@@ -1,4 +1,4 @@
-import express from "express";
+const express = require("express")
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route";
 const dotenv = require("dotenv")
