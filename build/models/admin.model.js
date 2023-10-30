@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
 var adminSchema = new mongoose.Schema({
     email: {
@@ -10,4 +12,4 @@ var adminSchema = new mongoose.Schema({
     },
 });
 var Admin = mongoose.models.admin || mongoose.model("admin", adminSchema);
-export default Admin;
+exports.default = Admin;

@@ -1,6 +1,8 @@
-import { Router } from "express";
-import { basicRegister, login } from "../controllers/user.controller";
-var userRouter = Router();
-userRouter.post("/", basicRegister);
-userRouter.post("/login", login);
-export default userRouter;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var user_controller_1 = require("../controllers/user.controller");
+var userRouter = (0, express_1.Router)();
+userRouter.post("/", user_controller_1.basicRegister);
+userRouter.post("/login", user_controller_1.login);
+exports.default = userRouter;

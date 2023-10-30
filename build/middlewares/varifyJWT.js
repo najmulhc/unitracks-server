@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import User from "../models/user.model";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var user_model_1 = __importDefault(require("../models/user.model"));
 var jwt = require("jsonwebtoken");
 var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var authorization, token, decoded, email, user;
@@ -48,7 +53,7 @@ var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, voi
                 throw new Error("Invalid token given");
             case 1:
                 email = decoded.email;
-                return [4 /*yield*/, User.findOne({
+                return [4 /*yield*/, user_model_1.default.findOne({
                         email: email,
                     })];
             case 2:
@@ -67,4 +72,4 @@ var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, voi
         }
     });
 }); };
-export default varifyJWT;
+exports.default = varifyJWT;
