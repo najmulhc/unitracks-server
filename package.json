@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.1",
     "@types/cookie-parser": "^1.4.5",
+    "@types/dotenv": "^8.2.0",
     "@types/mongodb": "^4.0.7",
     "@types/mongoose": "^5.11.97",
     "bcrypt": "^5.1.1",

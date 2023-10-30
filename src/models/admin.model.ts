@@ -1,7 +1,8 @@
-import mongoose, { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
+ 
 import { AdminType } from "../types";
 
-const adminSchema = new Schema<AdminType>({
+const adminSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -12,5 +13,5 @@ const adminSchema = new Schema<AdminType>({
   },
 });
 
-const Admin = mongoose.models.admin || model("admin", adminSchema);
+const Admin = mongoose.models.admin || mongoose.model("admin", adminSchema);
 export default Admin;

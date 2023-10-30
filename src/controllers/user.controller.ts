@@ -49,11 +49,21 @@ export const login = async (req: Request, res: Response) => {
     if (!compared) {
       throw new Error("Incorrect password!");
     }
-    // find admin
-    // find teacher
-    // find student
+
+    const token = jwt.sign(
+      {
+        email,
+      },
+      process.env.JWT_SIGN
+    );
+
+    return res.json({
+      success: true,
+      token,
+      role: user.role,
+    });
   } catch (error: any) {
-    res.json({
+    return res.json({
       success: false,
       body: req.body,
       message: error.message,

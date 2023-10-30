@@ -1,8 +1,8 @@
 import User from "../models/user.model";
 const jwt = require("jsonwebtoken");
 
-const varifyJWT = async (req: Request, res: Response, next) => {
-  const { authorization } = req.headers;
+const varifyJWT = async (req: any, res: Response, next) => {
+  const { authorization }: any = req.headers;
   const token = authorization.split(" ")[1];
   const decoded = jwt.varify(token, process.env.JWT_SIGN);
   if (!decoded) {
@@ -15,7 +15,7 @@ const varifyJWT = async (req: Request, res: Response, next) => {
     if (!user) {
       throw new Error("user does not exists");
     } else {
-      req.body.email = user.email;
+     req.body.email  = user.email;
       req.body.role = user.role;
     }
   }

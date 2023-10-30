@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,31 +34,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.basicRegister = void 0;
-var user_model_1 = __importDefault(require("../models/user.model"));
-var bcrypt_1 = __importDefault(require("bcrypt"));
-var dbconnect_1 = __importDefault(require("../dbconnect"));
+import User from "../models/user.model";
+import bcrypt from "bcrypt";
+import dbConnect from "../dbconnect";
 var jwt = require("jsonwebtoken");
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
-var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+export var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, saltRounds, hashedPassword, createdUser, token, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
+                return [4 /*yield*/, dbConnect()];
             case 1:
                 _b.sent();
                 _a = req.body, email = _a.email, password = _a.password;
                 saltRounds = 12;
-                return [4 /*yield*/, bcrypt_1.default.hash(password, saltRounds)];
+                return [4 /*yield*/, bcrypt.hash(password, saltRounds)];
             case 2:
                 hashedPassword = _b.sent();
-                return [4 /*yield*/, user_model_1.default.create({
+                return [4 /*yield*/, User.create({
                         email: email,
                         hashedPassword: hashedPassword,
                         role: "unassigned",
@@ -70,7 +64,7 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json({
                     success: true,
                     user: createdUser,
-                    token: token
+                    token: token,
                 });
                 return [3 /*break*/, 5];
             case 4:
@@ -85,17 +79,16 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
-exports.basicRegister = basicRegister;
-var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, user, compared, error_2;
+export var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, user, compared, token, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 _a = req.body, email = _a.email, password = _a.password;
                 user = null;
-                return [4 /*yield*/, user_model_1.default.findOne({
-                        email: email
+                return [4 /*yield*/, User.findOne({
+                        email: email,
                     })];
             case 1:
                 //find user
@@ -103,21 +96,29 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 if (!user) {
                     throw new Error("User not found");
                 }
-                compared = bcrypt_1.default.compare(password, user.hashedPassword);
-                return [3 /*break*/, 3];
+                compared = bcrypt.compare(password, user.hashedPassword);
+                if (!compared) {
+                    throw new Error("Incorrect password!");
+                }
+                token = jwt.sign({
+                    email: email,
+                }, process.env.JWT_SIGN);
+                return [2 /*return*/, res.json({
+                        success: true,
+                        token: token,
+                        role: user.role,
+                    })];
             case 2:
                 error_2 = _b.sent();
-                res.json({
-                    success: false,
-                    body: req.body,
-                    message: error_2.message,
-                });
-                return [3 /*break*/, 3];
+                return [2 /*return*/, res.json({
+                        success: false,
+                        body: req.body,
+                        message: error_2.message,
+                    })];
             case 3: return [2 /*return*/];
         }
     });
 }); };
-exports.login = login;
 // sign up as admin
 // set role for users
 // delete unwanted users

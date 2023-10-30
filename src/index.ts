@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route";
-import dotenv from "dotenv";
+const dotenv = require("dotenv")
 
 const app = express();
 const PORT = process.env.PORT || 6969;

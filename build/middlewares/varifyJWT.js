@@ -34,24 +34,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var connect = require('mongoose').connect;
-var dbConnect = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+import User from "../models/user.model";
+var jwt = require("jsonwebtoken");
+var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var authorization, token, decoded, email, user;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, connect("mongodb+srv://admin:".concat(process.env.MONGODB_USER_PASSWORD, "@maincluster.xiufldo.mongodb.net/?retryWrites=true&w=majority"))];
+                authorization = req.headers.authorization;
+                token = authorization.split(" ")[1];
+                decoded = jwt.varify(token, process.env.JWT_SIGN);
+                if (!!decoded) return [3 /*break*/, 1];
+                throw new Error("Invalid token given");
             case 1:
-                _a.sent();
-                console.log("MongoDB connected");
-                return [3 /*break*/, 3];
+                email = decoded.email;
+                return [4 /*yield*/, User.findOne({
+                        email: email,
+                    })];
             case 2:
-                error_1 = _a.sent();
-                console.log("Mongoose connection Error:", error_1.message);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                user = _a.sent();
+                if (!user) {
+                    throw new Error("user does not exists");
+                }
+                else {
+                    req.body.email = user.email;
+                    req.body.role = user.role;
+                }
+                _a.label = 3;
+            case 3:
+                next();
+                return [2 /*return*/];
         }
     });
 }); };
-export default dbConnect;
+export default varifyJWT;
