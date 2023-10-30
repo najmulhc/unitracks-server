@@ -91,13 +91,16 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, (0, dbconnect_1.default)()];
+            case 1:
+                _b.sent();
                 _a = req.body, email = _a.email, password = _a.password;
                 user = null;
                 return [4 /*yield*/, user_model_1.default.findOne({
                         email: email,
                     })];
-            case 1:
+            case 2:
                 //find user
                 user = _b.sent();
                 if (!user) {
@@ -115,14 +118,14 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                         token: token,
                         role: user.role,
                     })];
-            case 2:
+            case 3:
                 error_2 = _b.sent();
                 return [2 /*return*/, res.json({
                         success: false,
                         body: req.body,
                         message: error_2.message,
                     })];
-            case 3: return [2 /*return*/];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

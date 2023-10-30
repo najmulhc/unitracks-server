@@ -35,6 +35,7 @@ export const basicRegister = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
+    await dbConnect();
     const { email, password } = req.body;
     let user: UserType | null = null;
     //find user
