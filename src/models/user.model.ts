@@ -8,6 +8,7 @@ const userSchema = new Schema<UserType>({
   },
   email: {
     type: String,
+    unique: true
   },
   hashedPassword: {
     type: String,

@@ -6,7 +6,7 @@ export interface UserType {
 }
 
 export interface AdminType extends UserType {
-
+ role: "admin"
 }
 
 export interface TeacherType extends UserType {}

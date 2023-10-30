@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import dbConnect from "../dbconnect";
+import { UserType } from "../types";
+import jwt from 'jsonwebtoken'
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {
@@ -16,9 +18,11 @@ export const basicRegister = async (req: Request, res: Response) => {
       hashedPassword,
       role: "unassigned",
     });
+    const token = jwt.sign({email}, process.env.JWT_SIGN);
     res.json({
       success: true,
       user: createdUser,
+      token
     });
   } catch (error: any) {
     res.json({
@@ -28,6 +32,32 @@ export const basicRegister = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const login = async (req:Request, res:Response )  => {
+  try {
+  const {email, password} = req.body;
+  let user: (UserType | null) = null;
+  //find user
+  user = await User.findOne({
+    email
+  });
+
+  if(!user) {
+    throw new Error("User not found")
+  }
+  const compared = bcrypt.compare(password, user.hashedPassword);
+  // find admin
+  // find teacher
+  // find student
+
+  } catch (error: any) {
+    res.json({
+      success: false,
+      body: req.body,
+      message: error.message,
+    });
+  }
+}
 
 // sign up as admin
 // set role for users
