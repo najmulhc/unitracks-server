@@ -39,13 +39,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.basicRegister = void 0;
+exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dbconnect_1 = __importDefault(require("../dbconnect"));
+var jwt = require("jsonwebtoken");
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, saltRounds, hashedPassword, createdUser, error_1;
+    var _a, email, password, saltRounds, hashedPassword, createdUser, token, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -65,9 +66,11 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
                     })];
             case 3:
                 createdUser = _b.sent();
+                token = jwt.sign({ email: email }, process.env.JWT_SIGN);
                 res.json({
                     success: true,
                     user: createdUser,
+                    token: token
                 });
                 return [3 /*break*/, 5];
             case 4:
@@ -83,6 +86,38 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.basicRegister = basicRegister;
+var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, user, compared, error_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, email = _a.email, password = _a.password;
+                user = null;
+                return [4 /*yield*/, user_model_1.default.findOne({
+                        email: email
+                    })];
+            case 1:
+                //find user
+                user = _b.sent();
+                if (!user) {
+                    throw new Error("User not found");
+                }
+                compared = bcrypt_1.default.compare(password, user.hashedPassword);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _b.sent();
+                res.json({
+                    success: false,
+                    body: req.body,
+                    message: error_2.message,
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.login = login;
 // sign up as admin
 // set role for users
 // delete unwanted users

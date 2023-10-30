@@ -3,7 +3,7 @@ import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import dbConnect from "../dbconnect";
 import { UserType } from "../types";
-import jwt from 'jsonwebtoken'
+const jwt = require("jsonwebtoken")
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {

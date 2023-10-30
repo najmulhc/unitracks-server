@@ -31,6 +31,7 @@ var userSchema = new mongoose_1.Schema({
     },
     email: {
         type: String,
+        unique: true
     },
     hashedPassword: {
         type: String,

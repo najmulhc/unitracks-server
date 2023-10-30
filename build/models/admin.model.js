@@ -24,6 +24,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = __importStar(require("mongoose"));
-var adminSchema = new mongoose_1.Schema({});
+var adminSchema = new mongoose_1.Schema({
+    email: {
+        type: String,
+        required: true,
+    },
+    role: {
+        type: String,
+        default: "admin",
+    },
+});
 var Admin = mongoose_1.default.models.admin || (0, mongoose_1.model)("admin", adminSchema);
 exports.default = Admin;
