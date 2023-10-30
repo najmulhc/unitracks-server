@@ -10,7 +10,6 @@ const adminSchema = new Schema<AdminType>({
     type: String,
     default: "admin",
   },
-  
 });
 
 const Admin = mongoose.models.admin || model("admin", adminSchema);
