@@ -47,7 +47,7 @@ export const login = async (req: Request, res: Response) => {
     if (!user) {
       throw new Error("User not found");
     }
-    const compared = bcrypt.compare(password, user.hashedPassword);
+    const compared = await bcrypt.compare(password, user.hashedPassword);
     if (!compared) {
       throw new Error("Incorrect password!");
     }
