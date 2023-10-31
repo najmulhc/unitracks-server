@@ -3,13 +3,13 @@ import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import dbConnect from "../dbconnect";
 import { UserType } from "../types";
+import Admin from "../models/admin.model";
 const jwt = require("jsonwebtoken");
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {
   try {
     await dbConnect();
-
     const { email, password } = req.body;
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -27,7 +27,6 @@ export const basicRegister = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.json({
       success: false,
-      body: req.body,
       message: error.message,
     });
   }
@@ -66,7 +65,42 @@ export const login = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.json({
       success: false,
-      body: req.body,
+      message: error.message,
+    });
+  }
+};
+
+// when an unassigned user wanted to be an admin.
+export const beAnAdmin = async (req: Request, res: Response) => {
+  try {
+    await dbConnect();
+    const { email, role, key } = req.body;
+    if (role !== "unassigned") {
+      throw new Error("You do not have permission to perform this task.");
+    }
+    if (key !== "uU06Qh,33g&,M4~X" || !key) {
+      throw new Error("Invalid admin key");
+    }
+
+    const admin = await Admin.create({
+      email,
+    });
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      {
+        role: "admin",
+      },
+      {
+        new: true,
+      }
+    );
+    res.json({
+      success: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
       message: error.message,
     });
   }

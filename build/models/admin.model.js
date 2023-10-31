@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose = require("mongoose");
-var adminSchema = new mongoose.Schema({
+var mongoose_1 = __importDefault(require("mongoose"));
+var adminSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
         required: true,
@@ -11,5 +14,5 @@ var adminSchema = new mongoose.Schema({
         default: "admin",
     },
 });
-var Admin = mongoose.models.admin || mongoose.model("admin", adminSchema);
+var Admin = mongoose_1.default.models.admin || mongoose_1.default.model("admin", adminSchema);
 exports.default = Admin;

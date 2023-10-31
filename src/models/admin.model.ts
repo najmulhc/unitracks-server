@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
- 
-import { AdminType } from "../types";
+import mongoose from "mongoose";
 
 const adminSchema = new mongoose.Schema({
   email: {

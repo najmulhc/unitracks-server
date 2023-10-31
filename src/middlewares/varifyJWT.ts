@@ -1,24 +1,24 @@
+import { NextFunction } from "express";
 import User from "../models/user.model";
 const jwt = require("jsonwebtoken");
 
-const varifyJWT = async (req: any, res: Response, next) => {
+const varifyJWT = (req, res , next ) => {
   const { authorization }: any = req.headers;
   const token = authorization.split(" ")[1];
   const decoded = jwt.varify(token, process.env.JWT_SIGN);
   if (!decoded) {
     throw new Error("Invalid token given");
-  } else {
-    const { email } = decoded;
-    const user = await User.findOne({
-      email,
-    });
+  }
+  const { email } = decoded;
+  User.findOne({
+    email,
+  }).then((user) => {
     if (!user) {
       throw new Error("user does not exists");
-    } else {
-     req.body.email  = user.email;
-      req.body.role = user.role;
     }
-  }
+    req.body.email = user?.email;
+    req.body.role = user?.role;
+  });
 
   next();
 };

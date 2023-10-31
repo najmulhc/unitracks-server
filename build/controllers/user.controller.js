@@ -39,10 +39,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.basicRegister = void 0;
+exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dbconnect_1 = __importDefault(require("../dbconnect"));
+var admin_model_1 = __importDefault(require("../models/admin.model"));
 var jwt = require("jsonwebtoken");
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -77,7 +78,6 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
                 error_1 = _b.sent();
                 res.json({
                     success: false,
-                    body: req.body,
                     message: error_1.message,
                 });
                 return [3 /*break*/, 5];
@@ -122,7 +122,6 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 error_2 = _b.sent();
                 return [2 /*return*/, res.json({
                         success: false,
-                        body: req.body,
                         message: error_2.message,
                     })];
             case 4: return [2 /*return*/];
@@ -130,6 +129,51 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.login = login;
+// when an unassigned user wanted to be an admin.
+var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, role, key, admin, updatedUser, error_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, (0, dbconnect_1.default)()];
+            case 1:
+                _b.sent();
+                _a = req.body, email = _a.email, role = _a.role, key = _a.key;
+                if (role !== "unassigned") {
+                    throw new Error("You do not have permission to perform this task.");
+                }
+                if (key !== "uU06Qh,33g&,M4~X" || !key) {
+                    throw new Error("Invalid admin key");
+                }
+                return [4 /*yield*/, admin_model_1.default.create({
+                        email: email,
+                    })];
+            case 2:
+                admin = _b.sent();
+                return [4 /*yield*/, user_model_1.default.findOneAndUpdate({ email: email }, {
+                        role: "admin",
+                    }, {
+                        new: true,
+                    })];
+            case 3:
+                updatedUser = _b.sent();
+                res.json({
+                    success: true,
+                    user: updatedUser,
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                error_3 = _b.sent();
+                return [2 /*return*/, res.json({
+                        success: false,
+                        message: error_3.message,
+                    })];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.beAnAdmin = beAnAdmin;
 // sign up as admin
 // set role for users
 // delete unwanted users
