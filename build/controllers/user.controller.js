@@ -78,6 +78,7 @@ var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 
                 error_1 = _b.sent();
                 res.json({
                     success: false,
+                    body: { email: req.body.email, password: req.body.password },
                     message: error_1.message,
                 });
                 return [3 /*break*/, 5];

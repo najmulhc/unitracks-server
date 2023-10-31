@@ -11,6 +11,7 @@ export const basicRegister = async (req: Request, res: Response) => {
   try {
     await dbConnect();
     const { email, password } = req.body;
+ 
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const createdUser = await User.create({
@@ -27,6 +28,7 @@ export const basicRegister = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.json({
       success: false,
+      body: { email: req.body.email, password: req.body.password },
       message: error.message,
     });
   }

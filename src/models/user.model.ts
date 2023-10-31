@@ -8,13 +8,17 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true
+    unique: true,
   },
   hashedPassword: {
     type: String,
   },
   role: {
-    enum: ["unassigned", "admin", "teacher", "student"],
+    type: String,
+    enum: {
+      values: ["unassigned", "admin", "teacher", "student"],
+    },
+    default: "unassigned"
   },
 });
 
