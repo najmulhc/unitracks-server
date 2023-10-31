@@ -92,7 +92,7 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
+                _b.trys.push([0, 4, , 5]);
                 return [4 /*yield*/, (0, dbconnect_1.default)()];
             case 1:
                 _b.sent();
@@ -107,7 +107,9 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 if (!user) {
                     throw new Error("User not found");
                 }
-                compared = bcrypt_1.default.compare(password, user.hashedPassword);
+                return [4 /*yield*/, bcrypt_1.default.compare(password, user.hashedPassword)];
+            case 3:
+                compared = _b.sent();
                 if (!compared) {
                     throw new Error("Incorrect password!");
                 }
@@ -119,13 +121,13 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                         token: token,
                         user: user,
                     })];
-            case 3:
+            case 4:
                 error_2 = _b.sent();
                 return [2 /*return*/, res.json({
                         success: false,
                         message: error_2.message,
                     })];
-            case 4: return [2 /*return*/];
+            case 5: return [2 /*return*/];
         }
     });
 }); };
