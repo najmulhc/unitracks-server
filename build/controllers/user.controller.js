@@ -117,7 +117,7 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 return [2 /*return*/, res.json({
                         success: true,
                         token: token,
-                        role: user.role,
+                        user: user,
                     })];
             case 3:
                 error_2 = _b.sent();

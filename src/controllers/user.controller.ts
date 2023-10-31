@@ -11,7 +11,7 @@ export const basicRegister = async (req: Request, res: Response) => {
   try {
     await dbConnect();
     const { email, password } = req.body;
- 
+
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const createdUser = await User.create({
@@ -62,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
     return res.json({
       success: true,
       token,
-      role: user.role,
+      user: user,
     });
   } catch (error: any) {
     return res.json({
