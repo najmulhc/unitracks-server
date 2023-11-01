@@ -1,25 +1,32 @@
-import { NextFunction } from "express";
+import e, { NextFunction } from "express";
 import User from "../models/user.model";
-const jwt = require("jsonwebtoken");
+import dbConnect from "../dbconnect";
+var jwt = require("jsonwebtoken");
 
-const varifyJWT = (req, res , next ) => {
-  const { authorization }: any = req.headers;
-  const token = authorization.split(" ")[1];
-  const decoded = jwt.varify(token, process.env.JWT_SIGN);
+const varifyJWT = async (req: Request, res, next) => {
+  //@ts-ignore
+  const token = req.headers?.authorization.split(" ")[1];
+
+  const decoded = jwt.verify(token, process.env.JWT_SIGN);
   if (!decoded) {
     throw new Error("Invalid token given");
   }
   const { email } = decoded;
-  User.findOne({
+  await dbConnect();
+  const user = await User.findOne({
     email,
-  }).then((user) => {
-    if (!user) {
-      throw new Error("user does not exists");
-    }
-    req.body.email = user?.email;
-    req.body.role = user?.role;
   });
 
+  if (!user) {
+    throw new Error("User does not exists!");
+  }
+  const { role } = user;
+ //@ts-ignore
+  req.body?.role = role;
+   //@ts-ignore
+  req.body?.email = email;
+   //@ts-ignore
+  req.body?.user = user;
   next();
 };
 

@@ -77,6 +77,7 @@ export const beAnAdmin = async (req: Request, res: Response) => {
   try {
     await dbConnect();
     const { email, role, key } = req.body;
+    console.log(req.body.email, req.body.role);
     if (role !== "unassigned") {
       throw new Error("You do not have permission to perform this task.");
     }
@@ -107,6 +108,23 @@ export const beAnAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+// get user from jwt token 
+export const loginWithToken = async (req, res) => {
+  try {
+    const {user} = req.body;
+    res.json({
+      success: true, 
+      user
+    })
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
 
 // sign up as admin
 // set role for users

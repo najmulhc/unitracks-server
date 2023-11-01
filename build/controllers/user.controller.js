@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
+exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dbconnect_1 = __importDefault(require("../dbconnect"));
@@ -143,6 +143,7 @@ var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, f
             case 1:
                 _b.sent();
                 _a = req.body, email = _a.email, role = _a.role, key = _a.key;
+                console.log(req.body.email, req.body.role);
                 if (role !== "unassigned") {
                     throw new Error("You do not have permission to perform this task.");
                 }
@@ -177,6 +178,27 @@ var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.beAnAdmin = beAnAdmin;
+// get user from jwt token 
+var loginWithToken = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        try {
+            user = req.body.user;
+            res.json({
+                success: true,
+                user: user
+            });
+        }
+        catch (error) {
+            return [2 /*return*/, res.json({
+                    success: false,
+                    message: error.message,
+                })];
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.loginWithToken = loginWithToken;
 // sign up as admin
 // set role for users
 // delete unwanted users
