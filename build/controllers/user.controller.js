@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
+exports.setUserRole = exports.getAllUsers = exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dbconnect_1 = __importDefault(require("../dbconnect"));
@@ -178,7 +178,7 @@ var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.beAnAdmin = beAnAdmin;
-// get user from jwt token 
+// get user from jwt token
 var loginWithToken = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {
@@ -186,7 +186,7 @@ var loginWithToken = function (req, res) { return __awaiter(void 0, void 0, void
             user = req.body.user;
             res.json({
                 success: true,
-                user: user
+                user: user,
             });
         }
         catch (error) {
@@ -199,6 +199,72 @@ var loginWithToken = function (req, res) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.loginWithToken = loginWithToken;
+// get all users
+var getAllUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var role, users, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                role = req.body.user.role;
+                if (role !== "admin") {
+                    throw new Error("You do not have permission to perform this action.");
+                }
+                return [4 /*yield*/, user_model_1.default.find({})];
+            case 1:
+                users = _a.sent();
+                return [2 /*return*/, res.json({
+                        success: true,
+                        users: users,
+                    })];
+            case 2:
+                error_4 = _a.sent();
+                return [2 /*return*/, res.json({
+                        success: false,
+                        message: error_4.message,
+                    })];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllUsers = getAllUsers;
+var setUserRole = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var role, updatedUser, _a, _b, error_5;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                _d.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, (0, dbconnect_1.default)()];
+            case 1:
+                _d.sent();
+                role = req.body.user.role;
+                if (role !== "admin") {
+                    throw new Error("You do not have permission to perform this action.");
+                }
+                return [4 /*yield*/, user_model_1.default.findOneAndUpdate({ email: req.body.userEmail }, { role: req.body.userRole }, {
+                        new: true
+                    })];
+            case 2:
+                updatedUser = _d.sent();
+                _b = (_a = res).json;
+                _c = {
+                    success: true
+                };
+                return [4 /*yield*/, user_model_1.default.find()];
+            case 3: return [2 /*return*/, _b.apply(_a, [(_c.users = _d.sent(),
+                        _c)])];
+            case 4:
+                error_5 = _d.sent();
+                return [2 /*return*/, res.json({
+                        success: false,
+                        message: error_5.message,
+                    })];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.setUserRole = setUserRole;
 // sign up as admin
 // set role for users
 // delete unwanted users

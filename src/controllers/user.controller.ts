@@ -109,15 +109,60 @@ export const beAnAdmin = async (req: Request, res: Response) => {
   }
 };
 
-
-// get user from jwt token 
+// get user from jwt token
 export const loginWithToken = async (req, res) => {
   try {
-    const {user} = req.body;
+    const { user } = req.body;
     res.json({
-      success: true, 
-      user
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const { role } = req.body.user;
+
+    if (role !== "admin") {
+      throw new Error("You do not have permission to perform this action.");
+    }
+
+    const users = await User.find({});
+
+    return res.json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const setUserRole = async (req, res) => {
+  try {
+    await dbConnect();
+    const {role} = req.body.user;
+    if(role !== "admin") {
+      throw new Error("You do not have permission to perform this action.")
+    }
+    const updatedUser = await User.findOneAndUpdate({email: req.body.userEmail}, {role: req.body.userRole}, {
+      new: true
     })
+    return res.json({
+      success: true, 
+      users: await User.find()
+    })
+
   } catch (error) {
     return res.json({
       success: false,
