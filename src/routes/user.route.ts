@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   basicRegister,
   beAnAdmin,
+  deleteUser,
   getAllUsers,
   login,
   loginWithToken,
@@ -17,5 +18,6 @@ userRouter.post("/be-an-admin", varifyJWT, beAnAdmin);
 userRouter.get("/", varifyJWT, loginWithToken);
 userRouter.get("/get-all-users", varifyJWT, getAllUsers);
 userRouter.patch("/update-user-role", varifyJWT, setUserRole);
+userRouter.delete("/", varifyJWT, deleteUser)
 
 export default userRouter;

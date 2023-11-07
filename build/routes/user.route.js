@@ -13,4 +13,5 @@ userRouter.post("/be-an-admin", varifyJWT_1.default, user_controller_1.beAnAdmin
 userRouter.get("/", varifyJWT_1.default, user_controller_1.loginWithToken);
 userRouter.get("/get-all-users", varifyJWT_1.default, user_controller_1.getAllUsers);
 userRouter.patch("/update-user-role", varifyJWT_1.default, user_controller_1.setUserRole);
+userRouter.delete("/", varifyJWT_1.default, user_controller_1.deleteUser);
 exports.default = userRouter;

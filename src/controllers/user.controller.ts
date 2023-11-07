@@ -172,7 +172,7 @@ export const setUserRole = async (req, res) => {
 }
 
 // delete a user by admin 
-const deleteUser = async (req, res ) =>{
+export const deleteUser = async (req, res ) =>{
   try {
     const {role} = req.body;
     await dbConnect();

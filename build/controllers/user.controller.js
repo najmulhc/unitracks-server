@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setUserRole = exports.getAllUsers = exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
+exports.deleteUser = exports.setUserRole = exports.getAllUsers = exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dbconnect_1 = __importDefault(require("../dbconnect"));
@@ -302,6 +302,7 @@ var deleteUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+exports.deleteUser = deleteUser;
 // sign up as admin
 // set role for users
 // delete unwanted users
