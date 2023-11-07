@@ -265,6 +265,43 @@ var setUserRole = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.setUserRole = setUserRole;
+// delete a user by admin 
+var deleteUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var role, deletedUser, deleted, users, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                role = req.body.role;
+                return [4 /*yield*/, (0, dbconnect_1.default)()];
+            case 1:
+                _a.sent();
+                deletedUser = req.body.deletedUser;
+                if (role !== "admin") {
+                    throw new Error("You do not have permission to perform this action");
+                }
+                return [4 /*yield*/, user_model_1.default.findOneAndDelete({
+                        email: deletedUser.email
+                    })];
+            case 2:
+                deleted = _a.sent();
+                return [4 /*yield*/, user_model_1.default.find()];
+            case 3:
+                users = _a.sent();
+                return [2 /*return*/, res.json({
+                        success: true,
+                        users: users
+                    })];
+            case 4:
+                error_6 = _a.sent();
+                return [2 /*return*/, res.json({
+                        success: false,
+                        message: error_6.message,
+                    })];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
 // sign up as admin
 // set role for users
 // delete unwanted users

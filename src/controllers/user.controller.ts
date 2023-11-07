@@ -171,6 +171,33 @@ export const setUserRole = async (req, res) => {
   }
 }
 
+// delete a user by admin 
+const deleteUser = async (req, res ) =>{
+  try {
+    const {role} = req.body;
+    await dbConnect();
+    const {deletedUser} = req.body;
+    if(role !== "admin") {
+      throw new Error("You do not have permission to perform this action");
+      
+    }
+
+    const deleted = await User.findOneAndDelete({
+      email: deletedUser.email
+    });
+    const users = await User.find();
+    return res.json({
+      success: true, users
+    })
+    
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 // sign up as admin
 // set role for users
 // delete unwanted users
