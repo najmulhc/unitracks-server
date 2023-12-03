@@ -5,9 +5,9 @@ export interface UserType {
   email: string;
 }
 
-export interface AdminType extends UserType {
- role: "admin"
+export interface StudentType extends UserType {
+  role: "student";
+  authStage: "1"| "2", "completed",
+  roll: number, 
+  session: "2019"| "2020" 
 }
-
-export interface TeacherType extends UserType {}
-export interface StudentType extends UserType {}

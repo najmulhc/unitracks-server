@@ -12,7 +12,6 @@ const varifyJWT = async (req: Request, res, next) => {
     throw new Error("Invalid token given");
   }
   const { email } = decoded;
-  await dbConnect();
   const user = await User.findOne({
     email,
   });
@@ -21,11 +20,11 @@ const varifyJWT = async (req: Request, res, next) => {
     throw new Error("User does not exists!");
   }
   const { role } = user;
- //@ts-ignore
+  //@ts-ignore
   req.body?.role = role;
-   //@ts-ignore
+  //@ts-ignore
   req.body?.email = email;
-   //@ts-ignore
+  //@ts-ignore
   req.body?.user = user;
   next();
 };

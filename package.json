@@ -2,6 +2,7 @@
   "name": "unitrack-server",
   "version": "1.0.0",
   "description": "A full stack university management application. ",
+ "type": "module",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc",
@@ -11,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.20",
+    "prettier": "^3.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },

@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
-import dbConnect from "../dbconnect";
+
 import { UserType } from "../types";
 import Admin from "../models/admin.model";
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {
   try {
-    await dbConnect();
+   
     const { email, password } = req.body;
 
     const saltRounds = 12;
@@ -36,7 +36,7 @@ export const basicRegister = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    await dbConnect();
+    
     const { email, password } = req.body;
     let user: UserType | null = null;
     //find user
@@ -56,7 +56,7 @@ export const login = async (req: Request, res: Response) => {
       {
         email,
       },
-      process.env.JWT_SIGN
+      process.env.JWT_SIGN,
     );
 
     return res.json({
@@ -75,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
 // when an unassigned user wanted to be an admin.
 export const beAnAdmin = async (req: Request, res: Response) => {
   try {
-    await dbConnect();
+   
     const { email, role, key } = req.body;
     console.log(req.body.email, req.body.role);
     if (role !== "unassigned") {
@@ -95,7 +95,7 @@ export const beAnAdmin = async (req: Request, res: Response) => {
       },
       {
         new: true,
-      }
+      },
     );
     res.json({
       success: true,
@@ -150,54 +150,55 @@ export const getAllUsers = async (req, res) => {
 
 export const setUserRole = async (req, res) => {
   try {
-    await dbConnect();
-    const {role} = req.body.user;
-    if(role !== "admin") {
-      throw new Error("You do not have permission to perform this action.")
+    
+    const { role } = req.body.user;
+    if (role !== "admin") {
+      throw new Error("You do not have permission to perform this action.");
     }
-    const updatedUser = await User.findOneAndUpdate({email: req.body.userEmail}, {role: req.body.userRole}, {
-      new: true
-    })
+    const updatedUser = await User.findOneAndUpdate(
+      { email: req.body.userEmail },
+      { role: req.body.userRole },
+      {
+        new: true,
+      },
+    );
     return res.json({
-      success: true, 
-      users: await User.find()
-    })
-
+      success: true,
+      users: await User.find(),
+    });
   } catch (error) {
     return res.json({
       success: false,
       message: error.message,
     });
   }
-}
+};
 
-// delete a user by admin 
-export const deleteUser = async (req, res ) =>{
+// delete a user by admin
+export const deleteUser = async (req, res) => {
   try {
-    const {role} = req.body;
-    await dbConnect();
-    const {deletedUser} = req.body;
-    if(role !== "admin") {
+    const { role } = req.body;
+ 
+    const { deletedUser } = req.body;
+    if (role !== "admin") {
       throw new Error("You do not have permission to perform this action");
-      
     }
 
     const deleted = await User.findOneAndDelete({
-      email: deletedUser.email
+      email: deletedUser.email,
     });
     const users = await User.find();
     return res.json({
-      success: true, users
-    })
-    
+      success: true,
+      users,
+    });
   } catch (error) {
     return res.json({
       success: false,
       message: error.message,
     });
   }
-}
+};
 
 // sign up as admin
 // set role for users
-// delete unwanted users
