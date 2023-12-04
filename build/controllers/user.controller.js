@@ -42,78 +42,60 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.setUserRole = exports.getAllUsers = exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
-var dbconnect_1 = __importDefault(require("../dbconnect"));
 var admin_model_1 = __importDefault(require("../models/admin.model"));
-var jwt = require("jsonwebtoken");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, saltRounds, hashedPassword, createdUser, token, error_1;
+    var _a, email, password, saltRounds, hashedPassword, createdUser, token;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _b.sent();
                 _a = req.body, email = _a.email, password = _a.password;
                 saltRounds = 12;
                 return [4 /*yield*/, bcrypt_1.default.hash(password, saltRounds)];
-            case 2:
+            case 1:
                 hashedPassword = _b.sent();
                 return [4 /*yield*/, user_model_1.default.create({
                         email: email,
                         hashedPassword: hashedPassword,
                         role: "unassigned",
                     })];
-            case 3:
+            case 2:
                 createdUser = _b.sent();
-                token = jwt.sign({ email: email }, process.env.JWT_SIGN);
+                token = jsonwebtoken_1.default.sign({ email: email }, process.env.JWT_SIGN);
                 res.json({
                     success: true,
                     user: createdUser,
                     token: token,
                 });
-                return [3 /*break*/, 5];
-            case 4:
-                error_1 = _b.sent();
-                res.json({
-                    success: false,
-                    body: { email: req.body.email, password: req.body.password },
-                    message: error_1.message,
-                });
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); };
 exports.basicRegister = basicRegister;
 var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, user, compared, token, error_2;
+    var _a, email, password, user, compared, token;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _b.sent();
                 _a = req.body, email = _a.email, password = _a.password;
                 user = null;
                 return [4 /*yield*/, user_model_1.default.findOne({
                         email: email,
                     })];
-            case 2:
+            case 1:
                 //find user
                 user = _b.sent();
                 if (!user) {
                     throw new Error("User not found");
                 }
                 return [4 /*yield*/, bcrypt_1.default.compare(password, user.hashedPassword)];
-            case 3:
+            case 2:
                 compared = _b.sent();
                 if (!compared) {
                     throw new Error("Incorrect password!");
                 }
-                token = jwt.sign({
+                token = jsonwebtoken_1.default.sign({
                     email: email,
                 }, process.env.JWT_SIGN);
                 return [2 /*return*/, res.json({
@@ -121,27 +103,16 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                         token: token,
                         user: user,
                     })];
-            case 4:
-                error_2 = _b.sent();
-                return [2 /*return*/, res.json({
-                        success: false,
-                        message: error_2.message,
-                    })];
-            case 5: return [2 /*return*/];
         }
     });
 }); };
 exports.login = login;
 // when an unassigned user wanted to be an admin.
 var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, role, key, admin, updatedUser, error_3;
+    var _a, email, role, key, admin, updatedUser;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _b.sent();
                 _a = req.body, email = _a.email, role = _a.role, key = _a.key;
                 console.log(req.body.email, req.body.role);
                 if (role !== "unassigned") {
@@ -153,27 +124,20 @@ var beAnAdmin = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 return [4 /*yield*/, admin_model_1.default.create({
                         email: email,
                     })];
-            case 2:
+            case 1:
                 admin = _b.sent();
                 return [4 /*yield*/, user_model_1.default.findOneAndUpdate({ email: email }, {
                         role: "admin",
                     }, {
                         new: true,
                     })];
-            case 3:
+            case 2:
                 updatedUser = _b.sent();
                 res.json({
                     success: true,
                     user: updatedUser,
                 });
-                return [3 /*break*/, 5];
-            case 4:
-                error_3 = _b.sent();
-                return [2 /*return*/, res.json({
-                        success: false,
-                        message: error_3.message,
-                    })];
-            case 5: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); };
@@ -182,30 +146,21 @@ exports.beAnAdmin = beAnAdmin;
 var loginWithToken = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {
-        try {
-            user = req.body.user;
-            res.json({
-                success: true,
-                user: user,
-            });
-        }
-        catch (error) {
-            return [2 /*return*/, res.json({
-                    success: false,
-                    message: error.message,
-                })];
-        }
+        user = req.body.user;
+        res.json({
+            success: true,
+            user: user,
+        });
         return [2 /*return*/];
     });
 }); };
 exports.loginWithToken = loginWithToken;
 // get all users
 var getAllUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var role, users, error_4;
+    var role, users;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
                 role = req.body.user.role;
                 if (role !== "admin") {
                     throw new Error("You do not have permission to perform this action.");
@@ -217,92 +172,62 @@ var getAllUsers = function (req, res) { return __awaiter(void 0, void 0, void 0,
                         success: true,
                         users: users,
                     })];
-            case 2:
-                error_4 = _a.sent();
-                return [2 /*return*/, res.json({
-                        success: false,
-                        message: error_4.message,
-                    })];
-            case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.getAllUsers = getAllUsers;
 var setUserRole = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var role, updatedUser, _a, _b, error_5;
+    var role, updatedUser, _a, _b;
     var _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
-                _d.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _d.sent();
                 role = req.body.user.role;
                 if (role !== "admin") {
                     throw new Error("You do not have permission to perform this action.");
                 }
                 return [4 /*yield*/, user_model_1.default.findOneAndUpdate({ email: req.body.userEmail }, { role: req.body.userRole }, {
-                        new: true
+                        new: true,
                     })];
-            case 2:
+            case 1:
                 updatedUser = _d.sent();
                 _b = (_a = res).json;
                 _c = {
                     success: true
                 };
                 return [4 /*yield*/, user_model_1.default.find()];
-            case 3: return [2 /*return*/, _b.apply(_a, [(_c.users = _d.sent(),
+            case 2: return [2 /*return*/, _b.apply(_a, [(_c.users = _d.sent(),
                         _c)])];
-            case 4:
-                error_5 = _d.sent();
-                return [2 /*return*/, res.json({
-                        success: false,
-                        message: error_5.message,
-                    })];
-            case 5: return [2 /*return*/];
         }
     });
 }); };
 exports.setUserRole = setUserRole;
-// delete a user by admin 
+// delete a user by admin
 var deleteUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var role, deletedUser, deleted, users, error_6;
+    var role, deletedUser, deleted, users;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
                 role = req.body.role;
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _a.sent();
                 deletedUser = req.body.deletedUser;
                 if (role !== "admin") {
                     throw new Error("You do not have permission to perform this action");
                 }
                 return [4 /*yield*/, user_model_1.default.findOneAndDelete({
-                        email: deletedUser.email
+                        email: deletedUser.email,
                     })];
-            case 2:
+            case 1:
                 deleted = _a.sent();
                 return [4 /*yield*/, user_model_1.default.find()];
-            case 3:
+            case 2:
                 users = _a.sent();
                 return [2 /*return*/, res.json({
                         success: true,
-                        users: users
+                        users: users,
                     })];
-            case 4:
-                error_6 = _a.sent();
-                return [2 /*return*/, res.json({
-                        success: false,
-                        message: error_6.message,
-                    })];
-            case 5: return [2 /*return*/];
         }
     });
 }); };
 exports.deleteUser = deleteUser;
 // sign up as admin
 // set role for users
-// delete unwanted users

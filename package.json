@@ -1,17 +1,18 @@
 {
-  "name": "unitrack-server",
-  "version": "1.0.0",
+  "name": "unitracks-server",
+  "version": "0.0.1",
   "description": "A full stack university management application. ",
- "type": "module",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --respawn  --transpile-only  ./src/index.ts"
+    "dev": "ts-node-dev --respawn  --transpile-only  ./src/index.ts",
+    "start": "nodemon build/index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.20",
+    "nodemon": "^3.0.2",
     "prettier": "^3.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"

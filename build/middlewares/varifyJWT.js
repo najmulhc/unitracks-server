@@ -39,9 +39,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var user_model_1 = __importDefault(require("../models/user.model"));
-var dbconnect_1 = __importDefault(require("../dbconnect"));
-var jwt = require("jsonwebtoken");
 var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var token, decoded, email, user, role;
     var _a, _b, _c, _d;
@@ -49,18 +48,15 @@ var varifyJWT = function (req, res, next) { return __awaiter(void 0, void 0, voi
         switch (_e.label) {
             case 0:
                 token = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization.split(" ")[1];
-                decoded = jwt.verify(token, process.env.JWT_SIGN);
+                decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SIGN);
                 if (!decoded) {
                     throw new Error("Invalid token given");
                 }
                 email = decoded.email;
-                return [4 /*yield*/, (0, dbconnect_1.default)()];
-            case 1:
-                _e.sent();
                 return [4 /*yield*/, user_model_1.default.findOne({
                         email: email,
                     })];
-            case 2:
+            case 1:
                 user = _e.sent();
                 if (!user) {
                     throw new Error("User does not exists!");

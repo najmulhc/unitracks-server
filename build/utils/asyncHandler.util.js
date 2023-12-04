@@ -36,24 +36,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = require("mongoose");
-var dbConnect = function () { return __awaiter(void 0, void 0, void 0, function () {
+var asyncHandler = function (func) { return function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, mongoose_1.connect)("mongodb+srv://admin:".concat(process.env.MONGODB_USER_PASSWORD, "@maincluster.xiufldo.mongodb.net/?retryWrites=true&w=majority"))];
+                return [4 /*yield*/, func(req, res, next)];
             case 1:
                 _a.sent();
-                console.log("MongoDB connected");
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
-                console.log("Mongoose connection Error:", error_1.message);
+                res.status(error_1.statusCode).json({
+                    success: false,
+                    message: error_1.message,
+                });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
-}); };
-exports.default = dbConnect;
+}); }; };
+exports.default = asyncHandler;

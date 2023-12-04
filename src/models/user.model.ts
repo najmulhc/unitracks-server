@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<UserType>({
     enum: {
       values: ["unassigned", "admin", "teacher", "student"],
     },
-    default: "unassigned"
+    default: "unassigned",
   },
 });
 

@@ -9,15 +9,16 @@ import {
   setUserRole,
 } from "../controllers/user.controller";
 import varifyJWT from "../middlewares/varifyJWT";
+import asyncHandler from "../utils/asyncHandler.util";
 
 const userRouter = Router();
 
-userRouter.post("/", basicRegister);
-userRouter.post("/login", login);
-userRouter.post("/be-an-admin", varifyJWT, beAnAdmin);
-userRouter.get("/", varifyJWT, loginWithToken);
-userRouter.get("/get-all-users", varifyJWT, getAllUsers);
-userRouter.patch("/update-user-role", varifyJWT, setUserRole);
-userRouter.delete("/", varifyJWT, deleteUser)
+userRouter.post("/", asyncHandler(basicRegister));
+userRouter.post("/login", asyncHandler(login));
+userRouter.post("/be-an-admin", varifyJWT, asyncHandler(beAnAdmin));
+userRouter.get("/", varifyJWT, asyncHandler(loginWithToken));
+userRouter.get("/get-all-users", varifyJWT, asyncHandler(getAllUsers));
+userRouter.patch("/update-user-role", varifyJWT, asyncHandler(setUserRole));
+userRouter.delete("/", varifyJWT, asyncHandler(deleteUser));
 
 export default userRouter;

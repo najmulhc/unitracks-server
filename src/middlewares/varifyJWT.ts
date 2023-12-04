@@ -1,7 +1,5 @@
-import e, { NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import User from "../models/user.model";
-import dbConnect from "../dbconnect";
-var jwt = require("jsonwebtoken");
 
 const varifyJWT = async (req: Request, res, next) => {
   //@ts-ignore
