@@ -44,15 +44,22 @@ var user_model_1 = __importDefault(require("../models/user.model"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var admin_model_1 = __importDefault(require("../models/admin.model"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var ApiError_1 = __importDefault(require("../utils/ApiError"));
+var createStudent_1 = __importDefault(require("../utils/createStudent"));
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 var basicRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, saltRounds, hashedPassword, createdUser, token;
+    var _a, email, password, existedUser, hashedPassword, createdUser, token;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, email = _a.email, password = _a.password;
-                saltRounds = 12;
-                return [4 /*yield*/, bcrypt_1.default.hash(password, saltRounds)];
+                existedUser = user_model_1.default.findOne({
+                    email: email,
+                });
+                if (existedUser) {
+                    throw new ApiError_1.default(400, "User already exists!");
+                }
+                return [4 /*yield*/, bcrypt_1.default.hash(password, 10)];
             case 1:
                 hashedPassword = _b.sent();
                 return [4 /*yield*/, user_model_1.default.create({
@@ -177,7 +184,7 @@ var getAllUsers = function (req, res) { return __awaiter(void 0, void 0, void 0,
 }); };
 exports.getAllUsers = getAllUsers;
 var setUserRole = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var role, updatedUser, _a, _b;
+    var role, updatedUser, createdStudent, _a, _b;
     var _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -191,12 +198,18 @@ var setUserRole = function (req, res) { return __awaiter(void 0, void 0, void 0,
                     })];
             case 1:
                 updatedUser = _d.sent();
+                if (!(req.body.userRole === "student")) return [3 /*break*/, 3];
+                return [4 /*yield*/, (0, createStudent_1.default)(req.body.userEmail)];
+            case 2:
+                createdStudent = _d.sent();
+                _d.label = 3;
+            case 3:
                 _b = (_a = res).json;
                 _c = {
                     success: true
                 };
                 return [4 /*yield*/, user_model_1.default.find()];
-            case 2: return [2 /*return*/, _b.apply(_a, [(_c.users = _d.sent(),
+            case 4: return [2 /*return*/, _b.apply(_a, [(_c.users = _d.sent(),
                         _c)])];
         }
     });

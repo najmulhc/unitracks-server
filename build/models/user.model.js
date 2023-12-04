@@ -21,7 +21,7 @@ var userSchema = new mongoose_1.default.Schema({
         enum: {
             values: ["unassigned", "admin", "teacher", "student"],
         },
-        default: "unassigned"
+        default: "unassigned",
     },
 });
 var User = mongoose_1.default.models.users || mongoose_1.default.model("user", userSchema);

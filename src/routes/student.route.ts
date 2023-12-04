@@ -2,7 +2,7 @@ import { Router } from "express";
 import asyncHandler from "../utils/asyncHandler.util";
 import {
   getStudent,
-  studentInputPhaseOne,
+  studentInputPhaseOne, 
 } from "../controllers/student.controller";
 import varifyJWT from "../middlewares/varifyJWT";
 

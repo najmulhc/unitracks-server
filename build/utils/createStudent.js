@@ -35,26 +35,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var asyncHandler = function (func) { return function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, func(req, res)];
-            case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                res.json({
-                    success: false,
-                    message: error_1.message,
-                });
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+var student_model_1 = __importDefault(require("../models/student.model"));
+var ApiError_1 = __importDefault(require("./ApiError"));
+var createStudent = function (_a) {
+    var email = _a.email;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var existedUser, createdUser;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, student_model_1.default.findOne({
+                        email: email,
+                    })];
+                case 1:
+                    existedUser = _b.sent();
+                    if (existedUser) {
+                        throw new ApiError_1.default(400, "Student already exists!");
+                    }
+                    return [4 /*yield*/, student_model_1.default.create({
+                            email: email,
+                        })];
+                case 2:
+                    createdUser = _b.sent();
+                    return [2 /*return*/, createdUser];
+            }
+        });
     });
-}); }; };
-exports.default = asyncHandler;
+};
+exports.default = createStudent;
