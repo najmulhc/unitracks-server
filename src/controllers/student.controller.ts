@@ -25,9 +25,6 @@ export const getStudent = async (req, res) => {
   // return student object
 };
 
-
-
-
 // student input phase one
 export const studentInputPhaseOne = async (req, res) => {
   // varify the user is student
@@ -71,6 +68,7 @@ export const studentInputPhaseOne = async (req, res) => {
       lastName,
       dateOfBirth: realDateOfBirth,
       bloodGroup,
+      authStage: "two",
     },
     { new: true },
   );
@@ -83,9 +81,63 @@ export const studentInputPhaseOne = async (req, res) => {
 
 export const studnetInputPhaseTwo = async (req, res) => {
   // varify the user is a student and is in auth phase two.
+  // varify the user is student
+  const { email, role } = req.body;
+  // varify user is student
+  if (role !== "student") {
+    throw new ApiError(400, "You are not a student");
+  }
+  // he is in the phase One state in registration
+  const student = await Student.findOne({
+    email,
+  });
+  if (!student) {
+    throw new ApiError(404, "Student not found.");
+  }
+  if (student.authStage !== "two") {
+    throw new ApiError(400, "you are in wrong auth phase!");
+  }
   // get information such as batch, roll, section and other academic info.
+  const { roll, session } = req.body;
+
   // varify user given info as per request.
-  // assign course array to empty
+  if (!roll || !session) {
+    throw new ApiError(
+      400,
+      "Incomplete form informaiton, we need full information",
+    );
+  }
+  const studentWithRoll = await Student.findOne({
+    roll,
+  });
+  if (studentWithRoll) {
+    throw new ApiError(401, "Student already exists with this roll.");
+  }
+
+  const sessions = ["2020", "2019"];
+
+  if (!sessions.includes(session)) {
+    throw new ApiError(400, "Invalid session! please provide the correct one.");
+  }
+
   // update student object with new info and set authphase to completed
+  const updatedStudent = await Student.findOneAndUpdate(
+    {
+      email,
+    },
+    {
+      roll,
+      session,
+      authStage: "completed",
+      courses: [],
+    },
+    {
+      new: true,
+    },
+  );
   // return student new object with no courses.
+  return res.status(200).json({
+    success: true,
+    student: updatedStudent,
+  });
 };

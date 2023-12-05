@@ -20,6 +20,7 @@ const studentSchema = new Schema<StudentType>({
   roll: {
     type: String,
     default: "",
+    unique: true
   },
   dateOfBirth: {
     type: Number,
