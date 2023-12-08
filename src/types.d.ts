@@ -19,7 +19,12 @@ export interface StudentType {
   lastName: string;
   courses: mongoose.Schema.Types.ObjectId[];
   email: string;
+};
+
+export interface TeacherType {
+  
 }
+
 
 export interface CourseType {}
 
