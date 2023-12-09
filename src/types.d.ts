@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 export interface UserType {
   name?: string;
@@ -19,12 +19,44 @@ export interface StudentType {
   lastName: string;
   courses: mongoose.Schema.Types.ObjectId[];
   email: string;
-};
-
-export interface TeacherType {
-  
 }
 
+// not created the Schema
+export interface TeacherType {
+  firstName: string;
+  lastName: string;
+  email: string;
+  courses: mongoose.Schema.Types.ObjectId[];
+}
+
+export interface NotificationType {
+  title: string;
+  time: number;
+  setter: mongoose.Schema.Types.ObjectId; // the person set the notification
+  for: mongoose.Schema.Types.ObjectId[];
+  views: mongoose.Schema.Types.ObjectId[]; // if there is in view, that meens seen.
+}
+
+export interface QuestionType {
+  question: string;
+  options: string[];
+  correctAnswer: number; // index of the right answer in the options
+}
+
+export interface StudentQuizType {
+  student: mongoose.Schema.Types.ObjectId;
+  attempted: number;
+  correct: number;
+  wrong: number;
+  score: number;
+}
+
+export interface QuizType {
+  teacher: mongoose.Schema.Types.ObjectId;
+  course: mongoose.Schema.Types.ObjectId;
+  questions: QuestionType[];
+  participents: StudentQuizType[];
+}
 
 export interface CourseType {}
 
