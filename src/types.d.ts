@@ -56,6 +56,7 @@ export interface QuizType {
   course: mongoose.Schema.Types.ObjectId;
   questions: QuestionType[];
   participents: StudentQuizType[];
+  name: string;
 }
 
 export interface CourseType {}

@@ -7,17 +7,24 @@ const quizSchema = new Schema<QuizType>({
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Teacher",
+    required: true,
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Quiz",
+    required: true,
   },
   questions: {
-    type: [questionSchema], 
+    type: [questionSchema],
     default: [],
   },
   participents: {
     type: [studentQuizSchema],
+    default: [],
+  },
+  name: {
+    type: String,
+    required: true,
   },
 });
 
