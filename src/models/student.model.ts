@@ -20,7 +20,7 @@ const studentSchema = new Schema<StudentType>({
   roll: {
     type: String,
     default: "",
-    unique: true
+    unique: true,
   },
   dateOfBirth: {
     type: Number,
@@ -45,6 +45,12 @@ const studentSchema = new Schema<StudentType>({
   role: {
     type: String,
     default: "student",
+  },
+  bloodGroup: {
+    type: String,
+    enum: {
+      values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
+    },
   },
 });
 
