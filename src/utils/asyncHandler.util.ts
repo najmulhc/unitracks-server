@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 const asyncHandler =
-  (func) => async (req: Request, res: Response, next: NextFunction) => {
+  (func: any) => async (req: Request, res: Response, next: NextFunction) => {
     try {
       await func(req, res, next);
     } catch (error: any) {

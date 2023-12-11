@@ -1,9 +1,11 @@
 import mongoose, { mongo } from "mongoose";
 
+export type Role = "unassigned" | "admin" | "teacher" | "student";
+
 export interface UserType {
   name?: string;
   hashedPassword: string;
-  role: "unassigned" | "admin" | "teacher" | "student";
+  role: Role;
   email: string;
   details: mongoose.Schema.Types.ObjectId;
 }
