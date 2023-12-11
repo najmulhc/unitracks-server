@@ -13,7 +13,7 @@ import asyncHandler from "../utils/asyncHandler.util";
 
 const userRouter = Router();
 
-userRouter.post("/", asyncHandler(basicRegister));
+userRouter.post("/register", asyncHandler(basicRegister));
 userRouter.post("/login", asyncHandler(login));
 userRouter.post("/be-an-admin", varifyJWT, asyncHandler(beAnAdmin));
 userRouter.get("/", varifyJWT, asyncHandler(loginWithToken));

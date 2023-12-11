@@ -27,6 +27,10 @@ export interface TeacherType {
   lastName: string;
   email: string;
   courses: mongoose.Schema.Types.ObjectId[];
+  role: "teacher";
+  title: "Professor" | "Assistant Professor" | "Lecturer";
+  bloodGroup: "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
+  authStage: "one" | "completed";
 }
 
 export interface NotificationType {

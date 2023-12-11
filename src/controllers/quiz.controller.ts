@@ -4,8 +4,9 @@ import Course from "../models/course.model";
 import Quiz from "../models/quiz.model";
 import Teacher from "../models/teacher.model";
 import ApiError from "../utils/ApiError";
+import { Request, Response } from "express";
 
-export const createNewQuiz = async (req: Request, res) => {
+export const createNewQuiz = async (req: Request, res: Response) => {
   // varification  of authorization
   const { role, email, courseId }: any = req.body;
 
@@ -66,3 +67,13 @@ export const createNewQuiz = async (req: Request, res) => {
 // posting student response of a quiz
 
 // deleting a quiz
+
+export const deleteQuiz = async (req: Request, res: Response) => {
+  // test teacher and if he ownes the quiz
+  // get quiz id and test if it exists with proper validation
+  // delete the quiz
+  // return the resutl
+  return res.status(200).json({
+    success: true,
+  });
+};

@@ -1,10 +1,8 @@
-// input phase 1 (basic personal information)
-// input phase 2 (academics information)
-
+import { Request, Response } from "express";
 import Student from "../models/student.model";
 import ApiError from "../utils/ApiError";
 
-export const getStudent = async (req, res) => {
+export const getStudent = async (req: Request, res: Response) => {
   // get user ID from jwt,
   const { email, role } = req.body;
   // varify user is student
@@ -26,7 +24,7 @@ export const getStudent = async (req, res) => {
 };
 
 // student input phase one
-export const studentInputPhaseOne = async (req, res) => {
+export const studentInputPhaseOne = async (req: Request, res: Response) => {
   // varify the user is student
   const { email, role } = req.body;
   // varify user is student
@@ -79,7 +77,7 @@ export const studentInputPhaseOne = async (req, res) => {
   });
 };
 
-export const studnetInputPhaseTwo = async (req, res) => {
+export const studnetInputPhaseTwo = async (req: Request, res: Response) => {
   // varify the user is a student and is in auth phase two.
   // varify the user is student
   const { email, role } = req.body;

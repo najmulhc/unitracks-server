@@ -4,14 +4,14 @@ import bcrypt from "bcrypt";
 
 import { UserType } from "../types";
 import Admin from "../models/admin.model";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError";
 import createStudent from "../utils/createStudent";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const existedUser = User.findOne({
+  const existedUser: UserType | null = await User.findOne({
     email,
   });
   if (existedUser) {
@@ -23,7 +23,7 @@ export const basicRegister = async (req: Request, res: Response) => {
     hashedPassword,
     role: "unassigned",
   });
-  const token = jwt.sign({ email }, process.env.JWT_SIGN);
+  const token = jwt.sign({ email }, process.env.JWT_SIGN as string);
   res.json({
     success: true,
     user: createdUser,
@@ -51,7 +51,7 @@ export const login = async (req: Request, res: Response) => {
     {
       email,
     },
-    process.env.JWT_SIGN,
+    process.env.JWT_SIGN as string,
   );
 
   return res.json({
@@ -91,7 +91,7 @@ export const beAnAdmin = async (req: Request, res: Response) => {
 };
 
 // get user from jwt token
-export const loginWithToken = async (req, res) => {
+export const loginWithToken = async (req: Request, res: Response) => {
   const { user } = req.body;
   res.json({
     success: true,
@@ -100,7 +100,7 @@ export const loginWithToken = async (req, res) => {
 };
 
 // get all users
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   const { role } = req.body.user;
 
   if (role !== "admin") {
@@ -115,7 +115,7 @@ export const getAllUsers = async (req, res) => {
   });
 };
 
-export const setUserRole = async (req, res) => {
+export const setUserRole = async (req: Request, res: Response) => {
   const { role } = req.body.user;
   if (role !== "admin") {
     throw new Error("You do not have permission to perform this action.");
@@ -138,7 +138,7 @@ export const setUserRole = async (req, res) => {
 };
 
 // delete a user by admin
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
   const { role } = req.body;
 
   const { deletedUser } = req.body;

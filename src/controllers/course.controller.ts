@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 export const createCourse = (req: Request, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
   // varify given information
