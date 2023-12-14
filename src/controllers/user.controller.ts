@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
 
-import { UserType } from "../types";
+import { UserRequest, UserType } from "../types";
 import Admin from "../models/admin.model";
 import * as jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError";
@@ -101,8 +101,8 @@ export const loginWithToken = async (req: Request, res: Response) => {
 };
 
 // get all users
-export const getAllUsers = async (req: Request, res: Response) => {
-  const { role } = req.body.user;
+export const getAllUsers = async (req: UserRequest, res: Response) => {
+  const { role } = req.user;
 
   authTester(role, "admin");
   const users = await User.find({});
@@ -113,8 +113,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
   });
 };
 
-export const setUserRole = async (req: Request, res: Response) => {
-  const { role } = req.body.user;
+export const setUserRole = async (req: UserRequest, res: Response) => {
+  const { role } = req.user;
   authTester(role, "admin");
   const updatedUser = await User.findOneAndUpdate(
     { email: req.body.userEmail },

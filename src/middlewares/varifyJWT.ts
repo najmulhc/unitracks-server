@@ -3,10 +3,14 @@ import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../utils/ApiError";
 import asyncHandler from "../utils/asyncHandler.util";
+import { UserRequest } from "../types";
 
-const varifyJWT = async (req: Request, res: Response, next: NextFunction) => {
-  //@ts-ignore
-  const token = req.headers?.authorization.split(" ")[1];
+const varifyJWT = async (
+  req: UserRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token: string | undefined = req.headers.authorization?.split(" ")[1];
   if (!token) {
     throw new ApiError(400, "No token given", [], "");
   }
@@ -28,13 +32,7 @@ const varifyJWT = async (req: Request, res: Response, next: NextFunction) => {
   if (!user) {
     throw new ApiError(404, "User Does not eixsts.");
   }
-  const { role } = user;
-  //@ts-ignore
-  req.body.role = role;
-  //@ts-ignore
-  req.body.email = email;
-  //@ts-ignore
-  req.body.user = user;
+  req.user = user;
   next();
 };
 

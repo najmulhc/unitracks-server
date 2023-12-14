@@ -1,3 +1,4 @@
+import { Request } from "express";
 import mongoose, { mongo } from "mongoose";
 
 export type Role = "unassigned" | "admin" | "teacher" | "student";
@@ -69,3 +70,8 @@ export interface QuizType {
 export interface CourseType {}
 
 export interface AdminType {}
+
+export interface UserRequest extends Request {
+  user: User;
+  student?: StudentType;
+}

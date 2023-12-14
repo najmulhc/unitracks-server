@@ -1,21 +1,10 @@
 import { Request, Response } from "express";
 import Student from "../models/student.model";
 import ApiError from "../utils/ApiError";
+import { UserRequest } from "../types";
 
-export const getStudent = async (req: Request, res: Response) => {
-  // get user ID from jwt,
-  const { email, role } = req.body;
-  // varify user is student
-  if (role !== "student") {
-    throw new ApiError(400, "You are not a student");
-  }
-  const student = await Student.findOne({
-    email,
-  });
-  if (!student) {
-    throw new ApiError(404, "Student not found.");
-  }
-
+export const getStudent = async (req: UserRequest, res: Response) => {
+  const { student } = req;
   return res.json({
     success: true,
     student,
@@ -24,21 +13,9 @@ export const getStudent = async (req: Request, res: Response) => {
 };
 
 // student input phase one
-export const studentInputPhaseOne = async (req: Request, res: Response) => {
-  // varify the user is student
-  const { email, role } = req.body;
-  // varify user is student
-  if (role !== "student") {
-    throw new ApiError(400, "You are not a student");
-  }
-  // he is in the phase One state in registration
-  const student = await Student.findOne({
-    email,
-  });
-  if (!student) {
-    throw new ApiError(404, "Student not found.");
-  }
-  if (student.authStage !== "one") {
+export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
+  const { student } = req;
+  if (student?.authStage !== "one") {
     throw new ApiError(400, "you are in wrong auth phase!");
   }
   // get body basic info (firstName, lastName, dateOfBirh, bloodGroup) etc.
@@ -60,7 +37,7 @@ export const studentInputPhaseOne = async (req: Request, res: Response) => {
   }
   // update student object with new info and change user auth phase
   const updatedStudent = await Student.findOneAndUpdate(
-    { email },
+    { email: student.email },
     {
       firstName,
       lastName,
@@ -77,22 +54,9 @@ export const studentInputPhaseOne = async (req: Request, res: Response) => {
   });
 };
 
-export const studnetInputPhaseTwo = async (req: Request, res: Response) => {
-  // varify the user is a student and is in auth phase two.
-  // varify the user is student
-  const { email, role } = req.body;
-  // varify user is student
-  if (role !== "student") {
-    throw new ApiError(400, "You are not a student");
-  }
-  // he is in the phase One state in registration
-  const student = await Student.findOne({
-    email,
-  });
-  if (!student) {
-    throw new ApiError(404, "Student not found.");
-  }
-  if (student.authStage !== "two") {
+export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
+  const { student } = req;
+  if (student?.authStage !== "two") {
     throw new ApiError(400, "you are in wrong auth phase!");
   }
   // get information such as batch, roll, section and other academic info.
@@ -121,7 +85,7 @@ export const studnetInputPhaseTwo = async (req: Request, res: Response) => {
   // update student object with new info and set authphase to completed
   const updatedStudent = await Student.findOneAndUpdate(
     {
-      email,
+      email:student.email,
     },
     {
       roll,

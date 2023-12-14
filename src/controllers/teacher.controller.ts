@@ -31,4 +31,4 @@ export const getTeacher = async (req: Request, res: Response) => {
   });
 };
 
-// teacher auth stage two
+ 
