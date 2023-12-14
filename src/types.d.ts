@@ -8,6 +8,7 @@ export interface UserType {
   role: Role;
   email: string;
   details: mongoose.Schema.Types.ObjectId;
+  refreshToken: string | undefined;
 }
 
 export interface StudentType {

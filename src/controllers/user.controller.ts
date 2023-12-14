@@ -7,6 +7,8 @@ import Admin from "../models/admin.model";
 import * as jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError";
 import createStudent from "../utils/createStudent";
+import authTester from "../utils/authTester";
+import createTeacher from "../utils/createTeacher";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: Request, res: Response) => {
@@ -34,7 +36,7 @@ export const basicRegister = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   let user: UserType | null = null;
-  //find user
+
   user = await User.findOne({
     email,
   });
@@ -64,10 +66,9 @@ export const login = async (req: Request, res: Response) => {
 // when an unassigned user wanted to be an admin.
 export const beAnAdmin = async (req: Request, res: Response) => {
   const { email, role, key } = req.body;
-  console.log(req.body.email, req.body.role);
-  if (role !== "unassigned") {
-    throw new Error("You do not have permission to perform this task.");
-  }
+
+  authTester(role, "unassigned");
+
   if (key !== "uU06Qh,33g&,M4~X" || !key) {
     throw new Error("Invalid admin key");
   }
@@ -103,10 +104,7 @@ export const loginWithToken = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   const { role } = req.body.user;
 
-  if (role !== "admin") {
-    throw new Error("You do not have permission to perform this action.");
-  }
-
+  authTester(role, "admin");
   const users = await User.find({});
 
   return res.json({
@@ -117,9 +115,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const setUserRole = async (req: Request, res: Response) => {
   const { role } = req.body.user;
-  if (role !== "admin") {
-    throw new Error("You do not have permission to perform this action.");
-  }
+  authTester(role, "admin");
   const updatedUser = await User.findOneAndUpdate(
     { email: req.body.userEmail },
     { role: req.body.userRole },
@@ -130,6 +126,8 @@ export const setUserRole = async (req: Request, res: Response) => {
   // creates new student
   if (req.body.userRole === "student") {
     const createdStudent = await createStudent(req.body.userEmail);
+  } else if (req.body.userRole === "teacher") {
+    const createdTeacher = await createTeacher(req.body.email);
   }
   return res.json({
     success: true,
@@ -142,9 +140,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   const { role } = req.body;
 
   const { deletedUser } = req.body;
-  if (role !== "admin") {
-    throw new Error("You do not have permission to perform this action");
-  }
+  authTester(role, "admin");
 
   const deleted = await User.findOneAndDelete({
     email: deletedUser.email,
@@ -155,6 +151,3 @@ export const deleteUser = async (req: Request, res: Response) => {
     users,
   });
 };
-
-// sign up as admin
-// set role for users
