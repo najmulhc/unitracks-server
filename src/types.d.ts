@@ -8,7 +8,7 @@ export interface UserType {
   hashedPassword: string;
   role: Role;
   email: string;
-  details: mongoose.Schema.Types.ObjectId;
+  details: mongoose.Types.ObjectId;
   refreshToken: string | undefined;
 }
 
@@ -21,7 +21,7 @@ export interface StudentType {
   dateOfBirth: number;
   firstName: string;
   lastName: string;
-  courses: mongoose.Schema.Types.ObjectId[];
+  courses: mongoose.Types.ObjectId[];
   email: string;
 }
 
@@ -30,7 +30,7 @@ export interface TeacherType {
   firstName: string;
   lastName: string;
   email: string;
-  courses: mongoose.Schema.Types.ObjectId[];
+  courses: mongoose.Types.ObjectId[];
   role: "teacher";
   title: "Professor" | "Assistant Professor" | "Lecturer";
   bloodGroup: "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
@@ -40,9 +40,9 @@ export interface TeacherType {
 export interface NotificationType {
   title: string;
   time: number;
-  setter: mongoose.Schema.Types.ObjectId; // the person set the notification
-  for: mongoose.Schema.Types.ObjectId[];
-  views: mongoose.Schema.Types.ObjectId[]; // if there is in view, that meens seen.
+  setter: mongoose.Types.ObjectId; // the person set the notification
+  for: mongoose.Types.ObjectId[];
+  views: mongoose.Types.ObjectId[]; // if there is in view, that meens seen.
 }
 
 export interface QuestionType {
@@ -52,7 +52,7 @@ export interface QuestionType {
 }
 
 export interface StudentQuizType {
-  student: mongoose.Schema.Types.ObjectId;
+  student: mongoose.Types.ObjectId;
   attempted: number;
   correct: number;
   wrong: number;
@@ -60,14 +60,20 @@ export interface StudentQuizType {
 }
 
 export interface QuizType {
-  teacher: mongoose.Schema.Types.ObjectId;
-  course: mongoose.Schema.Types.ObjectId;
+  teacher: mongoose.Types.ObjectId;
+  course: mongoose.Types.ObjectId;
   questions: QuestionType[];
   participents: StudentQuizType[];
   name: string;
 }
 
-export interface CourseType {}
+export interface CourseType {
+  teacher: mongoose.Types.ObjectId;
+  session: "2020" | "2021";
+  students: [mongoose.Types.ObjectId];
+  courseCode: 101 | 102 | 103 | 104 | 105;
+  name: string,
+}
 
 export interface AdminType {}
 
