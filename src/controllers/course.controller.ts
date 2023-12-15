@@ -38,8 +38,21 @@ export const createCourse = async (req: UserRequest, res: Response) => {
   }
 };
 
-// get courses  for  a user.
+// get all courses by admin
+export const getAllCourses = async (req: UserRequest, res: Response) => {
+  if (!req.admin) {
+    throw new ApiError(402, "You do not have permission to perform this task.");
+  }
 
+  const courses = await Course.find().select("-students -teacher");
+  return res.status(200).json({
+    success: true,
+    courses,
+  });
+};
+
+// get courses  for  a user.
+export const getCourses = async (req: UserRequest, res: Response) => {};
 
 // get course by ID  -> when you need a full page course detail
 
