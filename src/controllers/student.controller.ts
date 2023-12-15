@@ -103,3 +103,4 @@ export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
     student: updatedStudent,
   });
 };
+

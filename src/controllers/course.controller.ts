@@ -4,6 +4,7 @@ import authTester from "../utils/authTester";
 import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
 import Course from "../models/course.model";
+import Student from "../models/student.model";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -53,7 +54,27 @@ export const getAllCourses = async (req: UserRequest, res: Response) => {
 };
 
 // get courses  for  a user.
-export const getCourses = async (req: UserRequest, res: Response) => {};
+export const getCourses = async (req: UserRequest, res: Response) => {
+  const { email, role } = req.user;
+  if (role === "student") {
+    const student = await Student.findOne({
+      email,
+    }).populate("courses");
+
+    return res.status(200).json({
+      success: true,
+      courses: student?.courses,
+    })
+  }else if( role === "teacher") {
+    const teacher = await Teacher.findOne({
+      email
+    }).populate("courses");
+    return res.status(200).json({
+      success: true,
+      courses: teacher?.courses,
+    });
+  }
+};
 
 // get course by ID  -> when you need a full page course detail
 
