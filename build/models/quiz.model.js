@@ -24,44 +24,31 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const teacherSchema = new mongoose_1.Schema({
-    firstName: {
-        type: String,
-        default: "",
+const question_model_1 = require("./question.model");
+const studentQuiz_model_1 = require("./studentQuiz.model");
+const quizSchema = new mongoose_1.Schema({
+    teacher: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Teacher",
+        required: true,
     },
-    lastName: {
-        type: String,
-        default: "",
+    course: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Quiz",
+        required: true,
     },
-    email: {
+    questions: {
+        type: [question_model_1.questionSchema],
+        default: [],
+    },
+    participents: {
+        type: [studentQuiz_model_1.studentQuizSchema],
+        default: [],
+    },
+    name: {
         type: String,
         required: true,
     },
-    courses: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Course",
-        },
-    ],
-    title: {
-        type: String,
-        enum: {
-            values: ["Professor", "Assistant Professor", "Lecturer"],
-        },
-    },
-    authStage: {
-        type: String,
-        enum: {
-            values: ["one", "completed"],
-        },
-        default: "one",
-    },
-    bloodGroup: {
-        type: String,
-        enum: {
-            values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
-        },
-    },
 });
-const Teacher = mongoose_1.default.model("Model", teacherSchema);
-exports.default = Teacher;
+const Quiz = mongoose_1.default.model("Quiz", quizSchema);
+exports.default = Quiz;

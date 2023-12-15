@@ -23,8 +23,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = __importStar(require("mongoose"));
-var studentSchema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const studentSchema = new mongoose_1.Schema({
     firstName: {
         type: String,
         default: "",
@@ -43,6 +43,7 @@ var studentSchema = new mongoose_1.Schema({
     roll: {
         type: String,
         default: "",
+        unique: true,
     },
     dateOfBirth: {
         type: Number,
@@ -68,6 +69,12 @@ var studentSchema = new mongoose_1.Schema({
         type: String,
         default: "student",
     },
+    bloodGroup: {
+        type: String,
+        enum: {
+            values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
+        },
+    },
 });
-var Student = (0, mongoose_1.model)("student", studentSchema);
+const Student = (0, mongoose_1.model)("student", studentSchema);
 exports.default = Student;

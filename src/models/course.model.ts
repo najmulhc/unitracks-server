@@ -12,6 +12,7 @@ const courseSchema = new Schema<CourseType>({
     enum: {
       values: ["2020", "2021"],
     },
+    required: true,
   },
   students: [
     {

@@ -72,12 +72,16 @@ export interface CourseType {
   session: "2020" | "2021";
   students: [mongoose.Types.ObjectId];
   courseCode: 101 | 102 | 103 | 104 | 105;
-  name: string,
+  name: string;
 }
 
-export interface AdminType {}
+export interface AdminType {
+  email: string;
+  role: "admin";
+}
 
 export interface UserRequest extends Request {
   user: User;
   student?: StudentType;
+  admin?: AdminType;
 }

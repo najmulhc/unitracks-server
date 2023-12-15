@@ -23,45 +23,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.studentQuizSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const teacherSchema = new mongoose_1.Schema({
-    firstName: {
-        type: String,
-        default: "",
+// this model will geneerate a response on the quiz by a student.
+exports.studentQuizSchema = new mongoose_1.Schema({
+    student: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Student",
     },
-    lastName: {
-        type: String,
-        default: "",
-    },
-    email: {
-        type: String,
+    attempted: {
+        type: Number,
         required: true,
     },
-    courses: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Course",
-        },
-    ],
-    title: {
-        type: String,
-        enum: {
-            values: ["Professor", "Assistant Professor", "Lecturer"],
-        },
+    correct: {
+        type: Number,
+        required: true,
     },
-    authStage: {
-        type: String,
-        enum: {
-            values: ["one", "completed"],
-        },
-        default: "one",
+    wrong: {
+        type: Number,
+        required: true,
     },
-    bloodGroup: {
-        type: String,
-        enum: {
-            values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
-        },
+    score: {
+        type: Number,
+        required: true,
     },
 });
-const Teacher = mongoose_1.default.model("Model", teacherSchema);
-exports.default = Teacher;
+const StudentQuiz = mongoose_1.default.model("StudentQuiz", exports.studentQuizSchema);
+exports.default = StudentQuiz;

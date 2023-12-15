@@ -14,12 +14,15 @@ const teacherSchema = new Schema<TeacherType>({
     type: String,
     required: true,
   },
-  courses: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-    },
-  ],
+  courses: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+    default: []
+  },
   title: {
     type: String,
     enum: {

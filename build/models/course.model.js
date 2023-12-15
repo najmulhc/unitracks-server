@@ -22,8 +22,57 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = __importStar(require("mongoose"));
-var courseSchema = new mongoose_1.Schema({});
-var Course = mongoose_1.default.model("Course", courseSchema);
+const mongoose_1 = __importStar(require("mongoose"));
+const student_model_1 = __importDefault(require("./student.model"));
+const courseSchema = new mongoose_1.Schema({
+    teacher: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Teacher",
+    },
+    session: {
+        type: String,
+        enum: {
+            values: ["2020", "2021"],
+        },
+        required: true,
+    },
+    students: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "Student",
+        },
+    ],
+    courseCode: {
+        type: Number,
+        min: 101,
+        max: 110,
+        required: [true, "Please Enter the Course Code"],
+        index: true,
+        unique: true,
+    },
+});
+courseSchema.pre("save", async function (next) {
+    if (!this.isModified("courseCode")) {
+        return;
+    }
+    // find the student in the session
+    const sessionStudents = await student_model_1.default.find({
+        session: this.session,
+    });
+    // for each student 1. add the course id to their course array, 2. add their id to the students array.
+    this.students = sessionStudents.map((student) => student._id);
+    for (let student of sessionStudents) {
+        await student_model_1.default.findOneAndUpdate({ email: student.email }, {
+            courses: [...student.courses, this._id],
+        }, {
+            new: "true",
+        });
+    }
+    next();
+});
+const Course = mongoose_1.default.model("Course", courseSchema);
 exports.default = Course;

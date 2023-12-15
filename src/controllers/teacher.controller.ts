@@ -3,9 +3,66 @@
 import { Request, Response } from "express";
 import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
+import { TeacherType, UserRequest } from "../types";
 
-export const postTeacher = async (req: Request, res: Response) => {
+export const postTeacher = async (req: UserRequest, res: Response) => {
   // this will take all information needed for a teacher
+  const { email, role } = req.user;
+  const existedTeacher: TeacherType | null = await Teacher.findOne({
+    email,
+  });
+
+  if (existedTeacher?.authStage !== "one") {
+    throw new ApiError(401, "Your auth stage has been already completed!");
+  }
+
+  const { firstName, lastName, bloodGroup, title } = req.body;
+
+  // validation of the given information
+  if (!firstName || !lastName || !bloodGroup || !title) {
+    throw new ApiError(
+      400,
+      "Incomplete user request. please fill the full form",
+    );
+  }
+
+  // validation of given information's correctness
+  const bloodGroups = ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"];
+  const titles = ["Professor", "Assistant Professor", "Lecturer"];
+
+  if (!titles.includes(title)) {
+    throw new ApiError(
+      400,
+      "Invalid teacher title, please provide the correct one.",
+    );
+  }
+  if (!bloodGroups.includes(bloodGroup)) {
+    throw new ApiError(
+      400,
+      "Invalid blood group, please provide  the correct one.",
+    );
+  }
+
+  const updatedTeacher = await Teacher.findByIdAndUpdate(
+    {
+      email,
+    },
+    {
+      firstName,
+      lastName,
+      bloodGroup,
+      title,
+      authStage: "completed",
+    },
+    {
+      new: true,
+    },
+  );
+
+  return res.status(200).json({
+    success: true,
+    teacher: updatedTeacher,
+  });
 };
 
 export const getTeacher = async (req: Request, res: Response) => {
@@ -30,5 +87,3 @@ export const getTeacher = async (req: Request, res: Response) => {
     teacher: teacher,
   });
 };
-
- 
