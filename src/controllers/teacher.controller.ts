@@ -5,6 +5,7 @@ import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
 import { TeacherType, UserRequest } from "../types";
 
+// completes the information collection process of a teacher
 export const postTeacher = async (req: UserRequest, res: Response) => {
   // this will take all information needed for a teacher
   const { email, role } = req.user;
@@ -65,6 +66,7 @@ export const postTeacher = async (req: UserRequest, res: Response) => {
   });
 };
 
+// gives the teacher object to the request
 export const getTeacher = async (req: Request, res: Response) => {
   // jwt will give the email and role
   const { email, role } = req.body;
@@ -87,3 +89,5 @@ export const getTeacher = async (req: Request, res: Response) => {
     teacher: teacher,
   });
 };
+
+

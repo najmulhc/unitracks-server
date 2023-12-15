@@ -69,7 +69,7 @@ export const beAnAdmin = async (req: Request, res: Response) => {
 
   authTester(role, "unassigned");
 
-  if (key !== "uU06Qh,33g&,M4~X" || !key) {
+  if (key !== process.env.ADMIN_KEY || !key) {
     throw new Error("Invalid admin key");
   }
 
@@ -107,7 +107,7 @@ export const getAllUsers = async (req: UserRequest, res: Response) => {
   authTester(role, "admin");
   const users = await User.find({});
 
-  return res.json({
+  return res.status(200).json({
     success: true,
     users,
   });
@@ -123,13 +123,16 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
       new: true,
     },
   );
+
   // creates new student
   if (req.body.userRole === "student") {
-    const createdStudent = await createStudent(req.body.userEmail);
+    await createStudent(req.body.userEmail);
   } else if (req.body.userRole === "teacher") {
-    const createdTeacher = await createTeacher(req.body.email);
+    // when you are looking to make a teacher
+    await createTeacher(req.body.email);
   }
-  return res.json({
+
+  return res.status(200).json({
     success: true,
     users: await User.find(),
   });

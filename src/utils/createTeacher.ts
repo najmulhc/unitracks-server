@@ -1,6 +1,7 @@
 import Teacher from "../models/teacher.model";
 import ApiError from "./ApiError";
 
+// will create a new teacher once the admin assigns an unassigned user into a teacher.
 const createTeacher = async (email: string) => {
   const existedTeacher = await Teacher.findOne({
     email,

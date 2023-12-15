@@ -28,6 +28,12 @@ const courseSchema = new Schema<CourseType>({
     index: true,
     unique: true,
   },
+  name: {
+    type: String, 
+    required: true, 
+    index: true, 
+    trim: true
+  }
 });
 
 courseSchema.pre("save", async function (next) {
