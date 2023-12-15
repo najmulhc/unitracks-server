@@ -10,6 +10,10 @@ const teacherSchema = new Schema<TeacherType>({
     type: String,
     default: "",
   },
+  role: {
+    type: String,
+    default: "teacher",
+  },
   email: {
     type: String,
     required: true,
@@ -21,7 +25,7 @@ const teacherSchema = new Schema<TeacherType>({
         ref: "Course",
       },
     ],
-    default: []
+    default: [],
   },
   title: {
     type: String,

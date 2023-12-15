@@ -19,9 +19,9 @@ export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
     throw new ApiError(400, "you are in wrong auth phase!");
   }
   // get body basic info (firstName, lastName, dateOfBirh, bloodGroup) etc.
-  const { firstName, lastName, dateOfBirh, bloodGroup } = req.body;
+  const { firstName, lastName, dateOfBirth, bloodGroup } = req.body;
   // varify the information given as per request.
-  if (!firstName || !lastName || !dateOfBirh || !bloodGroup) {
+  if (!firstName || !lastName || !dateOfBirth || !bloodGroup) {
     throw new ApiError(
       400,
       "Incomplete user information, please give full info",
@@ -31,7 +31,7 @@ export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
   if (!bloodGroups.includes(bloodGroup)) {
     throw new ApiError(400, "Invalid blood group.");
   }
-  const realDateOfBirth = new Date(dateOfBirh).getTime();
+  const realDateOfBirth = new Date(dateOfBirth).getTime();
   if (!realDateOfBirth || typeof realDateOfBirth !== "number") {
     throw new ApiError(400, "Invalid date of birth.");
   }

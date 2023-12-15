@@ -44,7 +44,7 @@ export const postTeacher = async (req: UserRequest, res: Response) => {
     );
   }
 
-  const updatedTeacher = await Teacher.findByIdAndUpdate(
+  const updatedTeacher = await Teacher.findOneAndUpdate(
     {
       email,
     },
@@ -67,9 +67,9 @@ export const postTeacher = async (req: UserRequest, res: Response) => {
 };
 
 // gives the teacher object to the request
-export const getTeacher = async (req: Request, res: Response) => {
+export const getTeacher = async (req: UserRequest, res: Response) => {
   // jwt will give the email and role
-  const { email, role } = req.body;
+  const { email, role } = req.user;
   if (role !== "teacher") {
     throw new ApiError(
       401,

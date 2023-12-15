@@ -4,6 +4,7 @@ import authTester from "../utils/authTester";
 import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
 import Course from "../models/course.model";
+
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
   const { email, role } = req.user;

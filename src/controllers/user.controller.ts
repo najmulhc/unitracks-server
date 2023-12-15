@@ -11,8 +11,13 @@ import authTester from "../utils/authTester";
 import createTeacher from "../utils/createTeacher";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
-export const basicRegister = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+export const basicRegister = async (req: UserRequest, res: Response) => {
+ 
+  const { email, password } = req?.body;
+  if(!email || !password) {
+    throw new ApiError(400, "Incomplete form info!")
+  }
+
   const existedUser: UserType | null = await User.findOne({
     email,
   });
@@ -20,13 +25,14 @@ export const basicRegister = async (req: Request, res: Response) => {
     throw new ApiError(400, "User already exists!");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
+       
   const createdUser = await User.create({
     email,
     hashedPassword,
     role: "unassigned",
   });
   const token = jwt.sign({ email }, process.env.JWT_SIGN as string);
-  res.json({
+  return res.json({
     success: true,
     user: createdUser,
     token,
@@ -92,8 +98,8 @@ export const beAnAdmin = async (req: Request, res: Response) => {
 };
 
 // get user from jwt token
-export const loginWithToken = async (req: Request, res: Response) => {
-  const { user } = req.body;
+export const loginWithToken = async (req: UserRequest, res: Response) => {
+  const { user } = req;
   res.json({
     success: true,
     user,
@@ -103,9 +109,9 @@ export const loginWithToken = async (req: Request, res: Response) => {
 // get all users
 export const getAllUsers = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
-
+ 
   authTester(role, "admin");
-  const users = await User.find({});
+  const users = await User.find({}).select("-hashedPassword -name -refreshToken");
 
   return res.status(200).json({
     success: true,
@@ -124,17 +130,21 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
     },
   );
 
+  let createdObject;
   // creates new student
   if (req.body.userRole === "student") {
-    await createStudent(req.body.userEmail);
+    createdObject = await createStudent({
+      email: req.body.userEmail,
+    });
   } else if (req.body.userRole === "teacher") {
     // when you are looking to make a teacher
-    await createTeacher(req.body.email);
+    createdObject = await createTeacher(req.body.userEmail);
   }
 
   return res.status(200).json({
     success: true,
     users: await User.find(),
+    createdObject
   });
 };
 
