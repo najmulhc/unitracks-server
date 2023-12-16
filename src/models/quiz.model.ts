@@ -6,12 +6,12 @@ import { studentQuizSchema } from "./studentQuiz.model";
 const quizSchema = new Schema<QuizType>({
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Teacher",
+    ref: "teacher",
     required: true,
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Quiz",
+    ref: "course",
     required: true,
   },
   questions: {
@@ -28,6 +28,6 @@ const quizSchema = new Schema<QuizType>({
   },
 });
 
-const Quiz = mongoose.model("Quiz", quizSchema);
+const Quiz = mongoose.model("quiz", quizSchema);
 
 export default Quiz;

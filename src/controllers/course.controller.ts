@@ -9,18 +9,21 @@ import Student from "../models/student.model";
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
   const { email, role } = req.user;
-  const { courseName, teacherId, session, courseCode } = req.body;
+  const { courseName, teacherEmail, session, courseCode } = req.body;
 
   // varify given information
   if (authTester(role, "admin")) {
-    if (!courseName || !teacherId || !session || !courseCode) {
+    if (!courseName || !teacherEmail || !session || !courseCode) {
       throw new ApiError(
         400,
         "Incomplete course information, please provide the full information.",
       );
     }
 
-    const teacher = await Teacher.findById(teacherId);
+    const teacher = await Teacher.findOne({
+      email: teacherEmail,
+    });
+
     if (!teacher) {
       throw new ApiError(404, "The teacher is not available!");
     }
@@ -64,14 +67,15 @@ export const getCourses = async (req: UserRequest, res: Response) => {
     return res.status(200).json({
       success: true,
       courses: student?.courses,
-    })
-  }else if( role === "teacher") {
+    });
+  } else if (role === "teacher") {
     const teacher = await Teacher.findOne({
-      email
+      email,
     }).populate("courses");
+
     return res.status(200).json({
       success: true,
-      courses: teacher?.courses,
+      coursessss: await Course.find({ teacher: teacher?._id }).populate("teacher"),
     });
   }
 };

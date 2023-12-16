@@ -8,22 +8,22 @@ const notificationSchema = new Schema<NotificationType>({
   },
   setter: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
   },
   for: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "student",
     },
   ],
   views: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "student",
     },
   ],
 });
 
-const Notification = mongoose.model("Notification", notificationSchema);
+const Notification = mongoose.model("notification", notificationSchema);
 
 export default Notification;

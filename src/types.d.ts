@@ -1,5 +1,5 @@
 import { Request } from "express";
-import mongoose, { mongo } from "mongoose";
+import mongoose, { ObjectId, mongo } from "mongoose";
 
 export type Role = "unassigned" | "admin" | "teacher" | "student";
 
@@ -73,6 +73,7 @@ export interface CourseType {
   students: [mongoose.Types.ObjectId];
   courseCode: 101 | 102 | 103 | 104 | 105;
   name: string;
+  _id: ObjectId
 }
 
 export interface AdminType {

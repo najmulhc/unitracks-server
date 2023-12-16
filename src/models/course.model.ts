@@ -5,7 +5,7 @@ import Student from "./student.model";
 const courseSchema = new Schema<CourseType>({
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Teacher",
+    ref: "teacher",
   },
   session: {
     type: String,
@@ -17,7 +17,7 @@ const courseSchema = new Schema<CourseType>({
   students: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "student",
     },
   ],
   courseCode: {
@@ -64,6 +64,6 @@ courseSchema.pre("save", async function (next) {
   next();
 });
 
-const Course = mongoose.model("Course", courseSchema);
+const Course = mongoose.model("course", courseSchema);
 
 export default Course;
