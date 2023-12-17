@@ -2,10 +2,10 @@ import { connect } from "mongoose";
 
 const dbConnect = async () => {
   try {
-    const { connections } = await connect(
+    await connect(
       `mongodb+srv://admin:${process.env.MONGODB_USER_PASSWORD}@maincluster.xiufldo.mongodb.net/?retryWrites=true&w=majority`,
     );
-    console.log(connections);
+
     console.log("MongoDB connected");
   } catch (error: any) {
     console.log("Mongoose connection Error:", error.message);

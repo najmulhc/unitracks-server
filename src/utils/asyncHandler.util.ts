@@ -5,7 +5,7 @@ const asyncHandler =
     try {
       await func(req, res, next);
     } catch (error: any) {
-      return res.json({
+      return res.status(error?.statusCode || 400).json({
         success: false,
         message: error.message,
       });

@@ -54,6 +54,7 @@ export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
   });
 };
 
+// student input phase two
 export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
   const { student } = req;
   if (student?.authStage !== "two") {

@@ -14,13 +14,13 @@ studentRouter
   .route("/")
   .get(varifyJWT, asyncHandler(studentTester), asyncHandler(getStudent));
 studentRouter.post(
-  "/authphase/one",
+  "/auth-phase/one",
   varifyJWT,
   asyncHandler(studentTester),
   asyncHandler(studentInputPhaseOne),
 );
 studentRouter.post(
-  "/authphase/two",
+  "/auth-phase/two",
   varifyJWT,
   asyncHandler(studentTester),
   asyncHandler(studnetInputPhaseTwo),
