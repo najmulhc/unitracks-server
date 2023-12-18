@@ -5,6 +5,7 @@ import Quiz from "../models/quiz.model";
 import Teacher from "../models/teacher.model";
 import ApiError from "../utils/ApiError";
 import { Request, Response } from "express";
+import ApiResponse from "../utils/ApiResponse";
 
 export const createNewQuiz = async (req: Request, res: Response) => {
   // varification  of authorization
@@ -51,7 +52,15 @@ export const createNewQuiz = async (req: Request, res: Response) => {
   const result = { success: true, quiz };
 
   // return created quiz
-  return res.json(result);
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        quiz,
+      },
+      "The quiz has been created.",
+    ),
+  );
 };
 
 // adding questions to the quiz
@@ -73,7 +82,7 @@ export const deleteQuiz = async (req: Request, res: Response) => {
   // get quiz id and test if it exists with proper validation
   // delete the quiz
   // return the resutl
-  return res.status(200).json({
-    success: true,
-  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "The quiz has been deleted."));
 };

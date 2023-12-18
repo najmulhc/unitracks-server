@@ -12,6 +12,6 @@ const studentRouter = (0, express_1.Router)();
 studentRouter
     .route("/")
     .get(varifyJWT_1.default, (0, asyncHandler_util_1.default)(studentTester_1.default), (0, asyncHandler_util_1.default)(student_controller_1.getStudent));
-studentRouter.post("/authphase/one", varifyJWT_1.default, (0, asyncHandler_util_1.default)(studentTester_1.default), (0, asyncHandler_util_1.default)(student_controller_1.studentInputPhaseOne));
-studentRouter.post("/authphase/two", varifyJWT_1.default, (0, asyncHandler_util_1.default)(studentTester_1.default), (0, asyncHandler_util_1.default)(student_controller_1.studnetInputPhaseTwo));
+studentRouter.post("/auth-phase/one", varifyJWT_1.default, (0, asyncHandler_util_1.default)(studentTester_1.default), (0, asyncHandler_util_1.default)(student_controller_1.studentInputPhaseOne));
+studentRouter.post("/auth-phase/two", varifyJWT_1.default, (0, asyncHandler_util_1.default)(studentTester_1.default), (0, asyncHandler_util_1.default)(student_controller_1.studnetInputPhaseTwo));
 exports.default = studentRouter;

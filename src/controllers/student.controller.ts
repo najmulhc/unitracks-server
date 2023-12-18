@@ -2,14 +2,19 @@ import { Request, Response } from "express";
 import Student from "../models/student.model";
 import ApiError from "../utils/ApiError";
 import { UserRequest } from "../types";
+import ApiResponse from "../utils/ApiResponse";
 
 export const getStudent = async (req: UserRequest, res: Response) => {
   const { student } = req;
-  return res.json({
-    success: true,
-    student,
-  });
-  // return student object
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        student,
+      },
+      "Student found successfully",
+    ),
+  );
 };
 
 // student input phase one
@@ -48,10 +53,16 @@ export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
     { new: true },
   );
   // return new student object
-  return res.json({
-    success: true,
-    student: updatedStudent,
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        student: updatedStudent,
+      },
+      "student auth phase one completed.",
+    ),
+  );
+  
 };
 
 // student input phase two
@@ -86,7 +97,7 @@ export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
   // update student object with new info and set authphase to completed
   const updatedStudent = await Student.findOneAndUpdate(
     {
-      email:student.email,
+      email: student.email,
     },
     {
       roll,
@@ -99,9 +110,13 @@ export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
     },
   );
   // return student new object with no courses.
-  return res.status(200).json({
-    success: true,
-    student: updatedStudent,
-  });
+   return res.status(200).json(
+     new ApiResponse(
+       200,
+       {
+         student: updatedStudent,
+       },
+       "student auth phase two completed.",
+     ),
+   );
 };
-

@@ -48,5 +48,5 @@ exports.studentQuizSchema = new mongoose_1.Schema({
         required: true,
     },
 });
-const StudentQuiz = mongoose_1.default.model("StudentQuiz", exports.studentQuizSchema);
+const StudentQuiz = mongoose_1.default.model("studentQuiz", exports.studentQuizSchema);
 exports.default = StudentQuiz;

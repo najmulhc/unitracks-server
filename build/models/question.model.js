@@ -43,5 +43,5 @@ exports.questionSchema = new mongoose_1.Schema({
         max: 5,
     },
 });
-const Question = mongoose_1.default.model("Question", exports.questionSchema);
+const Question = mongoose_1.default.model("question", exports.questionSchema);
 exports.default = Question;

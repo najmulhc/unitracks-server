@@ -29,11 +29,17 @@ const courseSchema = new Schema<CourseType>({
     unique: true,
   },
   name: {
-    type: String, 
-    required: true, 
-    index: true, 
-    trim: true
-  }
+    type: String,
+    required: true,
+    index: true,
+    trim: true,
+  },
+  resources: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "resource",
+    },
+  ],
 });
 
 courseSchema.pre("save", async function (next) {

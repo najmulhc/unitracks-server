@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, request } from "express";
 import { CourseType, UserRequest } from "../types";
 import authTester from "../utils/authTester";
 import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
 import Course from "../models/course.model";
 import Student from "../models/student.model";
+import ApiResponse from "../utils/ApiResponse";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -36,10 +37,15 @@ export const createCourse = async (req: UserRequest, res: Response) => {
       name: courseName,
     });
 
-    return res.status(200).json({
-      success: true,
-      course: createdCourse,
-    });
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          course: createdCourse,
+        },
+        "Successfully created the course.",
+      ),
+    );
   }
 };
 
@@ -50,10 +56,15 @@ export const getAllCourses = async (req: UserRequest, res: Response) => {
   }
 
   const courses = await Course.find().select("-students -teacher");
-  return res.status(200).json({
-    success: true,
-    courses,
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        courses,
+      },
+      "Successfully found all courses.",
+    ),
+  );
 };
 
 // get courses  for  a user.
@@ -64,22 +75,113 @@ export const getCourses = async (req: UserRequest, res: Response) => {
       email,
     }).populate("courses");
 
-    return res.status(200).json({
-      success: true,
-      courses: student?.courses,
-    });
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          courses: student?.courses,
+        },
+        "Response with all courses of the student.",
+      ),
+    );
   } else if (role === "teacher") {
     const teacher = await Teacher.findOne({
       email,
     }).populate("courses");
 
-    return res.status(200).json({
-      success: true,
-      coursessss: await Course.find({ teacher: teacher?._id }).populate("teacher"),
-    });
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          courses: await Course.find({
+            teacher: teacher?._id,
+          }).populate("teacher"),
+        },
+        "Response with all courses of the teacher.",
+      ),
+    );
+  } else {
+    throw new ApiError(400, "Invalid user type.");
   }
 };
+ 
+export const getCourseById = async (req: UserRequest, res: Response) => {
+  const { courseId } = req.body;
+  const { role } = req.user;
 
-// get course by ID  -> when you need a full page course detail
+  // when you are a teacher and want to access the course
+  if (role === "teacher") {
+    const teacher = await Teacher.findOne({
+      email: req.user.email,
+    });
+    const course = await Course.findById(courseId)
+      .populate("resource")
+      .populate("students")
+      .populate("teacher");
+    if (!course) {
+      throw new ApiError(404, "Course not found.");
+    }
 
-//
+    if (teacher?._id === course?.teacher._id) {
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            course,
+          },
+          "Course for the teacher is ready.",
+        ),
+      );
+    } else {
+      throw new ApiError(
+        401,
+        "You do not have access to the course as a teacher.",
+      );
+    }
+  } else if (role === "student") {
+    const { student } = req;
+
+    if (student?.courses.includes(courseId)) {
+      const course = await Course.findById(courseId)
+        .populate("resource")
+        .select("-students")
+        .populate("teacher");
+
+      if (!course) {
+        throw new ApiError(404, "Course not found.");
+      }
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { course },
+            "Course for the student found successfully",
+          ),
+        );
+    } else {
+      throw new ApiError(400, "You do not have access to the course.");
+    }
+  } else if (role === "admin") {
+    const course = await Course.findById(courseId)
+      .populate("teacher")
+      .populate("students")
+      .populate("resource");
+    if (!course) {
+      throw new ApiError(404, "Course not found.");
+    }
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          course,
+        },
+        "Course for admin found successfully!",
+      ),
+    );
+  } else {
+    throw new ApiError(403, "Unauthorized access to the course.");
+  }
+};
+ 

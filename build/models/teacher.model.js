@@ -33,16 +33,23 @@ const teacherSchema = new mongoose_1.Schema({
         type: String,
         default: "",
     },
+    role: {
+        type: String,
+        default: "teacher",
+    },
     email: {
         type: String,
         required: true,
     },
-    courses: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Course",
-        },
-    ],
+    courses: {
+        type: [
+            {
+                type: mongoose_1.default.Schema.Types.ObjectId,
+                ref: "Course",
+            },
+        ],
+        default: [],
+    },
     title: {
         type: String,
         enum: {
@@ -63,5 +70,5 @@ const teacherSchema = new mongoose_1.Schema({
         },
     },
 });
-const Teacher = mongoose_1.default.model("Model", teacherSchema);
+const Teacher = mongoose_1.default.model("teacher", teacherSchema);
 exports.default = Teacher;

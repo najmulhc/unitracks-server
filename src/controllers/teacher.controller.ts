@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import ApiError from "../utils/ApiError";
 import Teacher from "../models/teacher.model";
 import { TeacherType, UserRequest } from "../types";
+import ApiResponse from "../utils/ApiResponse";
 
 // completes the information collection process of a teacher
 export const postTeacher = async (req: UserRequest, res: Response) => {
@@ -60,10 +61,15 @@ export const postTeacher = async (req: UserRequest, res: Response) => {
     },
   );
 
-  return res.status(200).json({
-    success: true,
-    teacher: updatedTeacher,
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        teacher: updatedTeacher,
+      },
+      "The teacher has updated.",
+    ),
+  );
 };
 
 // gives the teacher object to the request
@@ -84,10 +90,13 @@ export const getTeacher = async (req: UserRequest, res: Response) => {
     throw new ApiError(404, "The teacher does not exists!");
   }
 
-  return res.status(200).json({
-    success: true,
-    teacher: teacher,
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        teacher,
+      },
+      "Found the teacher",
+    ),
+  );
 };
-
-

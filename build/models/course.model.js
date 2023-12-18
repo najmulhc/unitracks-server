@@ -31,7 +31,7 @@ const student_model_1 = __importDefault(require("./student.model"));
 const courseSchema = new mongoose_1.Schema({
     teacher: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Teacher",
+        ref: "teacher",
     },
     session: {
         type: String,
@@ -43,7 +43,7 @@ const courseSchema = new mongoose_1.Schema({
     students: [
         {
             type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
+            ref: "student",
         },
     ],
     courseCode: {
@@ -54,6 +54,12 @@ const courseSchema = new mongoose_1.Schema({
         index: true,
         unique: true,
     },
+    name: {
+        type: String,
+        required: true,
+        index: true,
+        trim: true
+    }
 });
 courseSchema.pre("save", async function (next) {
     if (!this.isModified("courseCode")) {
@@ -69,10 +75,10 @@ courseSchema.pre("save", async function (next) {
         await student_model_1.default.findOneAndUpdate({ email: student.email }, {
             courses: [...student.courses, this._id],
         }, {
-            new: "true",
+            new: true,
         });
     }
     next();
 });
-const Course = mongoose_1.default.model("Course", courseSchema);
+const Course = mongoose_1.default.model("course", courseSchema);
 exports.default = Course;

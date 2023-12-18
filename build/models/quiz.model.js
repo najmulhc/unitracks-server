@@ -29,12 +29,12 @@ const studentQuiz_model_1 = require("./studentQuiz.model");
 const quizSchema = new mongoose_1.Schema({
     teacher: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Teacher",
+        ref: "teacher",
         required: true,
     },
     course: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Quiz",
+        ref: "course",
         required: true,
     },
     questions: {
@@ -50,5 +50,5 @@ const quizSchema = new mongoose_1.Schema({
         required: true,
     },
 });
-const Quiz = mongoose_1.default.model("Quiz", quizSchema);
+const Quiz = mongoose_1.default.model("quiz", quizSchema);
 exports.default = Quiz;

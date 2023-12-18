@@ -73,7 +73,8 @@ export interface CourseType {
   students: [mongoose.Types.ObjectId];
   courseCode: 101 | 102 | 103 | 104 | 105;
   name: string;
-  _id: ObjectId
+  _id: ObjectId;
+  resources: [mongoose.Types.ObjectId]
 }
 
 export interface AdminType {
@@ -85,4 +86,11 @@ export interface UserRequest extends Request {
   user: User;
   student?: StudentType;
   admin?: AdminType;
+}
+
+export interface ResourceType {
+  title: string;
+  link: string; // stored link
+  teacher: mongoose.Types.ObjectId;
+  course: mongoose.Types.ObjectId;
 }
