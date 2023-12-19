@@ -74,7 +74,7 @@ export interface CourseType {
   courseCode: 101 | 102 | 103 | 104 | 105;
   name: string;
   _id: ObjectId;
-  resources: [mongoose.Types.ObjectId]
+  resources: [mongoose.Types.ObjectId];
 }
 
 export interface AdminType {
@@ -86,6 +86,7 @@ export interface UserRequest extends Request {
   user: User;
   student?: StudentType;
   admin?: AdminType;
+  teacher?: TeacherType;
 }
 
 export interface ResourceType {

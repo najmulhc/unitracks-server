@@ -17,10 +17,14 @@ const varifyJWT = async (req, res, next) => {
         throw new ApiError_1.default(404, "Invalid token.", [], "");
     }
     //@ts-ignore
-    const { email } = decoded;
+    const { email, role } = decoded;
     const user = await user_model_1.default.findOne({
         email,
     });
+    // if you change your role by mistake or intentionally. 
+    if (user.role !== role) {
+        throw new ApiError_1.default(401, "Unauthorized access.");
+    }
     if (!user) {
         throw new ApiError_1.default(404, "User Does not eixsts.");
     }

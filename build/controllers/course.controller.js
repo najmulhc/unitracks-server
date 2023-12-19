@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourses = exports.getAllCourses = exports.createCourse = void 0;
+exports.getCourseById = exports.getCourses = exports.getAllCourses = exports.createCourse = void 0;
 const authTester_1 = __importDefault(require("../utils/authTester"));
 const ApiError_1 = __importDefault(require("../utils/ApiError"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
 const course_model_1 = __importDefault(require("../models/course.model"));
 const student_model_1 = __importDefault(require("../models/student.model"));
+const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 const createCourse = async (req, res) => {
     // get required information (coursename, course code, batch, teacher);
     const { email, role } = req.user;
@@ -31,10 +32,9 @@ const createCourse = async (req, res) => {
             courseCode,
             name: courseName,
         });
-        return res.status(200).json({
-            success: true,
+        return res.status(200).json(new ApiResponse_1.default(200, {
             course: createdCourse,
-        });
+        }, "Successfully created the course."));
     }
 };
 exports.createCourse = createCourse;
@@ -44,10 +44,9 @@ const getAllCourses = async (req, res) => {
         throw new ApiError_1.default(402, "You do not have permission to perform this task.");
     }
     const courses = await course_model_1.default.find().select("-students -teacher");
-    return res.status(200).json({
-        success: true,
+    return res.status(200).json(new ApiResponse_1.default(200, {
         courses,
-    });
+    }, "Successfully found all courses."));
 };
 exports.getAllCourses = getAllCourses;
 // get courses  for  a user.
@@ -57,21 +56,81 @@ const getCourses = async (req, res) => {
         const student = await student_model_1.default.findOne({
             email,
         }).populate("courses");
-        return res.status(200).json({
-            success: true,
+        return res.status(200).json(new ApiResponse_1.default(200, {
             courses: student?.courses,
-        });
+        }, "Response with all courses of the student."));
     }
     else if (role === "teacher") {
         const teacher = await teacher_model_1.default.findOne({
             email,
         }).populate("courses");
-        return res.status(200).json({
-            success: true,
-            coursessss: await course_model_1.default.find({ teacher: teacher?._id }).populate("teacher"),
-        });
+        return res.status(200).json(new ApiResponse_1.default(200, {
+            courses: await course_model_1.default.find({
+                teacher: teacher?._id,
+            }).populate("teacher"),
+        }, "Response with all courses of the teacher."));
+    }
+    else {
+        throw new ApiError_1.default(400, "Invalid user type.");
     }
 };
 exports.getCourses = getCourses;
-// get course by ID  -> when you need a full page course detail
-//
+const getCourseById = async (req, res) => {
+    const { courseId } = req.body;
+    const { role } = req.user;
+    // when you are a teacher and want to access the course
+    if (role === "teacher") {
+        const teacher = await teacher_model_1.default.findOne({
+            email: req.user.email,
+        });
+        const course = await course_model_1.default.findById(courseId)
+            .populate("resource")
+            .populate("students")
+            .populate("teacher");
+        if (!course) {
+            throw new ApiError_1.default(404, "Course not found.");
+        }
+        if (teacher?._id === course?.teacher._id) {
+            return res.status(200).json(new ApiResponse_1.default(200, {
+                course,
+            }, "Course for the teacher is ready."));
+        }
+        else {
+            throw new ApiError_1.default(401, "You do not have access to the course as a teacher.");
+        }
+    }
+    else if (role === "student") {
+        const { student } = req;
+        if (student?.courses.includes(courseId)) {
+            const course = await course_model_1.default.findById(courseId)
+                .populate("resource")
+                .select("-students")
+                .populate("teacher");
+            if (!course) {
+                throw new ApiError_1.default(404, "Course not found.");
+            }
+            return res
+                .status(200)
+                .json(new ApiResponse_1.default(200, { course }, "Course for the student found successfully"));
+        }
+        else {
+            throw new ApiError_1.default(400, "You do not have access to the course.");
+        }
+    }
+    else if (role === "admin") {
+        const course = await course_model_1.default.findById(courseId)
+            .populate("teacher")
+            .populate("students")
+            .populate("resource");
+        if (!course) {
+            throw new ApiError_1.default(404, "Course not found.");
+        }
+        return res.status(200).json(new ApiResponse_1.default(200, {
+            course,
+        }, "Course for admin found successfully!"));
+    }
+    else {
+        throw new ApiError_1.default(403, "Unauthorized access to the course.");
+    }
+};
+exports.getCourseById = getCourseById;

@@ -9,6 +9,7 @@ const course_model_1 = __importDefault(require("../models/course.model"));
 const quiz_model_1 = __importDefault(require("../models/quiz.model"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
 const ApiError_1 = __importDefault(require("../utils/ApiError"));
+const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 const createNewQuiz = async (req, res) => {
     // varification  of authorization
     const { role, email, courseId } = req.body;
@@ -44,7 +45,9 @@ const createNewQuiz = async (req, res) => {
     }
     const result = { success: true, quiz };
     // return created quiz
-    return res.json(result);
+    return res.status(200).json(new ApiResponse_1.default(200, {
+        quiz,
+    }, "The quiz has been created."));
 };
 exports.createNewQuiz = createNewQuiz;
 // adding questions to the quiz
@@ -59,8 +62,8 @@ const deleteQuiz = async (req, res) => {
     // get quiz id and test if it exists with proper validation
     // delete the quiz
     // return the resutl
-    return res.status(200).json({
-        success: true,
-    });
+    return res
+        .status(200)
+        .json(new ApiResponse_1.default(200, {}, "The quiz has been deleted."));
 };
 exports.deleteQuiz = deleteQuiz;

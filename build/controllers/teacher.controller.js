@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTeacher = exports.postTeacher = void 0;
 const ApiError_1 = __importDefault(require("../utils/ApiError"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
+const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 // completes the information collection process of a teacher
 const postTeacher = async (req, res) => {
     // this will take all information needed for a teacher
@@ -42,10 +43,9 @@ const postTeacher = async (req, res) => {
     }, {
         new: true,
     });
-    return res.status(200).json({
-        success: true,
+    return res.status(200).json(new ApiResponse_1.default(200, {
         teacher: updatedTeacher,
-    });
+    }, "The teacher has updated."));
 };
 exports.postTeacher = postTeacher;
 // gives the teacher object to the request
@@ -61,9 +61,8 @@ const getTeacher = async (req, res) => {
     if (!teacher) {
         throw new ApiError_1.default(404, "The teacher does not exists!");
     }
-    return res.status(200).json({
-        success: true,
-        teacher: teacher,
-    });
+    return res.status(200).json(new ApiResponse_1.default(200, {
+        teacher,
+    }, "Found the teacher"));
 };
 exports.getTeacher = getTeacher;

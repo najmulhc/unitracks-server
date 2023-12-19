@@ -104,7 +104,7 @@ export const getCourses = async (req: UserRequest, res: Response) => {
     throw new ApiError(400, "Invalid user type.");
   }
 };
- 
+
 export const getCourseById = async (req: UserRequest, res: Response) => {
   const { courseId } = req.body;
   const { role } = req.user;
@@ -123,6 +123,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     }
 
     if (teacher?._id === course?.teacher._id) {
+      // testing if the teacher has access to the course
       return res.status(200).json(
         new ApiResponse(
           200,
@@ -139,6 +140,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       );
     }
   } else if (role === "student") {
+    // route handler for a student
     const { student } = req;
 
     if (student?.courses.includes(courseId)) {
@@ -163,6 +165,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       throw new ApiError(400, "You do not have access to the course.");
     }
   } else if (role === "admin") {
+    // route halder for admin
     const course = await Course.findById(courseId)
       .populate("teacher")
       .populate("students")
@@ -184,4 +187,3 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     throw new ApiError(403, "Unauthorized access to the course.");
   }
 };
- 

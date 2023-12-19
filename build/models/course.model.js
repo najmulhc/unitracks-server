@@ -58,8 +58,14 @@ const courseSchema = new mongoose_1.Schema({
         type: String,
         required: true,
         index: true,
-        trim: true
-    }
+        trim: true,
+    },
+    resources: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "resource",
+        },
+    ],
 });
 courseSchema.pre("save", async function (next) {
     if (!this.isModified("courseCode")) {

@@ -6,13 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.studnetInputPhaseTwo = exports.studentInputPhaseOne = exports.getStudent = void 0;
 const student_model_1 = __importDefault(require("../models/student.model"));
 const ApiError_1 = __importDefault(require("../utils/ApiError"));
+const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 const getStudent = async (req, res) => {
     const { student } = req;
-    return res.json({
-        success: true,
+    return res.status(200).json(new ApiResponse_1.default(200, {
         student,
-    });
-    // return student object
+    }, "Student found successfully"));
 };
 exports.getStudent = getStudent;
 // student input phase one
@@ -44,10 +43,9 @@ const studentInputPhaseOne = async (req, res) => {
         authStage: "two",
     }, { new: true });
     // return new student object
-    return res.json({
-        success: true,
+    return res.status(200).json(new ApiResponse_1.default(200, {
         student: updatedStudent,
-    });
+    }, "student auth phase one completed."));
 };
 exports.studentInputPhaseOne = studentInputPhaseOne;
 // student input phase two
@@ -84,9 +82,8 @@ const studnetInputPhaseTwo = async (req, res) => {
         new: true,
     });
     // return student new object with no courses.
-    return res.status(200).json({
-        success: true,
+    return res.status(200).json(new ApiResponse_1.default(200, {
         student: updatedStudent,
-    });
+    }, "student auth phase two completed."));
 };
 exports.studnetInputPhaseTwo = studnetInputPhaseTwo;

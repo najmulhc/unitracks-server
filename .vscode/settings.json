@@ -1,4 +1,4 @@
 {
-    "editor.fontFamily": "fira code", 
-    "editor.fontLigatures": true
+  "editor.fontFamily": "Cascadia Code",
+  "editor.fontLigatures": true
 }
