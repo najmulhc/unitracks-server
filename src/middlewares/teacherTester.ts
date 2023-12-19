@@ -22,6 +22,7 @@ const teacherTester = async (
     }
 
     req.teacher = teacher;
+    next();
   } catch (error: any) {
     throw new ApiError(
       400,

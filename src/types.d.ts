@@ -4,6 +4,7 @@ import mongoose, { ObjectId, mongo } from "mongoose";
 export type Role = "unassigned" | "admin" | "teacher" | "student";
 
 export interface UserType {
+  _id: ObjectId;
   name?: string;
   hashedPassword: string;
   role: Role;
@@ -23,10 +24,12 @@ export interface StudentType {
   lastName: string;
   courses: mongoose.Types.ObjectId[];
   email: string;
+  _id: ObjectId;
 }
 
 // not created the Schema
 export interface TeacherType {
+  _id: ObjectId;
   firstName: string;
   lastName: string;
   email: string;
@@ -38,6 +41,7 @@ export interface TeacherType {
 }
 
 export interface NotificationType {
+  _id: ObjectId;
   title: string;
   time: number;
   setter: mongoose.Types.ObjectId; // the person set the notification
@@ -46,12 +50,14 @@ export interface NotificationType {
 }
 
 export interface QuestionType {
+  _id: ObjectId;
   question: string;
   options: string[];
   correctAnswer: number; // index of the right answer in the options
 }
 
 export interface StudentQuizType {
+  _id: ObjectId;
   student: mongoose.Types.ObjectId;
   attempted: number;
   correct: number;
@@ -60,6 +66,7 @@ export interface StudentQuizType {
 }
 
 export interface QuizType {
+  _id: ObjectId;
   teacher: mongoose.Types.ObjectId;
   course: mongoose.Types.ObjectId;
   questions: QuestionType[];
@@ -79,6 +86,7 @@ export interface CourseType {
 
 export interface AdminType {
   email: string;
+  _id: ObjectId;
   role: "admin";
 }
 
@@ -94,4 +102,5 @@ export interface ResourceType {
   link: string; // stored link
   teacher: mongoose.Types.ObjectId;
   course: mongoose.Types.ObjectId;
+  _id: ObjectId;
 }

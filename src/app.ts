@@ -5,6 +5,8 @@ import studentRouter from "./routes/student.route";
 import teacherRouter from "./routes/teacher.route";
 import courseRouter from "./routes/course.route";
 import cookieParser from "cookie-parser";
+import resourceRouter from "./routes/resource.route";
+
 
 const app = express();
 app.use(cookieParser());
@@ -16,5 +18,6 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/teachers", teacherRouter);
 app.use("/api/v1/courses", courseRouter);
+app.use("/api/v1/resource", resourceRouter);
 
 export default app;
