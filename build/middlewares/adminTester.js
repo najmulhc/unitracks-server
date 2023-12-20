@@ -9,7 +9,10 @@ const ApiError_1 = __importDefault(require("../utils/ApiError"));
 // the user of the request will come from the varifyJWT middleware.
 const adminTester = (0, asyncHandler_util_1.default)(async (req, res, next) => {
     try {
-        const { email } = req.user;
+        const { email, role } = req.user;
+        if (role !== "admin") {
+            throw new ApiError_1.default(403, "You do not have permission to perform this task.");
+        }
         const foundAdmin = await admin_model_1.default.findOne(email);
         if (!foundAdmin) {
             throw new ApiError_1.default(404, "Admin is not found.");

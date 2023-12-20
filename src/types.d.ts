@@ -77,7 +77,7 @@ export interface QuizType {
 export interface CourseType {
   teacher: mongoose.Types.ObjectId;
   session: "2020" | "2021";
-  students: [mongoose.Types.ObjectId];
+  students: [mongoose.Schema.Types.ObjectId];
   courseCode: 101 | 102 | 103 | 104 | 105;
   name: string;
   _id: ObjectId;

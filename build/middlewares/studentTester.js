@@ -9,7 +9,7 @@ const studentTester = async (req, res, next) => {
     try {
         const { email, role } = req.user; // jwt varification will give the user object
         if (role !== "student") {
-            throw new ApiError_1.default(402, "You do not have permission to perform this action.");
+            throw new ApiError_1.default(403, "You do not have permission to perform this action.");
         }
         const student = await student_model_1.default.findOne({
             email,

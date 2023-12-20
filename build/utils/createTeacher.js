@@ -11,7 +11,7 @@ const createTeacher = async (email) => {
         email,
     });
     if (existedTeacher) {
-        throw new ApiError_1.default(402, "A teacher exists with the email");
+        throw new ApiError_1.default(400, "A teacher exists with the email");
     }
     const createdTeacher = await teacher_model_1.default.create({
         email,

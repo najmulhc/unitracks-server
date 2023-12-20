@@ -11,7 +11,7 @@ const teacherTester = async (
   try {
     const { email, role } = req.user;
     if (role !== "teacher") {
-      throw new ApiError(401, "Unauthorized access to be a teacher.");
+      throw new ApiError(403, "Unauthorized access to be a teacher.");
     }
     const teacher: TeacherType | null = await Teacher.findOne({
       email,
@@ -25,7 +25,7 @@ const teacherTester = async (
     next();
   } catch (error: any) {
     throw new ApiError(
-      400,
+      500,
       error.message || "something went wrong while testing the teacher",
     );
   }

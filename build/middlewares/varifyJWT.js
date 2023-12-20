@@ -14,7 +14,7 @@ const varifyJWT = async (req, res, next) => {
     }
     const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SIGN);
     if (!decoded) {
-        throw new ApiError_1.default(404, "Invalid token.", [], "");
+        throw new ApiError_1.default(401, "Invalid token.", [], "");
     }
     //@ts-ignore
     const { email, role } = decoded;
@@ -23,7 +23,7 @@ const varifyJWT = async (req, res, next) => {
     });
     // if you change your role by mistake or intentionally. 
     if (user.role !== role) {
-        throw new ApiError_1.default(401, "Unauthorized access.");
+        throw new ApiError_1.default(403, "Unauthorized access.");
     }
     if (!user) {
         throw new ApiError_1.default(404, "User Does not eixsts.");

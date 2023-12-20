@@ -14,6 +14,9 @@ class ApiError extends Error {
         this.message = message;
         this.success = false;
         this.errors = errors;
+        if (this.statusCode === 401) {
+            this.message = "You need to be logged in to perform this task.";
+        }
         if (stack) {
             this.stack = stack;
         }

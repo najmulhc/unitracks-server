@@ -41,7 +41,7 @@ exports.createCourse = createCourse;
 // get all courses by admin
 const getAllCourses = async (req, res) => {
     if (!req.admin) {
-        throw new ApiError_1.default(402, "You do not have permission to perform this task.");
+        throw new ApiError_1.default(403, "You do not have permission to perform this task.");
     }
     const courses = await course_model_1.default.find().select("-students -teacher");
     return res.status(200).json(new ApiResponse_1.default(200, {
@@ -90,7 +90,9 @@ const getCourseById = async (req, res) => {
         if (!course) {
             throw new ApiError_1.default(404, "Course not found.");
         }
-        if (teacher?._id === course?.teacher._id) {
+        //@ts-ignore
+        if (course?.teacher?._id === teacher?._id) {
+            // testing if the teacher has access to the course
             return res.status(200).json(new ApiResponse_1.default(200, {
                 course,
             }, "Course for the teacher is ready."));
@@ -100,6 +102,7 @@ const getCourseById = async (req, res) => {
         }
     }
     else if (role === "student") {
+        // route handler for a student
         const { student } = req;
         if (student?.courses.includes(courseId)) {
             const course = await course_model_1.default.findById(courseId)
@@ -114,10 +117,11 @@ const getCourseById = async (req, res) => {
                 .json(new ApiResponse_1.default(200, { course }, "Course for the student found successfully"));
         }
         else {
-            throw new ApiError_1.default(400, "You do not have access to the course.");
+            throw new ApiError_1.default(403, "You do not have access to the course.");
         }
     }
     else if (role === "admin") {
+        // route halder for admin
         const course = await course_model_1.default.findById(courseId)
             .populate("teacher")
             .populate("students")

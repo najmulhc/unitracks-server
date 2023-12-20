@@ -27,7 +27,7 @@ export const createNewQuiz = async (req: Request, res: Response) => {
   if (!course) {
     throw new ApiError(400, "The course does not exists.");
   }
-
+//@ts-ignore
   if (course.teacher !== teacher._id) {
     throw new ApiError(400, "The teacher does not takes the course.");
   }

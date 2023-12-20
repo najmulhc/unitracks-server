@@ -6,6 +6,7 @@ import Teacher from "../models/teacher.model";
 import Course from "../models/course.model";
 import Student from "../models/student.model";
 import ApiResponse from "../utils/ApiResponse";
+import { ObjectId } from "mongodb";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -52,7 +53,7 @@ export const createCourse = async (req: UserRequest, res: Response) => {
 // get all courses by admin
 export const getAllCourses = async (req: UserRequest, res: Response) => {
   if (!req.admin) {
-    throw new ApiError(402, "You do not have permission to perform this task.");
+    throw new ApiError(403, "You do not have permission to perform this task.");
   }
 
   const courses = await Course.find().select("-students -teacher");
@@ -121,8 +122,8 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     if (!course) {
       throw new ApiError(404, "Course not found.");
     }
-
-    if (teacher?._id === course?.teacher._id) {
+    //@ts-ignore
+    if (course?.teacher?._id === teacher?._id) {
       // testing if the teacher has access to the course
       return res.status(200).json(
         new ApiResponse(
@@ -162,7 +163,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
           ),
         );
     } else {
-      throw new ApiError(400, "You do not have access to the course.");
+      throw new ApiError(403, "You do not have access to the course.");
     }
   } else if (role === "admin") {
     // route halder for admin

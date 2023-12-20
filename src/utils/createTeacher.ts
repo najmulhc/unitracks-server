@@ -7,7 +7,7 @@ const createTeacher = async (email: string) => {
     email,
   });
   if (existedTeacher) {
-    throw new ApiError(402, "A teacher exists with the email");
+    throw new ApiError(400, "A teacher exists with the email");
   }
   const createdTeacher = await Teacher.create({
     email,

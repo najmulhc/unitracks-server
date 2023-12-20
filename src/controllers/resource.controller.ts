@@ -18,7 +18,7 @@ export const createResource = async (req: UserRequest, res: Response) => {
   }
 
   if (!courses.includes(courseId)) {
-    throw new ApiError(400, "You are not the teacher of the course.");
+    throw new ApiError(403, "You are not the teacher of the course.");
   }
 
   isValidUrl(resourceLink); // testing if the given link is valid.
@@ -58,7 +58,7 @@ export const deleteResource = async (req: UserRequest, res: Response) => {
     throw new ApiError(404, "No resource found!");
   }
   if (!courses.includes(resource?.course)) {
-    throw new ApiError(400, "You are not the teacher of the course.");
+    throw new ApiError(403, "You are not the teacher of the course.");
   }
 
   // delete the resource from the course

@@ -8,7 +8,14 @@ import ApiError from "../utils/ApiError";
 const adminTester = asyncHandler(
   async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.user;
+      const { email, role } = req.user;
+
+      if (role !== "admin") {
+        throw new ApiError(
+          403,
+          "You do not have permission to perform this task.",
+        );
+      }
 
       const foundAdmin = await Admin.findOne(email);
 

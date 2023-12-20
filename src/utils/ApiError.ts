@@ -12,12 +12,17 @@ class ApiError extends Error {
     errors = [],
     stack = "",
   ) {
-    super( message);
+    super(message);
     this.statusCode = statusCode;
     this.data = null; // find what it is
     this.message = message;
     this.success = false;
     this.errors = errors;
+
+    if (this.statusCode === 401) {
+      this.message = "You need to be logged in to perform this task.";
+    }
+     
 
     if (stack) {
       this.stack = stack;

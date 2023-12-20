@@ -95,7 +95,7 @@ const beAnAdmin = async (req, res) => {
     const { key } = req.body;
     (0, authTester_1.default)(role, "unassigned");
     if (key !== process.env.ADMIN_KEY || !key) {
-        throw new Error("Invalid admin key");
+        throw new ApiError_1.default(400, "Invalid admin key");
     }
     const admin = await admin_model_1.default.create({
         email,

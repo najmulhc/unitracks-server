@@ -16,7 +16,7 @@ const varifyJWT = async (
   }
   const decoded: any = jwt.verify(token, process.env.JWT_SIGN as string);
   if (!decoded) {
-    throw new ApiError(404, "Invalid token.", [], "");
+    throw new ApiError(401, "Invalid token.", [], "");
   }
   //@ts-ignore
   const { email, role } = decoded;
@@ -26,7 +26,7 @@ const varifyJWT = async (
 
   // if you change your role by mistake or intentionally. 
   if (user.role !== role) {
-    throw new ApiError(401, "Unauthorized access.");
+    throw new ApiError(403, "Unauthorized access.");
   }
 
   if (!user) {

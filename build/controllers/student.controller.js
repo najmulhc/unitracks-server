@@ -18,7 +18,7 @@ exports.getStudent = getStudent;
 const studentInputPhaseOne = async (req, res) => {
     const { student } = req;
     if (student?.authStage !== "one") {
-        throw new ApiError_1.default(400, "you are in wrong auth phase!");
+        throw new ApiError_1.default(401, "you are in wrong auth phase!");
     }
     // get body basic info (firstName, lastName, dateOfBirh, bloodGroup) etc.
     const { firstName, lastName, dateOfBirth, bloodGroup } = req.body;
@@ -52,7 +52,7 @@ exports.studentInputPhaseOne = studentInputPhaseOne;
 const studnetInputPhaseTwo = async (req, res) => {
     const { student } = req;
     if (student?.authStage !== "two") {
-        throw new ApiError_1.default(400, "you are in wrong auth phase!");
+        throw new ApiError_1.default(401, "you are in wrong auth phase!");
     }
     // get information such as batch, roll, section and other academic info.
     const { roll, session } = req.body;

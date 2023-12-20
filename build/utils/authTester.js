@@ -9,7 +9,7 @@ const authTester = (givenRole, expectedRole) => {
         return true;
     }
     else {
-        throw new ApiError_1.default(402, "You Do not have permission to perform this task.");
+        throw new ApiError_1.default(403, "You Do not have permission to perform this task.");
     }
 };
 exports.default = authTester;

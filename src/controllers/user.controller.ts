@@ -80,7 +80,7 @@ export const beAnAdmin = async (req: UserRequest, res: Response) => {
   authTester(role, "unassigned");
 
   if (key !== process.env.ADMIN_KEY || !key) {
-    throw new Error("Invalid admin key");
+    throw new ApiError(400, "Invalid admin key");
   }
 
   const admin = await Admin.create({
