@@ -68,7 +68,7 @@ export interface StudentQuizType {
 export interface QuizType {
   _id: ObjectId;
   teacher: mongoose.Types.ObjectId;
-  course: mongoose.Types.ObjectId;
+  course: mongoose.Schema.Types.ObjectId;
   questions: QuestionType[];
   participents: StudentQuizType[];
   name: string;
