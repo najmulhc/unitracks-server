@@ -29,7 +29,7 @@ export interface StudentType {
 
 // not created the Schema
 export interface TeacherType {
-  _id: ObjectId;
+  _id: mongoose.Schema.Types.ObjectId;
   firstName: string;
   lastName: string;
   email: string;
@@ -75,7 +75,7 @@ export interface QuizType {
 }
 
 export interface CourseType {
-  teacher: mongoose.Types.ObjectId;
+  teacher: mongoose.Schema.Types.ObjectId;
   session: "2020" | "2021";
   students: [mongoose.Schema.Types.ObjectId];
   courseCode: 101 | 102 | 103 | 104 | 105;
@@ -95,6 +95,7 @@ export interface UserRequest extends Request {
   student?: StudentType;
   admin?: AdminType;
   teacher?: TeacherType;
+  course?: CourseType;
 }
 
 export interface ResourceType {

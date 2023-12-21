@@ -1,11 +1,10 @@
-// creating a new quiz
-
 import Course from "../models/course.model";
 import Quiz from "../models/quiz.model";
 import Teacher from "../models/teacher.model";
 import ApiError from "../utils/ApiError";
 import { Request, Response } from "express";
 import ApiResponse from "../utils/ApiResponse";
+import { UserRequest } from "../types";
 
 export const createNewQuiz = async (req: Request, res: Response) => {
   // varification  of authorization
@@ -27,7 +26,7 @@ export const createNewQuiz = async (req: Request, res: Response) => {
   if (!course) {
     throw new ApiError(400, "The course does not exists.");
   }
-//@ts-ignore
+  //@ts-ignore
   if (course.teacher !== teacher._id) {
     throw new ApiError(400, "The teacher does not takes the course.");
   }
@@ -65,15 +64,37 @@ export const createNewQuiz = async (req: Request, res: Response) => {
 
 // adding questions to the quiz
 
+export const addQuestion = async (req: UserRequest, res: Response) => {
+  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
+};
+
 // getting a quiz by id.
 
+export const getQuizById = async (req: UserRequest, res: Response) => {
+  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
+};
+
 // getting quizzes by course for a student.
+
+export const getAllCoursesForStudent = async (
+  req: UserRequest,
+  res: Response,
+) => {
+  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
+};
 
 // getting all quizzes by a teacher.
 
 // getting quiz questions by students
 
+export const getQuizQuestions = async (req: UserRequest, res: Response) => {
+  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
+};
+
 // posting student response of a quiz
+export const postQuizResponse = async (req: UserRequest, res: Response) => {
+  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
+};
 
 // deleting a quiz
 
