@@ -1,6 +1,6 @@
 {
   "name": "unitracks-server",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A full stack university management application. ",
   "main": "./build/index.js",
   "scripts": {

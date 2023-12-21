@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import Student from "../models/student.model";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 import { UserRequest } from "../types";
-import ApiResponse from "../utils/ApiResponse";
+import ApiResponse from "../utils/ApiResponse.util";
 
 export const getStudent = async (req: UserRequest, res: Response) => {
   const { student } = req;
@@ -62,7 +62,6 @@ export const studentInputPhaseOne = async (req: UserRequest, res: Response) => {
       "student auth phase one completed.",
     ),
   );
-  
 };
 
 // student input phase two
@@ -110,13 +109,13 @@ export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
     },
   );
   // return student new object with no courses.
-   return res.status(200).json(
-     new ApiResponse(
-       200,
-       {
-         student: updatedStudent,
-       },
-       "student auth phase two completed.",
-     ),
-   );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        student: updatedStudent,
+      },
+      "student auth phase two completed.",
+    ),
+  );
 };

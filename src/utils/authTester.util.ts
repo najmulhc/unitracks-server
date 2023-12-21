@@ -1,5 +1,5 @@
 import { Role } from "../types";
-import ApiError from "./ApiError";
+import ApiError from "./ApiError.util";
 
 const authTester = (givenRole: Role, expectedRole: Role) => {
   if (givenRole === expectedRole) {

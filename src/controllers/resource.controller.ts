@@ -1,9 +1,10 @@
+import mongoose from "mongoose";
 import Course from "../models/course.model";
 import Resource from "../models/resource.model";
 import { TeacherType, UserRequest } from "../types";
-import ApiError from "../utils/ApiError";
-import ApiResponse from "../utils/ApiResponse";
-import isValidUrl from "../utils/isValidUrl";
+import ApiError from "../utils/ApiError.util";
+import ApiResponse from "../utils/ApiResponse.util";
+import isValidUrl from "../utils/isValidUrl.util";
 import { Response } from "express";
 
 // create a resource
@@ -79,3 +80,5 @@ export const deleteResource = async (req: UserRequest, res: Response) => {
     ),
   );
 };
+
+ 

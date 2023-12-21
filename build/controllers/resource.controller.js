@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteResource = exports.createResource = void 0;
 const resource_model_1 = __importDefault(require("../models/resource.model"));
-const ApiError_1 = __importDefault(require("../utils/ApiError"));
-const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
-const isValidUrl_1 = __importDefault(require("../utils/isValidUrl"));
+const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
+const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
+const isValidUrl_util_1 = __importDefault(require("../utils/isValidUrl.util"));
 // create a resource
 const createResource = async (req, res) => {
     // validation of teacher and the ownership of course
@@ -15,12 +15,12 @@ const createResource = async (req, res) => {
     // validation of given information
     const { courseId, resourceName, resourceLink } = req.body;
     if (!courseId || !resourceName || !resourceLink) {
-        throw new ApiError_1.default(400, "Incomplete request");
+        throw new ApiError_util_1.default(400, "Incomplete request");
     }
     if (!courses.includes(courseId)) {
-        throw new ApiError_1.default(403, "You are not the teacher of the course.");
+        throw new ApiError_util_1.default(403, "You are not the teacher of the course.");
     }
-    (0, isValidUrl_1.default)(resourceLink); // testing if the given link is valid.
+    (0, isValidUrl_util_1.default)(resourceLink); // testing if the given link is valid.
     // create new resource in database
     await resource_model_1.default.create({
         course: courseId,
@@ -30,7 +30,7 @@ const createResource = async (req, res) => {
     });
     // create a new notification
     //  return all the resources of the course
-    res.status(200).json(new ApiResponse_1.default(200, {
+    res.status(200).json(new ApiResponse_util_1.default(200, {
         resources: await resource_model_1.default.find({
             course: courseId,
         }),
@@ -44,17 +44,17 @@ const deleteResource = async (req, res) => {
     const resource = await resource_model_1.default.findById(req.body.resourceId);
     // validation of resource and validation of authorizaition.
     if (!resource) {
-        throw new ApiError_1.default(404, "No resource found!");
+        throw new ApiError_util_1.default(404, "No resource found!");
     }
     if (!courses.includes(resource?.course)) {
-        throw new ApiError_1.default(403, "You are not the teacher of the course.");
+        throw new ApiError_util_1.default(403, "You are not the teacher of the course.");
     }
     // delete the resource from the course
     await resource_model_1.default.deleteOne({
         link: resource.link,
     });
     // return all resources from the course.
-    res.status(200).json(new ApiResponse_1.default(200, {
+    res.status(200).json(new ApiResponse_util_1.default(200, {
         resources: await resource_model_1.default.find({
             course: resource.course,
         }),

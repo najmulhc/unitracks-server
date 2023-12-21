@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 import asyncHandler from "../utils/asyncHandler.util";
 import { Role, UserRequest } from "../types";
 
@@ -24,7 +24,7 @@ const varifyJWT = async (
     email,
   });
 
-  // if you change your role by mistake or intentionally. 
+  // if you change your role by mistake or intentionally.
   if (user.role !== role) {
     throw new ApiError(403, "Unauthorized access.");
   }

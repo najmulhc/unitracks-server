@@ -1,4 +1,4 @@
-import ApiError from "./ApiError";
+import ApiError from "./ApiError.util";
 
 const isValidUrl = (str: string) => {
   const regex =

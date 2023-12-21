@@ -1,10 +1,10 @@
 // teacher auth stage one.
 
 import { Request, Response } from "express";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 import Teacher from "../models/teacher.model";
 import { TeacherType, UserRequest } from "../types";
-import ApiResponse from "../utils/ApiResponse";
+import ApiResponse from "../utils/ApiResponse.util";
 
 // completes the information collection process of a teacher
 export const postTeacher = async (req: UserRequest, res: Response) => {

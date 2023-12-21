@@ -5,10 +5,10 @@ import bcrypt from "bcrypt";
 import { UserRequest, UserType } from "../types";
 import Admin from "../models/admin.model";
 import * as jwt from "jsonwebtoken";
-import ApiError from "../utils/ApiError";
-import createStudent from "../utils/createStudent";
-import authTester from "../utils/authTester";
-import createTeacher from "../utils/createTeacher";
+import ApiError from "../utils/ApiError.util";
+import createStudent from "../utils/createStudent.util";
+import authTester from "../utils/authTester.util";
+import createTeacher from "../utils/createTeacher.util";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: UserRequest, res: Response) => {
@@ -157,15 +157,12 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
     },
   );
 
-  let createdObject;
   // creates new student
   if (req.body.userRole === "student") {
-    createdObject = await createStudent({
-      email: userEmail,
-    });
+    await createStudent(userEmail);
   } else if (userRole === "teacher") {
     // when you are looking to make a teacher
-    createdObject = await createTeacher(req.body.userEmail);
+    await createTeacher(userEmail);
   }
 
   return res.status(200).json({

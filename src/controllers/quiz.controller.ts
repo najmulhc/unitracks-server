@@ -1,7 +1,7 @@
 import Quiz from "../models/quiz.model";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 import { Request, Response } from "express";
-import ApiResponse from "../utils/ApiResponse";
+import ApiResponse from "../utils/ApiResponse.util";
 import { QuizType, UserRequest } from "../types";
 
 export const createNewQuiz = async (req: UserRequest, res: Response) => {

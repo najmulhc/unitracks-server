@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { TeacherType, UserRequest } from "../types";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 import Teacher from "../models/teacher.model";
 
 const teacherTester = async (

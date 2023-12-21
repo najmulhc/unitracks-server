@@ -31,21 +31,21 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const jwt = __importStar(require("jsonwebtoken"));
-const ApiError_1 = __importDefault(require("../utils/ApiError"));
-const createStudent_1 = __importDefault(require("../utils/createStudent"));
-const authTester_1 = __importDefault(require("../utils/authTester"));
-const createTeacher_1 = __importDefault(require("../utils/createTeacher"));
+const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
+const createStudent_util_1 = __importDefault(require("../utils/createStudent.util"));
+const authTester_util_1 = __importDefault(require("../utils/authTester.util"));
+const createTeacher_util_1 = __importDefault(require("../utils/createTeacher.util"));
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 const basicRegister = async (req, res) => {
     const { email, password } = req?.body;
     if (!email || !password) {
-        throw new ApiError_1.default(400, "Incomplete form info!");
+        throw new ApiError_util_1.default(400, "Incomplete form info!");
     }
     const existedUser = await user_model_1.default.findOne({
         email,
     });
     if (existedUser) {
-        throw new ApiError_1.default(400, "User already exists!");
+        throw new ApiError_util_1.default(400, "User already exists!");
     }
     const hashedPassword = await bcrypt_1.default.hash(password, 10);
     const createdUser = await user_model_1.default.create({
@@ -70,11 +70,11 @@ const login = async (req, res) => {
         email,
     });
     if (!user) {
-        throw new ApiError_1.default(404, "User not found.");
+        throw new ApiError_util_1.default(404, "User not found.");
     }
     const compared = await bcrypt_1.default.compare(password, user.hashedPassword);
     if (!compared) {
-        throw new ApiError_1.default(400, "Incorrect password.");
+        throw new ApiError_util_1.default(400, "Incorrect password.");
     }
     const token = jwt.sign({
         email,
@@ -93,9 +93,9 @@ exports.login = login;
 const beAnAdmin = async (req, res) => {
     const { email, role } = req.user;
     const { key } = req.body;
-    (0, authTester_1.default)(role, "unassigned");
+    (0, authTester_util_1.default)(role, "unassigned");
     if (key !== process.env.ADMIN_KEY || !key) {
-        throw new ApiError_1.default(400, "Invalid admin key");
+        throw new ApiError_util_1.default(400, "Invalid admin key");
     }
     const admin = await admin_model_1.default.create({
         email,
@@ -126,7 +126,7 @@ exports.loginWithToken = loginWithToken;
 // get all users
 const getAllUsers = async (req, res) => {
     const { role } = req.user;
-    (0, authTester_1.default)(role, "admin");
+    (0, authTester_util_1.default)(role, "admin");
     const users = await user_model_1.default.find({}).select("-hashedPassword -name -refreshToken");
     return res.status(200).json({
         success: true,
@@ -136,34 +136,31 @@ const getAllUsers = async (req, res) => {
 exports.getAllUsers = getAllUsers;
 const setUserRole = async (req, res) => {
     const { role } = req.user;
-    (0, authTester_1.default)(role, "admin");
+    (0, authTester_util_1.default)(role, "admin");
     const { userRole, userEmail } = req.body;
     // test if the user is exist
     const user = await user_model_1.default.findOne({
         email: userEmail,
     });
     if (!user) {
-        throw new ApiError_1.default(404, "User does not exists.");
+        throw new ApiError_util_1.default(404, "User does not exists.");
     }
     if (user.role !== "unassigned") {
-        throw new ApiError_1.default(400, "User allready has a role assigned.");
+        throw new ApiError_util_1.default(400, "User allready has a role assigned.");
     }
     if (!["teacher", "student"].includes(userRole)) {
-        throw new ApiError_1.default(400, "Invalid user role.");
+        throw new ApiError_util_1.default(400, "Invalid user role.");
     }
     const updatedUser = await user_model_1.default.findOneAndUpdate({ email: userEmail }, { role: userRole }, {
         new: true,
     });
-    let createdObject;
     // creates new student
     if (req.body.userRole === "student") {
-        createdObject = await (0, createStudent_1.default)({
-            email: userEmail,
-        });
+        await (0, createStudent_util_1.default)(userEmail);
     }
     else if (userRole === "teacher") {
         // when you are looking to make a teacher
-        createdObject = await (0, createTeacher_1.default)(req.body.userEmail);
+        await (0, createTeacher_util_1.default)(userEmail);
     }
     return res.status(200).json({
         success: true,
@@ -175,7 +172,7 @@ exports.setUserRole = setUserRole;
 const deleteUser = async (req, res) => {
     const { role } = req.user;
     const { deletedUser } = req.body;
-    (0, authTester_1.default)(role, "admin");
+    (0, authTester_util_1.default)(role, "admin");
     const deleted = await user_model_1.default.findOneAndDelete({
         email: deletedUser.email,
     });

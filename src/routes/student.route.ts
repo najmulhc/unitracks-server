@@ -5,8 +5,8 @@ import {
   studentInputPhaseOne,
   studnetInputPhaseTwo,
 } from "../controllers/student.controller";
-import varifyJWT from "../middlewares/varifyJWT";
-import studentTester from "../middlewares/studentTester";
+import varifyJWT from "../middlewares/varifyJWT.middleware";
+import studentTester from "../middlewares/studentTester.middleware";
 
 const studentRouter = Router();
 

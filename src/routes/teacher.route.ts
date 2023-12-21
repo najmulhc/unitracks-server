@@ -1,5 +1,5 @@
 import { Router } from "express";
-import varifyJWT from "../middlewares/varifyJWT";
+import varifyJWT from "../middlewares/varifyJWT.middleware";
 import asyncHandler from "../utils/asyncHandler.util";
 import { getTeacher, postTeacher } from "../controllers/teacher.controller";
 

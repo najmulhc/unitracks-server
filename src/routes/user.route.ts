@@ -8,7 +8,7 @@ import {
   loginWithToken,
   setUserRole,
 } from "../controllers/user.controller";
-import varifyJWT from "../middlewares/varifyJWT";
+import varifyJWT from "../middlewares/varifyJWT.middleware";
 import asyncHandler from "../utils/asyncHandler.util";
 
 const userRouter = Router();

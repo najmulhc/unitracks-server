@@ -1,70 +1,85 @@
 "use strict";
-// creating a new quiz
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteQuiz = exports.createNewQuiz = void 0;
-const course_model_1 = __importDefault(require("../models/course.model"));
+exports.deleteQuiz = exports.postQuizResponse = exports.getQuizQuestions = exports.getAllCoursesForStudent = exports.getQuizById = exports.addQuestion = exports.createNewQuiz = void 0;
 const quiz_model_1 = __importDefault(require("../models/quiz.model"));
-const teacher_model_1 = __importDefault(require("../models/teacher.model"));
-const ApiError_1 = __importDefault(require("../utils/ApiError"));
-const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
+const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
+const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
 const createNewQuiz = async (req, res) => {
-    // varification  of authorization
-    const { role, email, courseId } = req.body;
-    if (role !== "teacher") {
-        throw new ApiError_1.default(400, "You do not have permission to create a course.");
-    }
-    const teacher = await teacher_model_1.default.findOne({
-        email,
-    });
-    if (!teacher) {
-        throw new ApiError_1.default(400, "Teacher does not exists.");
-    }
-    const course = await course_model_1.default.findById(courseId);
-    if (!course) {
-        throw new ApiError_1.default(400, "The course does not exists.");
-    }
-    //@ts-ignore
-    if (course.teacher !== teacher._id) {
-        throw new ApiError_1.default(400, "The teacher does not takes the course.");
-    }
+    const { teacher, course } = req;
     // varification of given information
     const { quizName } = req.body;
     if (!quizName) {
-        throw new ApiError_1.default(400, "No quiz name given.");
+        throw new ApiError_util_1.default(400, "No quiz name given.");
     }
     // create simple quiz object and store it to db.
     const quiz = await quiz_model_1.default.create({
-        teacher: teacher._id,
-        course: course._id,
+        teacher: teacher?._id,
+        course: course?._id,
         name: quizName,
     });
     if (!quiz) {
-        throw new ApiError_1.default(500, "There was an error creating the quiz.");
+        throw new ApiError_util_1.default(500, "There was an error creating the quiz.");
     }
-    const result = { success: true, quiz };
     // return created quiz
-    return res.status(200).json(new ApiResponse_1.default(200, {
+    return res.status(200).json(new ApiResponse_util_1.default(200, {
         quiz,
     }, "The quiz has been created."));
 };
 exports.createNewQuiz = createNewQuiz;
 // adding questions to the quiz
+const addQuestion = async (req, res) => {
+    const { teacher, course } = req;
+    return res.status(200).json(new ApiResponse_util_1.default(200, {}, "Messge"));
+};
+exports.addQuestion = addQuestion;
 // getting a quiz by id.
+const getQuizById = async (req, res) => {
+    return res.status(200).json(new ApiResponse_util_1.default(200, {}, "Messge"));
+};
+exports.getQuizById = getQuizById;
 // getting quizzes by course for a student.
+const getAllCoursesForStudent = async (req, res) => {
+    return res.status(200).json(new ApiResponse_util_1.default(200, {}, "Messge"));
+};
+exports.getAllCoursesForStudent = getAllCoursesForStudent;
 // getting all quizzes by a teacher.
 // getting quiz questions by students
+const getQuizQuestions = async (req, res) => {
+    return res.status(200).json(new ApiResponse_util_1.default(200, {}, "Messge"));
+};
+exports.getQuizQuestions = getQuizQuestions;
 // posting student response of a quiz
+const postQuizResponse = async (req, res) => {
+    return res.status(200).json(new ApiResponse_util_1.default(200, {}, "Messge"));
+};
+exports.postQuizResponse = postQuizResponse;
 // deleting a quiz
 const deleteQuiz = async (req, res) => {
-    // test teacher and if he ownes the quiz
-    // get quiz id and test if it exists with proper validation
+    const { course } = req;
+    const { quizId } = req.body;
+    // find and validate the quiz
+    const quiz = await quiz_model_1.default.findById(quizId);
+    if (!quiz) {
+        throw new ApiError_util_1.default(400, "Invalid quiz id.");
+    }
+    if (quiz && quiz.course !== course?._id) {
+        throw new ApiError_util_1.default(404, "The quiz does not exists in the course.");
+    }
     // delete the quiz
+    try {
+        await quiz_model_1.default.findByIdAndDelete(quizId);
+    }
+    catch (error) {
+        throw new ApiError_util_1.default(500, error.message || "There was an error to delete the quiz.");
+    }
     // return the resutl
-    return res
-        .status(200)
-        .json(new ApiResponse_1.default(200, {}, "The quiz has been deleted."));
+    return res.status(200).json(new ApiResponse_util_1.default(200, {
+        quizzes: await quiz_model_1.default.find({
+            course: course?._id,
+        }),
+    }, "The quiz has been deleted."));
 };
 exports.deleteQuiz = deleteQuiz;

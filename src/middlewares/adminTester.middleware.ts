@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { UserRequest } from "../types";
 import asyncHandler from "../utils/asyncHandler.util";
 import Admin from "../models/admin.model";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 
 // the user of the request will come from the varifyJWT middleware.
 const adminTester = asyncHandler(

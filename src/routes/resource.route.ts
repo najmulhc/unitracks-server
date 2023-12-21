@@ -1,7 +1,7 @@
 import { Router } from "express";
 import asyncHandler from "../utils/asyncHandler.util";
-import varifyJWT from "../middlewares/varifyJWT";
-import teacherTester from "../middlewares/teacherTester";
+import varifyJWT from "../middlewares/varifyJWT.middleware";
+import teacherTester from "../middlewares/teacherTester.middleware";
 import {
   createResource,
   deleteResource,

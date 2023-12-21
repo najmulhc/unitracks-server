@@ -1,12 +1,13 @@
 import { Request, Response, request } from "express";
 import { CourseType, UserRequest } from "../types";
-import authTester from "../utils/authTester";
-import ApiError from "../utils/ApiError";
+import authTester from "../utils/authTester.util";
+import ApiError from "../utils/ApiError.util";
 import Teacher from "../models/teacher.model";
 import Course from "../models/course.model";
 import Student from "../models/student.model";
-import ApiResponse from "../utils/ApiResponse";
+import ApiResponse from "../utils/ApiResponse.util";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -107,8 +108,8 @@ export const getCourses = async (req: UserRequest, res: Response) => {
 };
 
 export const getCourseById = async (req: UserRequest, res: Response) => {
-  const { courseId } = req.body;
-  const { role } = req.user;
+  const { courseId } = req.params;
+  const { role, email } = req.user;
 
   // when you are a teacher and want to access the course
   if (role === "teacher") {
@@ -142,9 +143,10 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     }
   } else if (role === "student") {
     // route handler for a student
-    const { student } = req;
-
-    if (student?.courses.includes(courseId)) {
+    const student = await Student.findOne({
+      email,
+    });
+    if (student?.courses.includes(new mongoose.Types.ObjectId(courseId))) {
       const course = await Course.findById(courseId)
         .populate("resource")
         .select("-students")
@@ -166,7 +168,6 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       throw new ApiError(403, "You do not have access to the course.");
     }
   } else if (role === "admin") {
-    // route halder for admin
     const course = await Course.findById(courseId)
       .populate("teacher")
       .populate("students")

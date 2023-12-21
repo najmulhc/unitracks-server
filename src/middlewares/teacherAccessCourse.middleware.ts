@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 
 import Course from "../models/course.model";
 import { UserRequest } from "../types";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.util";
 
 const teacherCourseAccess = async (
   req: UserRequest,
