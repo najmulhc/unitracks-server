@@ -43,6 +43,11 @@ export const basicRegister = async (req: UserRequest, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new ApiError(400, "Incomplete login credentials.");
+  }
+
   let user = await User.findOne({
     email,
   });
