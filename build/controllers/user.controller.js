@@ -81,6 +81,7 @@ const login = async (req, res) => {
     }
     const token = jwt.sign({
         email,
+        role: user?.role,
     }, process.env.JWT_SIGN);
     return res.json({
         success: true,
