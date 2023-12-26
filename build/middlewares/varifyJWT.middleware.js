@@ -12,10 +12,12 @@ const varifyJWT = async (req, res, next) => {
     if (!token) {
         throw new ApiError_util_1.default(400, "No token given", [], "");
     }
+    console.log(token);
     const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SIGN);
     if (!decoded) {
         throw new ApiError_util_1.default(401, "Invalid token.", [], "");
     }
+    console.log(decoded);
     //@ts-ignore
     const { email, role } = decoded;
     const user = await user_model_1.default.findOne({

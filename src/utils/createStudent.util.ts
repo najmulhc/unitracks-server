@@ -12,6 +12,7 @@ const createStudent = async (email: string) => {
   const createdUser = await Student.create({
     email,
   });
+  
   return createdUser;
 };
 

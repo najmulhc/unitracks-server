@@ -42,7 +42,6 @@ const studentSchema = new mongoose_1.Schema({
     },
     roll: {
         type: String,
-        default: "",
         unique: true,
     },
     dateOfBirth: {

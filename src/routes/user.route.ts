@@ -11,6 +11,7 @@ import {
 import varifyJWT from "../middlewares/varifyJWT.middleware";
 import asyncHandler from "../utils/asyncHandler.util";
 
+
 const userRouter = Router();
 
 userRouter.post("/register", asyncHandler(basicRegister));

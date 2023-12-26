@@ -8,6 +8,6 @@ const router = Router();
 router
   .route("/")
   .get(varifyJWT, asyncHandler(getTeacher))
-  .post(asyncHandler(varifyJWT), asyncHandler(postTeacher));
+  .patch(asyncHandler(varifyJWT), asyncHandler(postTeacher));
 
 export default router;

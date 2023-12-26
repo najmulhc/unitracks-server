@@ -14,10 +14,16 @@ const varifyJWT = async (
   if (!token) {
     throw new ApiError(400, "No token given", [], "");
   }
+
+  console.log(token);
+
   const decoded: any = jwt.verify(token, process.env.JWT_SIGN as string);
   if (!decoded) {
     throw new ApiError(401, "Invalid token.", [], "");
   }
+
+  console.log(decoded);
+
   //@ts-ignore
   const { email, role } = decoded;
   const user = await User.findOne({

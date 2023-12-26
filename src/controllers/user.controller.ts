@@ -9,6 +9,7 @@ import ApiError from "../utils/ApiError.util";
 import createStudent from "../utils/createStudent.util";
 import authTester from "../utils/authTester.util";
 import createTeacher from "../utils/createTeacher.util";
+import ApiResponse from "../utils/ApiResponse.util";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: UserRequest, res: Response) => {
@@ -30,7 +31,10 @@ export const basicRegister = async (req: UserRequest, res: Response) => {
     hashedPassword,
     role: "unassigned",
   });
-  const token = jwt.sign({ email }, process.env.JWT_SIGN as string);
+  const token = jwt.sign(
+    { email, role: "unassigned" },
+    process.env.JWT_SIGN as string,
+  );
   return res.json({
     success: true,
     user: {
@@ -68,14 +72,19 @@ export const login = async (req: Request, res: Response) => {
     process.env.JWT_SIGN as string,
   );
 
-  return res.json({
-    success: true,
-    token,
-    user: {
-      email: user.email,
-      role: user.role,
-    },
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        token,
+        user: {
+          email: user.email,
+          role: user.role,
+        },
+      },
+      "user created",
+    ),
+  );
 };
 
 // when an unassigned user wanted to be an admin.
@@ -101,22 +110,31 @@ export const beAnAdmin = async (req: UserRequest, res: Response) => {
       new: true,
     },
   ).select("-hashedPassword");
-  res.json({
-    success: true,
-    user: updatedUser,
-  });
+  const token = jwt.sign(
+    {
+      email: email,
+      role: "admin",
+    },
+    process.env.JWT_SIGN as string,
+  );
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        token,
+        user: updatedUser,
+      },
+      "user role set to admin.",
+    ),
+  );
 };
 
 // get user from jwt token
 export const loginWithToken = async (req: UserRequest, res: Response) => {
   const { user } = req;
-  res.json({
-    success: true,
-    user: {
-      email: user.email,
-      role: user.role,
-    },
-  });
+  res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "Got user from given token"));
 };
 
 // get all users
@@ -128,10 +146,15 @@ export const getAllUsers = async (req: UserRequest, res: Response) => {
     "-hashedPassword -name -refreshToken",
   );
 
-  return res.status(200).json({
-    success: true,
-    users,
-  });
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        users,
+      },
+      "all users getted",
+    ),
+  );
 };
 
 export const setUserRole = async (req: UserRequest, res: Response) => {
@@ -165,7 +188,16 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
 
   // creates new student
   if (req.body.userRole === "student") {
-    await createStudent(userEmail);
+    const createdStudent = await createStudent(userEmail);
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          student: createdStudent,
+        },
+        "student created Successfully",
+      ),
+    );
   } else if (userRole === "teacher") {
     // when you are looking to make a teacher
     await createTeacher(userEmail);
@@ -181,15 +213,19 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
 export const deleteUser = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
 
-  const { deletedUser } = req.body;
+  const { deletedUserId } = req.body;
   authTester(role, "admin");
 
-  const deleted = await User.findOneAndDelete({
-    email: deletedUser.email,
-  });
-  const users = await User.find();
-  return res.json({
-    success: true,
-    users,
-  });
+  try {
+    const deleted = await User.findByIdAndDelete(deletedUserId);
+  } catch (error: any) {
+    throw new ApiError(
+      500,
+      error.message || "there was an error deleting  the user.",
+    );
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "User deleted successfully"));
 };

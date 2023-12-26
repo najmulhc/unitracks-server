@@ -11,5 +11,5 @@ const router = (0, express_1.Router)();
 router
     .route("/")
     .get(varifyJWT_middleware_1.default, (0, asyncHandler_util_1.default)(teacher_controller_1.getTeacher))
-    .post((0, asyncHandler_util_1.default)(varifyJWT_middleware_1.default), (0, asyncHandler_util_1.default)(teacher_controller_1.postTeacher));
+    .patch((0, asyncHandler_util_1.default)(varifyJWT_middleware_1.default), (0, asyncHandler_util_1.default)(teacher_controller_1.postTeacher));
 exports.default = router;
