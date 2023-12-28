@@ -36,6 +36,8 @@ const createStudent_util_1 = __importDefault(require("../utils/createStudent.uti
 const authTester_util_1 = __importDefault(require("../utils/authTester.util"));
 const createTeacher_util_1 = __importDefault(require("../utils/createTeacher.util"));
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
+const teacher_model_1 = __importDefault(require("../models/teacher.model"));
+const student_model_1 = __importDefault(require("../models/student.model"));
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 const basicRegister = async (req, res) => {
     const { email, password } = req?.body;
@@ -181,6 +183,16 @@ const deleteUser = async (req, res) => {
     (0, authTester_util_1.default)(role, "admin");
     try {
         const deleted = await user_model_1.default.findByIdAndDelete(deletedUserId);
+        if (deleted.role === "teacher") {
+            await teacher_model_1.default.findOneAndDelete({
+                email: deleted.email,
+            });
+        }
+        else if (deleted.role === "student") {
+            await student_model_1.default.findOneAndDelete({
+                email: deleted.email,
+            });
+        }
     }
     catch (error) {
         throw new ApiError_util_1.default(500, error.message || "there was an error deleting  the user.");
