@@ -10,6 +10,8 @@ import createStudent from "../utils/createStudent.util";
 import authTester from "../utils/authTester.util";
 import createTeacher from "../utils/createTeacher.util";
 import ApiResponse from "../utils/ApiResponse.util";
+import Teacher from "../models/teacher.model";
+import Student from "../models/student.model";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: UserRequest, res: Response) => {
@@ -214,10 +216,18 @@ export const deleteUser = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
 
   const { deletedUserId } = req.body;
-  authTester(role, "admin");
-
+  authTester(role, "admin"); 
   try {
     const deleted = await User.findByIdAndDelete(deletedUserId);
+    if (deleted.role === "teacher") {
+      await Teacher.findOneAndDelete({
+        email: deleted.email,
+      });
+    } else if (deleted.role === "student") {
+      await Student.findOneAndDelete({
+        email: deleted.email,
+      });
+    }
   } catch (error: any) {
     throw new ApiError(
       500,
