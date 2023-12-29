@@ -105,3 +105,7 @@ export interface ResourceType {
   course: mongoose.Types.ObjectId;
   _id: ObjectId;
 }
+
+export interface CourseColorType { 
+  code: string, 
+}
