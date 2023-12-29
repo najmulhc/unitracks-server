@@ -6,6 +6,7 @@ import teacherRouter from "./routes/teacher.route";
 import courseRouter from "./routes/course.route";
 import cookieParser from "cookie-parser";
 import resourceRouter from "./routes/resource.route";
+import courseColorRouter from './routes/courseColor.route'
 
 
 const app = express();
@@ -19,5 +20,6 @@ app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/teachers", teacherRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/resource", resourceRouter);
+app.use("api/v1/course-colors", courseColorRouter)
 
 export default app;

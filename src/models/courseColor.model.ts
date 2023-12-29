@@ -4,6 +4,7 @@ import { CourseColorType } from "../types";
 const courseColorSchema = new Schema<CourseColorType>({
   code: {
     type: String,
+    unique: true,
     required: true,
     validate: {
       validator: function (value: string) {
