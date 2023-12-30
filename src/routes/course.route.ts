@@ -1,6 +1,7 @@
 import { Router } from "express";
 import varifyJWT from "../middlewares/varifyJWT.middleware";
 import {
+  assignTeacher,
   createCourse,
   getAllCourses,
   getCourseById,
@@ -18,5 +19,6 @@ router
   .get(varifyJWT, asyncHandler(adminTester), asyncHandler(getAllCourses));
 
 router.route("/:courseId").get(varifyJWT, asyncHandler(getCourseById));
+router.route("/assign-teacher").patch(varifyJWT, asyncHandler(assignTeacher));
 
 export default router;

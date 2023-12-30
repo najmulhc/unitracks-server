@@ -12,28 +12,19 @@ import mongoose from "mongoose";
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
   const { email, role } = req.user;
-  const { courseName, teacherEmail, session, courseCode } = req.body;
+  const { courseName, session, courseCode } = req.body;
 
   // varify given information
   if (authTester(role, "admin")) {
-    if (!courseName || !teacherEmail || !session || !courseCode) {
+    if (!courseName || !session || !courseCode) {
       throw new ApiError(
         400,
         "Incomplete course information, please provide the full information.",
       );
     }
 
-    const teacher = await Teacher.findOne({
-      email: teacherEmail,
-    });
-
-    if (!teacher) {
-      throw new ApiError(404, "The teacher is not available!");
-    }
-
     // create course from the given information
     const createdCourse: CourseType = await Course.create({
-      teacher: teacher._id,
       session,
       courseCode,
       name: courseName,
@@ -49,6 +40,54 @@ export const createCourse = async (req: UserRequest, res: Response) => {
       ),
     );
   }
+};
+
+// assign a teacher to the course
+export const assignTeacher = async (req: UserRequest, res: Response) => {
+  const { role } = req.user;
+  authTester(role, "admin");
+  const { teacherId, courseId } = req.body;
+  const course: CourseType | null = await Course.findById(courseId);
+  if (!course) {
+    throw new ApiError(404, "No course found with this id");
+  }
+  if (course.teacher) {
+    throw new ApiError(
+      401,
+      "You have already assigned a teacer to the course.",
+    );
+  }
+  const teacher = await Teacher.findById(teacherId);
+  if (!teacher) {
+    throw new ApiError(404, "No teacher found with this id.");
+  }
+
+  // now we have the teacher, and a course that has no teacher assigned
+  const updatedCourse = await Course.findByIdAndUpdate(
+    courseId,
+    {
+      $set: {
+        teacher: teacherId,
+      },
+    },
+    {
+      new: true,
+    },
+  );
+
+  if (!updatedCourse) {
+    throw new ApiError(500, "there was an error updating the course");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        course: updatedCourse,
+      },
+      "The teacher has been assigned",
+    ),
+  );
 };
 
 // get all courses by admin
