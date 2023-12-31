@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourseById = exports.getCourses = exports.getAllCourses = exports.createCourse = void 0;
+exports.getCourseById = exports.getCourses = exports.getAllCourses = exports.assignTeacher = exports.createCourse = void 0;
 const authTester_util_1 = __importDefault(require("../utils/authTester.util"));
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
@@ -14,21 +14,14 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const createCourse = async (req, res) => {
     // get required information (coursename, course code, batch, teacher);
     const { email, role } = req.user;
-    const { courseName, teacherEmail, session, courseCode } = req.body;
+    const { courseName, session, courseCode } = req.body;
     // varify given information
     if ((0, authTester_util_1.default)(role, "admin")) {
-        if (!courseName || !teacherEmail || !session || !courseCode) {
+        if (!courseName || !session || !courseCode) {
             throw new ApiError_util_1.default(400, "Incomplete course information, please provide the full information.");
-        }
-        const teacher = await teacher_model_1.default.findOne({
-            email: teacherEmail,
-        });
-        if (!teacher) {
-            throw new ApiError_util_1.default(404, "The teacher is not available!");
         }
         // create course from the given information
         const createdCourse = await course_model_1.default.create({
-            teacher: teacher._id,
             session,
             courseCode,
             name: courseName,
@@ -39,6 +32,38 @@ const createCourse = async (req, res) => {
     }
 };
 exports.createCourse = createCourse;
+// assign a teacher to the course
+const assignTeacher = async (req, res) => {
+    const { role } = req.user;
+    (0, authTester_util_1.default)(role, "admin");
+    const { teacherId, courseId } = req.body;
+    const course = await course_model_1.default.findById(courseId);
+    if (!course) {
+        throw new ApiError_util_1.default(404, "No course found with this id");
+    }
+    if (course.teacher) {
+        throw new ApiError_util_1.default(401, "You have already assigned a teacer to the course.");
+    }
+    const teacher = await teacher_model_1.default.findById(teacherId);
+    if (!teacher) {
+        throw new ApiError_util_1.default(404, "No teacher found with this id.");
+    }
+    // now we have the teacher, and a course that has no teacher assigned
+    const updatedCourse = await course_model_1.default.findByIdAndUpdate(courseId, {
+        $set: {
+            teacher: teacherId,
+        },
+    }, {
+        new: true,
+    });
+    if (!updatedCourse) {
+        throw new ApiError_util_1.default(500, "there was an error updating the course");
+    }
+    res.status(200).json(new ApiResponse_util_1.default(200, {
+        course: updatedCourse,
+    }, "The teacher has been assigned"));
+};
+exports.assignTeacher = assignTeacher;
 // get all courses by admin
 const getAllCourses = async (req, res) => {
     if (!req.admin) {

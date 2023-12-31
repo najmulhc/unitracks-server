@@ -15,4 +15,5 @@ router
     .route("/get-all-courses")
     .get(varifyJWT_middleware_1.default, (0, asyncHandler_util_1.default)(adminTester_middleware_1.default), (0, asyncHandler_util_1.default)(course_controller_1.getAllCourses));
 router.route("/:courseId").get(varifyJWT_middleware_1.default, (0, asyncHandler_util_1.default)(course_controller_1.getCourseById));
+router.route("/assign-teacher").patch(varifyJWT_middleware_1.default, (0, asyncHandler_util_1.default)(course_controller_1.assignTeacher));
 exports.default = router;

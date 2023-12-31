@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema<UserType>({
     },
     default: "unassigned",
   },
-  refreshToken: {
+  refreshToken: { // not in use untill next version. 
     type: String,
     default: undefined,
   },

@@ -22,3 +22,4 @@ router.route("/:courseId").get(varifyJWT, asyncHandler(getCourseById));
 router.route("/assign-teacher").patch(varifyJWT, asyncHandler(assignTeacher));
 
 export default router;
+ 
