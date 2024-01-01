@@ -8,6 +8,7 @@ import Student from "../models/student.model";
 import ApiResponse from "../utils/ApiResponse.util";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
+import { uploadImage } from "../utils/uploadImage";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -227,4 +228,22 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
   } else {
     throw new ApiError(403, "Unauthorized access to the course.");
   }
+};
+
+// upload the cover image of the course
+
+export const uploadCourseCoverImage = async (
+  req: UserRequest,
+  res: Response,
+) => {
+  // const { role } = req.user;
+  // authTester(role, "admin");
+  const coverImageLocalPath = req.file?.path;
+  const uploadedUrl = await uploadImage(coverImageLocalPath as string);
+  res.status(200).json(
+    new ApiResponse(200, {
+      coverImageLocalPath, uploadedUrl
+    }, "we got the local path of the image. ")
+  )
+   
 };

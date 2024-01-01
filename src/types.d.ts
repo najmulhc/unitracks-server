@@ -82,6 +82,7 @@ export interface CourseType {
   name: string;
   _id: ObjectId;
   resources: [mongoose.Types.ObjectId];
+  coverImage : string
 }
 
 export interface AdminType {

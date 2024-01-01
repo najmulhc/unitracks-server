@@ -1,12 +1,11 @@
-import { v2 as cloudinary } from "cloudinary";
-import ApiError from "./ApiError.util";
+import { v2 as cloudinary } from "cloudinary"; 
 import fs from "fs";
 
 // configure cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: "dzruagzhw",
+  api_key: "965192888623839",
+  api_secret: "v0fqKyZUeH4a2_6YI6g4E3leH80",
   secure: true,
 });
 
@@ -28,7 +27,7 @@ export const uploadImage = async (localPath: string) => {
     }
   } catch (error: any) {
     fs.unlinkSync(localPath);
-    console.log("there was an error while uploading the image");
+    console.log(error);
     return null;
   }
 };
@@ -54,8 +53,8 @@ export const deleteImage = async (url: string) => {
     } else {
       return null;
     }
-  } catch (error) {
-    console.log("There was a problem while deleting the image");
+  } catch (error: any) {
+    console.log(error.message);
     return null;
   }
 };

@@ -6,9 +6,11 @@ import {
   getAllCourses,
   getCourseById,
   getCourses,
+  uploadCourseCoverImage,
 } from "../controllers/course.controller";
 import asyncHandler from "../utils/asyncHandler.util";
 import adminTester from "../middlewares/adminTester.middleware";
+import upload from "../middlewares/multer.middleware";
 
 const router = Router();
 
@@ -20,6 +22,7 @@ router
 
 router.route("/:courseId").get(varifyJWT, asyncHandler(getCourseById));
 router.route("/assign-teacher").patch(varifyJWT, asyncHandler(assignTeacher));
+router.route("/cover-image").patch(varifyJWT, upload.single('coverImage'),  asyncHandler(uploadCourseCoverImage))
 
 export default router;
  

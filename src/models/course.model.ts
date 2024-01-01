@@ -40,6 +40,10 @@ const courseSchema = new Schema<CourseType>({
       ref: "resource",
     },
   ],
+  coverImage: {
+    type: String,  // will get from cloudinary. 
+    required: false, 
+  }
 });
 
 courseSchema.pre("save", async function (next) {
