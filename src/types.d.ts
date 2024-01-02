@@ -45,7 +45,7 @@ export interface NotificationType {
   title: string;
   time: number;
   setter: mongoose.Types.ObjectId; // the person set the notification
-  for: mongoose.Types.ObjectId[];
+  studentsFor: mongoose.Types.ObjectId[];
   views: mongoose.Types.ObjectId[]; // if there is in view, that meens seen.
 }
 

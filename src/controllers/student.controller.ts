@@ -3,14 +3,22 @@ import Student from "../models/student.model";
 import ApiError from "../utils/ApiError.util";
 import { UserRequest } from "../types";
 import ApiResponse from "../utils/ApiResponse.util";
+import { createNotification } from "./notificationController";
+import { ObjectId } from "mongoose";
 
 export const getStudent = async (req: UserRequest, res: Response) => {
   const { student } = req;
+  const notification = await createNotification({
+    creator: student?._id as ObjectId, 
+    text: "he is trying to create a notification", 
+    sessions: ["2019", "2020"], 
+
+  })
   return res.status(200).json(
     new ApiResponse(
       200,
       {
-        student,
+        student, notification
       },
       "Student found successfully",
     ),
