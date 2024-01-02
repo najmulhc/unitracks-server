@@ -8,7 +8,7 @@
     "dev": "ts-node-dev --respawn  --transpile-only  ./src/index.ts",
     "start": "nodemon build/index.js"
   },
-  "author": "",
+  "author": "Najmul Huda Chowdhury Chayan",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

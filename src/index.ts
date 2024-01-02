@@ -1,7 +1,11 @@
 import app from "./app";
 import dbConnect from "./dbconnect";
 import dotenv from "dotenv";
-dotenv.config();
+import path from 'path'
+
+dotenv.config({
+  path: path.resolve(__dirname, "../.env")
+});
 
 const PORT = process.env.PORT || 6969;
 
