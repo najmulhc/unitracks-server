@@ -12,6 +12,7 @@ import createTeacher from "../utils/createTeacher.util";
 import ApiResponse from "../utils/ApiResponse.util";
 import Teacher from "../models/teacher.model";
 import Student from "../models/student.model";
+import { createNotification } from "./notificationController";
 
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 export const basicRegister = async (req: UserRequest, res: Response) => {
@@ -73,7 +74,11 @@ export const login = async (req: Request, res: Response) => {
     },
     process.env.JWT_SIGN as string,
   );
-
+  const notification = await createNotification({
+    creator: user._id,
+    text: "I bet this is the latest user to log inn.",
+    sessions: ["2019"],
+  });
   return res.status(200).json(
     new ApiResponse(
       200,
@@ -216,7 +221,7 @@ export const deleteUser = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
 
   const { deletedUserId } = req.body;
-  authTester(role, "admin"); 
+  authTester(role, "admin");
   try {
     const deleted = await User.findByIdAndDelete(deletedUserId);
     if (deleted.role === "teacher") {

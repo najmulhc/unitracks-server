@@ -24,7 +24,7 @@ export interface StudentType {
   lastName: string;
   courses: mongoose.Types.ObjectId[];
   email: string;
-  _id: ObjectId;
+  _id: mongoose.Schema.Types.ObjectId;
 }
 
 // not created the Schema
@@ -46,7 +46,7 @@ export interface NotificationType {
   time: number;
   setter: mongoose.Types.ObjectId; // the person set the notification
   studentsFor: mongoose.Types.ObjectId[];
-  views: mongoose.Types.ObjectId[]; // if there is in view, that meens seen.
+  views: mongoose.Schema.Types.ObjectId[]; // if there is in view, that meens seen.
 }
 
 export interface QuestionType {
@@ -97,6 +97,7 @@ export interface UserRequest extends Request {
   admin?: AdminType;
   teacher?: TeacherType;
   course?: CourseType;
+  
 }
 
 export interface ResourceType {
