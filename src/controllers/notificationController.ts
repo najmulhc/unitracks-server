@@ -44,7 +44,7 @@ export const createNotification = async ({
   return createdNotification;
 };
 
-// get notification
+// get notifications (pagination requires )
 
 export const getNotifications = async (req: UserRequest, res: Response) => {
   // assuming the data is taking by the student
@@ -55,25 +55,25 @@ export const getNotifications = async (req: UserRequest, res: Response) => {
 
   let notifications: any[] = [];
 
-  // will return the last 10 notifications. O(n) complexity
+  // will return the last 10 notifications. O(n) complexity: n <= 10
   for (let not of foundNotifications.sort((a, b) => b.time - a.time)) {
-   if(notifications.length <= 10) {
-     if (not.views.includes(_id)) {
-       notifications.push({
-         title: not.title,
-         time: not.time,
-         isSeen: true,
-         _id: not._id,
-       });
-     } else {
-       notifications.push({
-         title: not.title,
-         time: not.time,
-         isSeen: false,
-         _id: not._id,
-       });
-     }
-   }
+    if (notifications.length <= 10) {
+      if (not.views.includes(_id)) {
+        notifications.push({
+          title: not.title,
+          time: not.time,
+          isSeen: true,
+          _id: not._id,
+        });
+      } else {
+        notifications.push({
+          title: not.title,
+          time: not.time,
+          isSeen: false,
+          _id: not._id,
+        });
+      }
+    }
   }
 
   res
@@ -85,11 +85,26 @@ export const getNotifications = async (req: UserRequest, res: Response) => {
         "Got the notifications",
       ),
     );
-
-  // get the student infor
-  // find the notificaitons with the student Id,
-  // return last 12 (if exists) with a sorted by time notifications.
 };
 
 // watch notification
-
+export const seeNotifications = async (req: UserRequest, res: Response) => {
+  const { _id } = req.student as StudentType;
+  const notifications: string[] = req.body.seenNotifications; // will return an array of _ids
+  for (let notification of notifications) {
+    await Notification.findByIdAndUpdate(notification, {
+      $push: {
+        views: _id,
+      },
+    });
+  }
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        success: true,
+      },
+      "Successfully seen the notification",
+    ),
+  );
+};
