@@ -122,9 +122,10 @@ const getCourseById = async (req, res) => {
             email: req.user.email,
         });
         const course = await course_model_1.default.findById(courseId)
-            .populate("resource")
-            .populate("students")
-            .populate("teacher");
+            .populate({
+            path: "students",
+            select: "firstName lastName -_id",
+        });
         if (!course) {
             throw new ApiError_util_1.default(404, "Course not found.");
         }

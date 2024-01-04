@@ -168,9 +168,11 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       email: req.user.email,
     });
     const course = await Course.findById(courseId)
-      .populate("resource")
-      .populate("students")
-      .populate("teacher");
+    .populate({
+      path: "students",
+      select: "firstName lastName -_id",
+    });
+
     if (!course) {
       throw new ApiError(404, "Course not found.");
     }
