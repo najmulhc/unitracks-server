@@ -74,11 +74,7 @@ export const login = async (req: Request, res: Response) => {
     },
     process.env.JWT_SIGN as string,
   );
-  const notification = await createNotification({
-    creator: user._id,
-    text: "I bet this is the latest user to log inn.",
-    sessions: ["2019"],
-  });
+  
   return res.status(200).json(
     new ApiResponse(
       200,

@@ -5,39 +5,53 @@ import Notification from "../models/notification.model";
 import { NotificationType, StudentType, UserRequest } from "../types";
 import { Response } from "express";
 import ApiResponse from "../utils/ApiResponse.util";
+import ApiError from "../utils/ApiError.util";
 
 export interface NotificationCreateType {
   text: string;
   creator: ObjectId;
-  sessions: ("2020" | "2019")[];
+  sessions?: ("2020" | "2019")[];
+  userId?: mongoose.Schema.Types.ObjectId;
 }
 
 export const createNotification = async ({
   text,
   creator,
   sessions,
+  userId,
 }: NotificationCreateType) => {
   const time: number = new Date().getTime();
-  const sessionObject: any[] = sessions.map((session) => {
-    return {
-      session: session,
-    };
-  });
 
+  let studentsfor = [];
   // getting students id from the session object.
-  let studentsfor = await Student.aggregate([
-    {
-      $match: {
-        $or: sessionObject,
+  if (!userId && sessions) {
+    const sessionObject: any[] = sessions.map((session) => {
+      return {
+        session: session,
+      };
+    });
+    let forStudents = await Student.aggregate([
+      {
+        $match: {
+          $or: sessionObject,
+        },
       },
-    },
-    { $group: { _id: null, ids: { $push: "$$ROOT._id" } } },
-  ]);
+      { $group: { _id: null, ids: { $push: "$$ROOT._id" } } },
+    ]);
 
+    studentsfor = forStudents[0].ids;
+  } else if (!sessions && userId) {
+    studentsfor = [userId];
+  } else {
+    throw new ApiError(
+      400,
+      "The  notification has no visitor assigned. please set either the batch of the students or the user id of the particuler student.",
+    );
+  }
   const createdNotification = await Notification.create({
-    setter: creator,
+    setter: userId,
     title: text,
-    studentsFor: studentsfor[0].ids,
+    studentsFor: [userId],
     time,
   });
 
@@ -47,8 +61,8 @@ export const createNotification = async ({
 // get notifications (pagination requires )
 
 export const getNotifications = async (req: UserRequest, res: Response) => {
-  // assuming the data is taking by the student
-  const { _id } = req.student as StudentType;
+  // assuming the data is taking by the user
+  const { _id } = req.user;
   const foundNotifications: NotificationType[] = await Notification.find({
     studentsFor: _id,
   });
@@ -89,7 +103,7 @@ export const getNotifications = async (req: UserRequest, res: Response) => {
 
 // watch notification
 export const seeNotifications = async (req: UserRequest, res: Response) => {
-  const { _id } = req.student as StudentType;
+  const { _id } = req.user;
   const notifications: string[] = req.body.seenNotifications; // will return an array of _ids
   for (let notification of notifications) {
     await Notification.findByIdAndUpdate(notification, {

@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const dbconnect_1 = __importDefault(require("./dbconnect"));
 const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+const path_1 = __importDefault(require("path"));
+dotenv_1.default.config({
+    path: path_1.default.resolve(__dirname, "../.env")
+});
 const PORT = process.env.PORT || 6969;
 (0, dbconnect_1.default)()
     .then(() => {

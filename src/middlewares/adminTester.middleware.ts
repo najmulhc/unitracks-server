@@ -17,7 +17,9 @@ const adminTester = asyncHandler(
         );
       }
 
-      const foundAdmin = await Admin.findOne(email);
+      const foundAdmin = await Admin.findOne({
+        email
+      });
 
       if (!foundAdmin) {
         throw new ApiError(404, "Admin is not found.");

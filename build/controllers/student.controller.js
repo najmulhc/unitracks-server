@@ -7,10 +7,16 @@ exports.studnetInputPhaseTwo = exports.studentInputPhaseOne = exports.getStudent
 const student_model_1 = __importDefault(require("../models/student.model"));
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
+const notificationController_1 = require("./notificationController");
 const getStudent = async (req, res) => {
     const { student } = req;
+    const notification = await (0, notificationController_1.createNotification)({
+        creator: student?._id,
+        text: "he is trying to create a notification",
+        sessions: ["2019", "2020"],
+    });
     return res.status(200).json(new ApiResponse_util_1.default(200, {
-        student,
+        student, notification
     }, "Student found successfully"));
 };
 exports.getStudent = getStudent;

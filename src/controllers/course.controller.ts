@@ -9,6 +9,7 @@ import ApiResponse from "../utils/ApiResponse.util";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { uploadImage } from "../utils/uploadImage";
+import { createNotification } from "./notificationController";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -29,6 +30,11 @@ export const createCourse = async (req: UserRequest, res: Response) => {
       session,
       courseCode,
       name: courseName,
+    });
+    const notification = await createNotification({
+      creator: req.user._id,
+      sessions: [session],
+      text: `Successfully Enrolled to the course ${createdCourse.name}`,
     });
 
     return res.status(200).json(
@@ -80,6 +86,11 @@ export const assignTeacher = async (req: UserRequest, res: Response) => {
     throw new ApiError(500, "there was an error updating the course");
   }
 
+  const notification = await createNotification({
+    text: `You have been assignd as a teacher of the course titled ${course.name}`,
+    userId: teacher._id,
+    creator: req.user._id,
+  });
   res.status(200).json(
     new ApiResponse(
       200,
@@ -241,9 +252,13 @@ export const uploadCourseCoverImage = async (
   const coverImageLocalPath = req.file?.path;
   const uploadedUrl = await uploadImage(coverImageLocalPath as string);
   res.status(200).json(
-    new ApiResponse(200, {
-      coverImageLocalPath, uploadedUrl
-    }, "we got the local path of the image. ")
-  )
-   
+    new ApiResponse(
+      200,
+      {
+        coverImageLocalPath,
+        uploadedUrl,
+      },
+      "we got the local path of the image. ",
+    ),
+  );
 };

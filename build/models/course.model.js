@@ -66,6 +66,10 @@ const courseSchema = new mongoose_1.Schema({
             ref: "resource",
         },
     ],
+    coverImage: {
+        type: String,
+        required: false,
+    }
 });
 courseSchema.pre("save", async function (next) {
     if (!this.isModified("courseCode")) {

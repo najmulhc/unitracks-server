@@ -28,12 +28,14 @@ const notificationSchema = new mongoose_1.Schema({
     title: {
         type: String,
         required: [true, "We need the title of the notification"],
+        minlength: 15,
+        maxlength: 50
     },
     setter: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "user",
     },
-    for: [
+    studentsFor: [
         {
             type: mongoose_1.default.Schema.Types.ObjectId,
             ref: "student",
@@ -45,6 +47,10 @@ const notificationSchema = new mongoose_1.Schema({
             ref: "student",
         },
     ],
+    time: {
+        type: Number,
+        required: true,
+    },
 });
 const Notification = mongoose_1.default.model("notification", notificationSchema);
 exports.default = Notification;

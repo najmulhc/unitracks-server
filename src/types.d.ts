@@ -92,7 +92,7 @@ export interface AdminType {
 }
 
 export interface UserRequest extends Request {
-  user: User;
+  user: UserType;
   student?: StudentType;
   admin?: AdminType;
   teacher?: TeacherType;

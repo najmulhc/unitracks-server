@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourseById = exports.getCourses = exports.getAllCourses = exports.assignTeacher = exports.createCourse = void 0;
+exports.uploadCourseCoverImage = exports.getCourseById = exports.getCourses = exports.getAllCourses = exports.assignTeacher = exports.createCourse = void 0;
 const authTester_util_1 = __importDefault(require("../utils/authTester.util"));
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
@@ -11,6 +11,8 @@ const course_model_1 = __importDefault(require("../models/course.model"));
 const student_model_1 = __importDefault(require("../models/student.model"));
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const uploadImage_1 = require("../utils/uploadImage");
+const notificationController_1 = require("./notificationController");
 const createCourse = async (req, res) => {
     // get required information (coursename, course code, batch, teacher);
     const { email, role } = req.user;
@@ -25,6 +27,11 @@ const createCourse = async (req, res) => {
             session,
             courseCode,
             name: courseName,
+        });
+        const notification = await (0, notificationController_1.createNotification)({
+            creator: req.user._id,
+            sessions: [session],
+            text: `Successfully Enrolled to the course ${createdCourse.name}`,
         });
         return res.status(200).json(new ApiResponse_util_1.default(200, {
             course: createdCourse,
@@ -59,6 +66,11 @@ const assignTeacher = async (req, res) => {
     if (!updatedCourse) {
         throw new ApiError_util_1.default(500, "there was an error updating the course");
     }
+    const notification = await (0, notificationController_1.createNotification)({
+        text: `You have been assignd as a teacher of the course titled ${course.name}`,
+        userId: teacher._id,
+        creator: req.user._id,
+    });
     res.status(200).json(new ApiResponse_util_1.default(200, {
         course: updatedCourse,
     }, "The teacher has been assigned"));
@@ -165,3 +177,15 @@ const getCourseById = async (req, res) => {
     }
 };
 exports.getCourseById = getCourseById;
+// upload the cover image of the course
+const uploadCourseCoverImage = async (req, res) => {
+    // const { role } = req.user;
+    // authTester(role, "admin");
+    const coverImageLocalPath = req.file?.path;
+    const uploadedUrl = await (0, uploadImage_1.uploadImage)(coverImageLocalPath);
+    res.status(200).json(new ApiResponse_util_1.default(200, {
+        coverImageLocalPath,
+        uploadedUrl,
+    }, "we got the local path of the image. "));
+};
+exports.uploadCourseCoverImage = uploadCourseCoverImage;
