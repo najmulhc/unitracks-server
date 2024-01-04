@@ -221,10 +221,10 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       throw new ApiError(403, "You do not have access to the course.");
     }
   } else if (role === "admin") {
-    const course = await Course.findById(courseId)
-      .populate("teacher")
-      .populate("students")
-      .populate("resource");
+    const course = await Course.findById(courseId).populate({
+      path: "students",
+      select: "firstName lastName -_id",
+    });
     if (!course) {
       throw new ApiError(404, "Course not found.");
     }

@@ -162,10 +162,10 @@ const getCourseById = async (req, res) => {
         }
     }
     else if (role === "admin") {
-        const course = await course_model_1.default.findById(courseId)
-            .populate("teacher")
-            .populate("students")
-            .populate("resource");
+        const course = await course_model_1.default.findById(courseId).populate({
+            path: "students",
+            select: "firstName lastName -_id",
+        });
         if (!course) {
             throw new ApiError_util_1.default(404, "Course not found.");
         }
