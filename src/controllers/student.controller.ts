@@ -9,16 +9,16 @@ import { ObjectId } from "mongoose";
 export const getStudent = async (req: UserRequest, res: Response) => {
   const { student } = req;
   const notification = await createNotification({
-    creator: student?._id as ObjectId, 
-    text: "he is trying to create a notification", 
-    sessions: ["2019", "2020"], 
-
-  })
+    creator: student?._id as ObjectId,
+    text: "he is trying to create a notification",
+    sessions: ["2021", "2020"],
+  });
   return res.status(200).json(
     new ApiResponse(
       200,
       {
-        student, notification
+        student,
+        notification,
       },
       "Student found successfully",
     ),
@@ -95,7 +95,7 @@ export const studnetInputPhaseTwo = async (req: UserRequest, res: Response) => {
     throw new ApiError(401, "Student already exists with this roll.");
   }
 
-  const sessions = ["2020", "2019"];
+  const sessions = ["2020", "2021"];
 
   if (!sessions.includes(session)) {
     throw new ApiError(400, "Invalid session! please provide the correct one.");

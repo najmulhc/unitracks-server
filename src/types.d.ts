@@ -17,7 +17,7 @@ export interface StudentType {
   role: "student";
   authStage: "one" | "two" | "completed";
   roll: string;
-  session: "2019" | "2020";
+  session: "2021" | "2020";
   bloodGroup: "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
   dateOfBirth: number;
   firstName: string;
@@ -82,7 +82,7 @@ export interface CourseType {
   name: string;
   _id: ObjectId;
   resources: [mongoose.Types.ObjectId];
-  coverImage : string
+  coverImage: string;
 }
 
 export interface AdminType {
@@ -97,7 +97,6 @@ export interface UserRequest extends Request {
   admin?: AdminType;
   teacher?: TeacherType;
   course?: CourseType;
-  
 }
 
 export interface ResourceType {
@@ -108,6 +107,6 @@ export interface ResourceType {
   _id: ObjectId;
 }
 
-export interface CourseColorType { 
-  code: string, 
+export interface CourseColorType {
+  code: string;
 }

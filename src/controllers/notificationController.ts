@@ -10,7 +10,7 @@ import ApiError from "../utils/ApiError.util";
 export interface NotificationCreateType {
   text: string;
   creator: ObjectId;
-  sessions?: ("2020" | "2019")[];
+  sessions?: ("2020" | "2021")[];
   userId?: mongoose.Schema.Types.ObjectId;
 }
 

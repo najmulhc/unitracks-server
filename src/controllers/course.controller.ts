@@ -8,7 +8,7 @@ import Student from "../models/student.model";
 import ApiResponse from "../utils/ApiResponse.util";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-import { uploadImage } from "../utils/uploadImage";
+import { deleteImage, uploadImage } from "../utils/uploadImage";
 import { createNotification } from "./notificationController";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
@@ -167,8 +167,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     const teacher = await Teacher.findOne({
       email: req.user.email,
     });
-    const course = await Course.findById(courseId)
-    .populate({
+    const course = await Course.findById(courseId).populate({
       path: "students",
       select: "firstName lastName -_id",
     });
@@ -249,8 +248,8 @@ export const uploadCourseCoverImage = async (
   req: UserRequest,
   res: Response,
 ) => {
-  // const { role } = req.user;
-  // authTester(role, "admin");
+  const { role } = req.user;
+  authTester(role, "admin");
   const coverImageLocalPath = req.file?.path;
   const uploadedUrl = await uploadImage(coverImageLocalPath as string);
   res.status(200).json(
@@ -263,4 +262,27 @@ export const uploadCourseCoverImage = async (
       "we got the local path of the image. ",
     ),
   );
+};
+
+export const deleteCourse = async (req: UserRequest, res: Response) => {
+  // test if he is the admin
+  const { role } = req.user;
+  authTester(role, "admin");
+  // test if the course exists.
+  const courseId = req.params;
+  const course = await Course.findById(courseId);
+  if (!course) {
+    throw new ApiError(404, "No course found to delete");
+  }
+  // delete the cover photo of the course
+  const {coverImage} = course;
+ const deleted =   await deleteImage(coverImage);
+  // delete all the resources of the course
+
+  // delete the course by Id.
+  const deletedCourse = await Course.findByIdAndDelete(courseId); 
+  // return the response
+  res.status(200).json(
+    new ApiResponse(200, {}, "successfully deleted the course")
+  )
 };

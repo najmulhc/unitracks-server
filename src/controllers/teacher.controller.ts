@@ -5,6 +5,7 @@ import ApiError from "../utils/ApiError.util";
 import Teacher from "../models/teacher.model";
 import { TeacherType, UserRequest } from "../types";
 import ApiResponse from "../utils/ApiResponse.util";
+import authTester from "../utils/authTester.util";
 
 // completes the information collection process of a teacher
 export const postTeacher = async (req: UserRequest, res: Response) => {
@@ -97,6 +98,22 @@ export const getTeacher = async (req: UserRequest, res: Response) => {
         teacher,
       },
       "Found the teacher",
+    ),
+  );
+};
+
+export const getAllTeachers = async (req: UserRequest, res: Response) => {
+  const { role } = req.user;
+  authTester(role, "admin");
+  const teachers = await Teacher.find().select("_id firstName lastName email");
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        teachers,
+      },
+      "Got all the teachers",
     ),
   );
 };

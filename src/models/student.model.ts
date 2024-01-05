@@ -18,7 +18,7 @@ const studentSchema = new Schema<StudentType>({
     default: "one",
   },
   roll: {
-    type: String, 
+    type: String,
     unique: true,
   },
   dateOfBirth: {
@@ -28,7 +28,7 @@ const studentSchema = new Schema<StudentType>({
   session: {
     type: String,
     enum: {
-      values: ["2020", "2019"],
+      values: ["2020", "2021"],
     },
   },
   courses: [

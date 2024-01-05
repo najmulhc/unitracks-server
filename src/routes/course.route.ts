@@ -3,6 +3,7 @@ import varifyJWT from "../middlewares/varifyJWT.middleware";
 import {
   assignTeacher,
   createCourse,
+  deleteCourse,
   getAllCourses,
   getCourseById,
   getCourses,
@@ -20,9 +21,17 @@ router
   .route("/get-all-courses")
   .get(varifyJWT, asyncHandler(adminTester), asyncHandler(getAllCourses));
 
-router.route("/:courseId").get(varifyJWT, asyncHandler(getCourseById));
+router
+  .route("/:courseId")
+  .get(varifyJWT, asyncHandler(getCourseById))
+  .delete(varifyJWT, asyncHandler(deleteCourse));
 router.route("/assign-teacher").patch(varifyJWT, asyncHandler(assignTeacher));
-router.route("/cover-image").patch(varifyJWT, upload.single('coverImage'),  asyncHandler(uploadCourseCoverImage))
+router
+  .route("/cover-image")
+  .patch(
+    varifyJWT,
+    upload.single("coverImage"),
+    asyncHandler(uploadCourseCoverImage),
+  );
 
 export default router;
- 
