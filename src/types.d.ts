@@ -75,14 +75,16 @@ export interface QuizType {
 }
 
 export interface CourseType {
-  teacher: mongoose.Schema.Types.ObjectId;
+  teacher: mongoose.Schema.Types.ObjectId | TeacherType;
   session: "2020" | "2021";
   students: [mongoose.Schema.Types.ObjectId];
-  courseCode: 101 | 102 | 103 | 104 | 105;
+  courseCode: number;
   name: string;
   _id: ObjectId;
   resources: [mongoose.Types.ObjectId];
   coverImage: string;
+
+  textBook: [string];
 }
 
 export interface AdminType {

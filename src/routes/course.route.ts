@@ -8,6 +8,7 @@ import {
   getCourseById,
   getCourses,
   uploadCourseCoverImage,
+  uploadTextBook,
 } from "../controllers/course.controller";
 import asyncHandler from "../utils/asyncHandler.util";
 import adminTester from "../middlewares/adminTester.middleware";
@@ -25,7 +26,9 @@ router
   .route("/:courseId")
   .get(varifyJWT, asyncHandler(getCourseById))
   .delete(varifyJWT, asyncHandler(deleteCourse));
-router.route("/assign-teacher").patch(varifyJWT, asyncHandler(assignTeacher));
+router
+  .route("/assign-teacher/:courseId")
+  .patch(varifyJWT,asyncHandler(adminTester) ,asyncHandler(assignTeacher));
 router
   .route("/cover-image")
   .patch(
@@ -33,5 +36,6 @@ router
     upload.single("coverImage"),
     asyncHandler(uploadCourseCoverImage),
   );
+router.route("/textbook").post(varifyJWT, asyncHandler(uploadTextBook));
 
 export default router;

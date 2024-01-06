@@ -1,5 +1,5 @@
 import { Request, Response, request } from "express";
-import { CourseType, UserRequest } from "../types";
+import { CourseType, TeacherType, UserRequest } from "../types";
 import authTester from "../utils/authTester.util";
 import ApiError from "../utils/ApiError.util";
 import Teacher from "../models/teacher.model";
@@ -10,6 +10,7 @@ import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { deleteImage, uploadImage } from "../utils/uploadImage";
 import { createNotification } from "./notificationController";
+import courseTeacherTester from "../utils/courseTeacherTester";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -53,7 +54,8 @@ export const createCourse = async (req: UserRequest, res: Response) => {
 export const assignTeacher = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
   authTester(role, "admin");
-  const { teacherId, courseId } = req.body;
+  const { teacherId } = req.body;
+  const { courseId } = req.params;
   const course: CourseType | null = await Course.findById(courseId);
   if (!course) {
     throw new ApiError(404, "No course found with this id");
@@ -169,7 +171,7 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
     });
     const course = await Course.findById(courseId).populate({
       path: "students",
-      select: "firstName lastName -_id",
+      select: "firstName lastName -_id roll",
     });
 
     if (!course) {
@@ -220,10 +222,15 @@ export const getCourseById = async (req: UserRequest, res: Response) => {
       throw new ApiError(403, "You do not have access to the course.");
     }
   } else if (role === "admin") {
-    const course = await Course.findById(courseId).populate({
-      path: "students",
-      select: "firstName lastName -_id",
-    });
+    const course = await Course.findById(courseId)
+      .populate({
+        path: "students",
+        select: "firstName lastName -_id roll",
+      })
+      .populate({
+        path: "teacher",
+        select: "firstName lastName title -_id",
+      });
     if (!course) {
       throw new ApiError(404, "Course not found.");
     }
@@ -269,20 +276,52 @@ export const deleteCourse = async (req: UserRequest, res: Response) => {
   const { role } = req.user;
   authTester(role, "admin");
   // test if the course exists.
-  const courseId = req.params;
+  const { courseId } = req.params;
   const course = await Course.findById(courseId);
   if (!course) {
     throw new ApiError(404, "No course found to delete");
   }
   // delete the cover photo of the course
-  const {coverImage} = course;
- const deleted =   await deleteImage(coverImage);
+  const { coverImage } = course;
+  const deleted = await deleteImage(coverImage);
   // delete all the resources of the course
 
   // delete the course by Id.
-  const deletedCourse = await Course.findByIdAndDelete(courseId); 
+  const deletedCourse = await Course.findByIdAndDelete(courseId);
   // return the response
-  res.status(200).json(
-    new ApiResponse(200, {}, "successfully deleted the course")
-  )
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "successfully deleted the course"));
+};
+
+ 
+export const uploadTextBook = async (req: UserRequest, res: Response) => {
+ 
+  const { role, email } = req.user;
+  authTester(role, "teacher");
+  const { courseId, textbookUrl } = req.body;
+
+  if (!courseId) {
+    throw new ApiError(400, "No course id given");
+  }
+  const course: CourseType = await courseTeacherTester({
+    courseId,
+    teacherEmail: email,
+  });
+  const updatedCourse = await Course.updateOne(
+    { _id: course._id },
+    {
+      $push: {
+        textBook: textbookUrl,
+      },
+    },
+    { new: true },
+  );
+  if (!updatedCourse) {
+    throw new ApiError(500, "There was an error to upload the textbook url.");
+  } else {
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Successfully updated the textbook."));
+  }
 };

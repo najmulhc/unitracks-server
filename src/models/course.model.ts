@@ -41,9 +41,14 @@ const courseSchema = new Schema<CourseType>({
     },
   ],
   coverImage: {
-    type: String,  // will get from cloudinary. 
-    required: false, 
-  }
+    type: String, // will get from cloudinary.
+    required: false,
+  },
+  textBook: [
+    {
+      type: String,
+    },
+  ],
 });
 
 courseSchema.pre("save", async function (next) {
