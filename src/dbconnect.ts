@@ -1,4 +1,4 @@
-import { connect } from "mongoose";
+import mongoose, { connect } from "mongoose";
 
 const dbConnect = async () => {
   try {
@@ -7,6 +7,7 @@ const dbConnect = async () => {
     );
 
     console.log("MongoDB connected");
+ 
   } catch (error: any) {
     console.log("Mongoose connection Error:", error.message);
   }

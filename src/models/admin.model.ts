@@ -9,8 +9,12 @@ const adminSchema = new mongoose.Schema({
     type: String,
     default: "admin",
   },
-  
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
-const Admin = mongoose.models.admin || mongoose.model("admin", adminSchema);
+const Admin = mongoose.models.admin || mongoose.model("Admin", adminSchema);
 export default Admin;

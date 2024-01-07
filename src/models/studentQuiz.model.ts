@@ -25,6 +25,6 @@ export const studentQuizSchema = new Schema<StudentQuizType>({
   },
 });
 
-const StudentQuiz = mongoose.model("studentQuiz", studentQuizSchema);
+const StudentQuiz = mongoose.model("StudentQuiz", studentQuizSchema);
 
 export default StudentQuiz;

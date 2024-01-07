@@ -16,80 +16,59 @@ export interface NotificationCreateType {
 
 export const createNotification = async ({
   text,
-  creator,
+
   sessions,
   userId,
 }: NotificationCreateType) => {
   const time: number = new Date().getTime();
 
-  let studentsfor = [];
+  let usersFor = [];
   // getting students id from the session object.
   if (!userId && sessions) {
-    const sessionObject: any[] = sessions.map((session) => {
-      return {
-        session: session,
-      };
+    let forStudents = await Student.find({
+      session: sessions,
     });
-    let forStudents = await Student.aggregate([
-      {
-        $match: {
-          $or: sessionObject,
-        },
-      },
-      { $group: { _id: null, ids: { $push: "$$ROOT._id" } } },
-    ]);
-
-    studentsfor = forStudents[0].ids;
+    for(let student of forStudents) {
+      usersFor.push(student.userId)
+    }
+  
   } else if (!sessions && userId) {
-    studentsfor = [userId];
+    usersFor = [userId];
   } else {
     throw new ApiError(
       400,
-      "The  notification has no visitor assigned. please set either the batch of the students or the user id of the particuler student.",
+      "The  notification has no visitor assigned. please set either the batch of the students or the user id of the particuler user.",
     );
   }
   const createdNotification = await Notification.create({
     setter: userId,
     title: text,
-    studentsFor: [userId],
+    usersFor: usersFor,
     time,
   });
 
+  console.log(createdNotification)
   return createdNotification;
 };
 
 // get notifications (pagination requires )
 
 export const getNotifications = async (req: UserRequest, res: Response) => {
-  if (req.user.role === "student") {
-    // assuming the data is taking by the user
-    const { _id } = req.user;
-    const foundNotifications: NotificationType[] = await Notification.find({
-      studentsFor: _id,
-    });
-
-    const notifications = foundNotifications
-      .sort((a, b) => b.time - a.time)
-      .slice(0, 10)
-      .map((not) => ({
-        title: not.title,
-        time: not.time,
-        isSeen: not.views.includes(_id),
-        _id: not._id,
-      }));
-
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { notifications: notifications },
-          "Got the notifications",
+  // the user will get their notification based on their id.
+  const notifications = await Notification.find({
+    usersFor: req.user._id,
+  });
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        notifications: notifications.sort(
+          (first, second) => second.time - first.time,
         ),
-      );
-  } else {
-    throw new ApiError(500, "notification feature hasn't arrived yet for you!");
-  }
+      },
+      "Got all the notifications of the users.",
+    ),
+  );
 };
 
 // watch notification

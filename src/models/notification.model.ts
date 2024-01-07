@@ -12,7 +12,7 @@ const notificationSchema = new Schema<NotificationType>({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  studentsFor: [
+  usersFor: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -30,6 +30,6 @@ const notificationSchema = new Schema<NotificationType>({
   },
 });
 
-const Notification = mongoose.model("notification", notificationSchema);
+const Notification = mongoose.model("Notification", notificationSchema);
 
 export default Notification;

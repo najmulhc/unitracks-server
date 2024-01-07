@@ -28,6 +28,6 @@ const quizSchema = new Schema<QuizType>({
   },
 });
 
-const Quiz = mongoose.model("quiz", quizSchema);
+const Quiz = mongoose.model("Quiz", quizSchema);
 
 export default Quiz;

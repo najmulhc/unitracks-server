@@ -20,6 +20,6 @@ export const questionSchema = new Schema<QuestionType>({
   },
 });
 
-const Question = mongoose.model("question", questionSchema);
+const Question = mongoose.model("Question", questionSchema);
 
 export default Question;

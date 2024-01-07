@@ -74,7 +74,11 @@ export const login = async (req: Request, res: Response) => {
     },
     process.env.JWT_SIGN as string,
   );
-  
+  const notification = await createNotification({
+    creator: user._id,
+    text: "dummy text of notification",
+    sessions: ["2020", "2021"],
+  });
   return res.status(200).json(
     new ApiResponse(
       200,
@@ -84,6 +88,7 @@ export const login = async (req: Request, res: Response) => {
           email: user.email,
           role: user.role,
         },
+        notification,
       },
       "user created",
     ),
@@ -101,9 +106,6 @@ export const beAnAdmin = async (req: UserRequest, res: Response) => {
     throw new ApiError(400, "Invalid admin key");
   }
 
-  const admin = await Admin.create({
-    email,
-  });
   const updatedUser = await User.findOneAndUpdate(
     { email },
     {
@@ -191,7 +193,10 @@ export const setUserRole = async (req: UserRequest, res: Response) => {
 
   // creates new student
   if (req.body.userRole === "student") {
-    const createdStudent = await createStudent(userEmail);
+    const createdStudent = await createStudent({
+      email: req.body.userEmail,
+      userId: updatedUser._id,
+    });
     return res.status(200).json(
       new ApiResponse(
         200,

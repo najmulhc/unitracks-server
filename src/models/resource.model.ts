@@ -12,14 +12,14 @@ const resourceSchema = new Schema<ResourceType>({
   },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "teacher",
+    ref: "Teacher",
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "course",
+    ref: "Course",
   },
 });
 
-const Resource = model("resource", resourceSchema);
+const Resource = model("Resource", resourceSchema);
 
 export default Resource;
