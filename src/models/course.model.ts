@@ -79,6 +79,6 @@ courseSchema.pre("save", async function (next) {
   next();
 });
 
-const Course = mongoose.model("course", courseSchema);
+const Course = mongoose.model("Course", courseSchema);
 
 export default Course;

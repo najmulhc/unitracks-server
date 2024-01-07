@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, mongo } from "mongoose";
 import { StudentType } from "../types";
 
 const studentSchema = new Schema<StudentType>({
@@ -51,8 +51,13 @@ const studentSchema = new Schema<StudentType>({
       values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
     },
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
 });
 
-const Student = model("student", studentSchema);
+const Student = model("Student", studentSchema);
 
 export default Student;

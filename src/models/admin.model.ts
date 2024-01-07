@@ -9,6 +9,7 @@ const adminSchema = new mongoose.Schema({
     type: String,
     default: "admin",
   },
+  
 });
 
 const Admin = mongoose.models.admin || mongoose.model("admin", adminSchema);

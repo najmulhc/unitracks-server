@@ -61,44 +61,35 @@ export const createNotification = async ({
 // get notifications (pagination requires )
 
 export const getNotifications = async (req: UserRequest, res: Response) => {
-  // assuming the data is taking by the user
-  const { _id } = req.user;
-  const foundNotifications: NotificationType[] = await Notification.find({
-    studentsFor: _id,
-  });
+  if (req.user.role === "student") {
+    // assuming the data is taking by the user
+    const { _id } = req.user;
+    const foundNotifications: NotificationType[] = await Notification.find({
+      studentsFor: _id,
+    });
 
-  let notifications: any[] = [];
+    const notifications = foundNotifications
+      .sort((a, b) => b.time - a.time)
+      .slice(0, 10)
+      .map((not) => ({
+        title: not.title,
+        time: not.time,
+        isSeen: not.views.includes(_id),
+        _id: not._id,
+      }));
 
-  // will return the last 10 notifications. O(n) complexity: n <= 10
-  for (let not of foundNotifications.sort((a, b) => b.time - a.time)) {
-    if (notifications.length <= 10) {
-      if (not.views.includes(_id)) {
-        notifications.push({
-          title: not.title,
-          time: not.time,
-          isSeen: true,
-          _id: not._id,
-        });
-      } else {
-        notifications.push({
-          title: not.title,
-          time: not.time,
-          isSeen: false,
-          _id: not._id,
-        });
-      }
-    }
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { notifications: notifications },
+          "Got the notifications",
+        ),
+      );
+  } else {
+    throw new ApiError(500, "notification feature hasn't arrived yet for you!");
   }
-
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { notifications: notifications },
-        "Got the notifications",
-      ),
-    );
 };
 
 // watch notification

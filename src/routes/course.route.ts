@@ -16,26 +16,24 @@ import upload from "../middlewares/multer.middleware";
 
 const router = Router();
 
-router.route("/").post(varifyJWT, asyncHandler(createCourse));
-router.route("/my-courses").get(varifyJWT, asyncHandler(getCourses));
+router.use(varifyJWT);
+
+router.route("/").post(asyncHandler(createCourse));
+router.route("/my-courses").get(asyncHandler(getCourses));
 router
   .route("/get-all-courses")
-  .get(varifyJWT, asyncHandler(adminTester), asyncHandler(getAllCourses));
+  .get(asyncHandler(adminTester), asyncHandler(getAllCourses));
 
 router
   .route("/:courseId")
-  .get(varifyJWT, asyncHandler(getCourseById))
-  .delete(varifyJWT, asyncHandler(deleteCourse));
+  .get(asyncHandler(getCourseById))
+  .delete(asyncHandler(deleteCourse));
 router
   .route("/assign-teacher/:courseId")
-  .patch(varifyJWT,asyncHandler(adminTester) ,asyncHandler(assignTeacher));
+  .patch(asyncHandler(adminTester), asyncHandler(assignTeacher));
 router
   .route("/cover-image")
-  .patch(
-    varifyJWT,
-    upload.single("coverImage"),
-    asyncHandler(uploadCourseCoverImage),
-  );
-router.route("/textbook").post(varifyJWT, asyncHandler(uploadTextBook));
+  .patch(upload.single("coverImage"), asyncHandler(uploadCourseCoverImage));
+router.route("/textbook").post(asyncHandler(uploadTextBook));
 
 export default router;

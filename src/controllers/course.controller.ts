@@ -52,8 +52,6 @@ export const createCourse = async (req: UserRequest, res: Response) => {
 
 // assign a teacher to the course
 export const assignTeacher = async (req: UserRequest, res: Response) => {
-  const { role } = req.user;
-  authTester(role, "admin");
   const { teacherId } = req.body;
   const { courseId } = req.params;
   const course: CourseType | null = await Course.findById(courseId);
@@ -289,14 +287,17 @@ export const deleteCourse = async (req: UserRequest, res: Response) => {
   // delete the course by Id.
   const deletedCourse = await Course.findByIdAndDelete(courseId);
   // return the response
+  await createNotification({
+    creator: req.user._id,
+    sessions: [course.session],
+    text: `The course titled ${course.name} was deleted.`,
+  });
   res
     .status(200)
     .json(new ApiResponse(200, {}, "successfully deleted the course"));
 };
 
- 
 export const uploadTextBook = async (req: UserRequest, res: Response) => {
- 
   const { role, email } = req.user;
   authTester(role, "teacher");
   const { courseId, textbookUrl } = req.body;

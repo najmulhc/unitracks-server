@@ -9,7 +9,7 @@ export interface UserType {
   hashedPassword: string;
   role: Role;
   email: string;
-  details: mongoose.Types.ObjectId;
+  
   refreshToken: string | undefined;
 }
 
@@ -25,6 +25,7 @@ export interface StudentType {
   courses: mongoose.Types.ObjectId[];
   email: string;
   _id: mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
 // not created the Schema
@@ -38,6 +39,7 @@ export interface TeacherType {
   title: "Professor" | "Assistant Professor" | "Lecturer";
   bloodGroup: "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
   authStage: "one" | "completed";
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
 export interface NotificationType {
@@ -91,6 +93,7 @@ export interface AdminType {
   email: string;
   _id: ObjectId;
   role: "admin";
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
 export interface UserRequest extends Request {

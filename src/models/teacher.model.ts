@@ -46,8 +46,13 @@ const teacherSchema = new Schema<TeacherType>({
       values: ["A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
     },
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
-const Teacher = mongoose.model("teacher", teacherSchema);
+const Teacher = mongoose.model("Teacher", teacherSchema);
 
 export default Teacher;

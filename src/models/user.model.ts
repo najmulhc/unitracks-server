@@ -20,14 +20,8 @@ const userSchema = new mongoose.Schema<UserType>({
     },
     default: "unassigned",
   },
-  refreshToken: { // not in use untill next version. 
-    type: String,
-    default: undefined,
-  },
 });
 
- 
-
-const User = mongoose.models.users || mongoose.model("user", userSchema);
+const User = mongoose.models.users || mongoose.model("User", userSchema);
 
 export default User;

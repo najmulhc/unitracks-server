@@ -10,18 +10,18 @@ const notificationSchema = new Schema<NotificationType>({
   },
   setter: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
   },
   studentsFor: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "student",
+      ref: "User",
     },
   ],
   views: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "student",
+      ref: "Student",
     },
   ],
   time: {
