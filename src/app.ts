@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import resourceRouter from "./routes/resource.route";
 import courseColorRouter from "./routes/courseColor.route";
 import notificationRouter from "./routes/notification.route";
+import dashboardRouter from './routes/dashboard.route'
 
 const app = express();
 app.use(cookieParser());
@@ -22,5 +23,6 @@ app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/resource", resourceRouter);
 app.use("/api/v1/course-colors", courseColorRouter);
 app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/dashboard", dashboardRouter)
 
 export default app;
