@@ -115,3 +115,145 @@ export interface ResourceType {
 export interface CourseColorType {
   code: string;
 }
+
+
+export interface Quiz {
+  name: string;
+  startTime: number;
+  endTime: number;
+  questions: {
+    question: string[];
+    options: string[];
+    correctOption: number;
+  }[];
+  responses: QuizResponse[];
+}
+
+export interface QuizResponse {
+  student: number;
+  time: number;
+  quizId: string;
+  answerScript: number[];
+  score: number;
+}
+
+export interface PresentationResponse {
+  presentationId: string;
+  students: string[];
+  isEvaluated: boolean;
+  submission: {
+    video: string;
+    slide: string;
+  };
+  score: number;
+}
+
+export interface Presentation {
+  course: number;
+  topic: string;
+  startingTime: number;
+  endingTime: number;
+  description: string;
+  responses: PresentationResponse[];
+}
+
+export interface AssignmentResponse {
+  assignmentId: string;
+  students: string[];
+  isEvaluated: boolean;
+  score: number;
+  submission: string; // the pdf file
+}
+
+export interface Assignment {
+  course: string;
+  topic: string;
+  startingTime: number;
+  endingTime: number;
+  description: string;
+  responses: AssignmentResponse[];
+}
+
+export interface Exam {
+  type: "final" | "mid";
+  totalMarks: number;
+  questions: {
+    questionNumber: number;
+    totalMarks: number;
+    subQuestions: {
+      question: string;
+      marks: number;
+    }[];
+  }[];
+  response: ExamResponse;
+}
+
+export interface ExamResponse {
+  student: number;
+  exam: number;
+  isEvaluated: boolean;
+  answerScript: {
+    questionNumber: number;
+    responses: {
+      answer: string;
+      marks: number;
+    }[];
+  }[];
+  score: number;
+}
+
+export interface MarksDistribution {
+  course: number;
+  attendence: {
+    minimum: number;
+    totalMarks: number;
+  };
+  quiz: {
+    count: number;
+    questionsCount: number;
+    totalMarks: number;
+  };
+  mid: {
+    count: number;
+    marksForEach: number;
+    totalMarks: number;
+    totalQuestions: number;
+    maxAttemptedQuestions: number;
+  };
+  assignment: {
+    count: number;
+    marksForEach: number;
+    totalMarks: number;
+  };
+
+  presentation: {
+    count: number;
+    marksForEach: number;
+    totalMarks: number;
+  };
+
+  final: {
+    marksForEach: number;
+    totalMarks: number;
+    totalQuestions: number;
+    maxAttempedQuestions: number;
+  };
+
+  total: 100;
+}
+
+export interface FinalScore {
+  student: string;
+  course: string;
+  _id: string;
+  parts: {
+    quiz: number;
+    mid: number;
+    attendence: number;
+    presentation: number;
+    final: number;
+  };
+  grade: string;
+  total: number;
+  GPA: number;
+}
