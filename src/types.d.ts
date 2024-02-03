@@ -9,7 +9,7 @@ export interface UserType {
   hashedPassword: string;
   role: Role;
   email: string;
-  
+
   refreshToken: string | undefined;
 }
 
@@ -116,7 +116,6 @@ export interface CourseColorType {
   code: string;
 }
 
-
 export interface Quiz {
   name: string;
   startTime: number;
@@ -158,19 +157,21 @@ export interface Presentation {
 }
 
 export interface AssignmentResponse {
-  assignmentId: string;
-  students: string[];
+  assignment: mongoose.Types.ObjectId;
+  students: mongoose.Types.ObjectId[];
+  type: "individual" | "group";
   isEvaluated: boolean;
-  score: number;
+  score: number ;
   submission: string; // the pdf file
 }
 
 export interface Assignment {
-  course: string;
+  course: mongoose.Types.ObjectId;
   topic: string;
   startingTime: number;
   endingTime: number;
   description: string;
+  type: "individual" | "group";
   responses: AssignmentResponse[];
 }
 
