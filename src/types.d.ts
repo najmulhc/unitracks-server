@@ -141,7 +141,7 @@ export interface QuizResponse extends EvaluationResponse {
 }
 
 export interface PresentationResponse extends EvaluationResponse {
-  presentationId: string;
+  presentationId: mongoose.Types.ObjectId;
 
   answerScript: {
     video: string;
