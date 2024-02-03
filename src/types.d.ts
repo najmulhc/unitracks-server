@@ -128,23 +128,25 @@ export interface Quiz {
   responses: QuizResponse[];
 }
 
-export interface QuizResponse {
-  student: number;
-  time: number;
-  quizId: string;
-  answerScript: number[];
+export interface EvaluationResponse {
+  students: mongoose.Types.ObjectId[];
   score: number;
+  submissionTime: number;
+  isEvaluated: boolean;
 }
 
-export interface PresentationResponse {
+export interface QuizResponse extends EvaluationResponse {
+  quizId: string;
+  answerScript: number[];
+}
+
+export interface PresentationResponse extends EvaluationResponse {
   presentationId: string;
-  students: string[];
-  isEvaluated: boolean;
-  submission: {
+
+  answerScript: {
     video: string;
     slide: string;
   };
-  score: number;
 }
 
 export interface Presentation {
@@ -156,12 +158,9 @@ export interface Presentation {
   responses: PresentationResponse[];
 }
 
-export interface AssignmentResponse {
-  assignment: mongoose.Types.ObjectId;
-  students: mongoose.Types.ObjectId[];
+export interface AssignmentResponse extends EvaluationResponse {
+  assignmentId: mongoose.Types.ObjectId;
   type: "individual" | "group";
-  isEvaluated: boolean;
-  score: number ;
   submission: string; // the pdf file
 }
 
@@ -189,18 +188,15 @@ export interface Exam {
   response: ExamResponse;
 }
 
-export interface ExamResponse {
-  student: number;
-  exam: number;
-  isEvaluated: boolean;
+export interface ExamResponse extends EvaluationResponse {
+  examId: mongoose.Types.ObjectId;
   answerScript: {
     questionNumber: number;
-    responses: {
+    subQuestions: {
       answer: string;
       marks: number;
     }[];
   }[];
-  score: number;
 }
 
 export interface MarksDistribution {
