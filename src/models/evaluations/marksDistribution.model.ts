@@ -7,6 +7,14 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
     type: mongoose.Schema.Types.ObjectId,
     ref: "course",
   },
+  attendence: {
+    minimum: { type: Number, default: 0, min: 0, max: 20 },
+    totalMarks: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+  },
   quiz: {
     count: {
       type: Number,
@@ -19,8 +27,112 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
       min: 0,
     },
     totalMarks: {
-      type: Number, 
-    }
+      type: Number,
+    },
+  },
+  mid: {
+    count: {
+      type: Number,
+      min: 1,
+      max: 5,
+      default: 1,
+    },
+    marksForEach: {
+      type: Number,
+      min: 10,
+      max: 20,
+      default: 10,
+    },
+    totalMarks: {
+      type: Number,
+      min: 10,
+      max: 100,
+      default: 10,
+    },
+    totalQuestions: {
+      type: Number,
+      min: 0,
+      max: 20,
+      default: 0,
+    },
+    maxAttemptedQuestions: {
+      type: Number,
+      min: 0,
+      max: 20,
+      default: 0,
+    },
+  },
+  assignment: {
+    count: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0,
+    },
+    marksForEach: {
+      type: Number,
+      min: 0,
+      max: 20,
+      default: 0,
+    },
+    totalMarks: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+  },
+  presentation: {
+    count: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0,
+    },
+    marksForEach: {
+      type: Number,
+      min: 0,
+      max: 20,
+      default: 0,
+    },
+    totalMarks: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+  },
+  final: {
+    marksForEach: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    totalMarks: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    totalQuestions: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    maxAttempedQuestions: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+  },
+  total: {
+    type: Number,
+    default: 100,
+    min: 100,
+    max: 100,
   },
 });
 

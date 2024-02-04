@@ -125,7 +125,7 @@ export interface Quiz {
     options: string[];
     correctOption: number;
   }[];
-  responses: QuizResponse[];
+  responses: mongoose.Types.ObjectId[];
 }
 
 export interface EvaluationResponse {
@@ -136,7 +136,7 @@ export interface EvaluationResponse {
 }
 
 export interface QuizResponse extends EvaluationResponse {
-  quizId: string;
+  quizId: mongoose.Types.ObjectId;
   answerScript: number[];
 }
 
@@ -150,12 +150,12 @@ export interface PresentationResponse extends EvaluationResponse {
 }
 
 export interface Presentation {
-  course: number;
+  course: mongoose.Types.ObjectId;
   topic: string;
   startingTime: number;
   endingTime: number;
   description: string;
-  responses: PresentationResponse[];
+  responses: mongoose.Types.ObjectId[];
 }
 
 export interface AssignmentResponse extends EvaluationResponse {
@@ -185,7 +185,7 @@ export interface Exam {
       marks: number;
     }[];
   }[];
-  response: ExamResponse;
+  responses: mongoose.Types.ObjectId;
 }
 
 export interface ExamResponse extends EvaluationResponse {
@@ -240,9 +240,9 @@ export interface MarksDistribution {
 }
 
 export interface FinalScore {
-  student: string;
-  course: string;
-  _id: string;
+  student: mongoose.Types.ObjectId;
+  course: mongoose.Types.ObjectId;
+
   parts: {
     quiz: number;
     mid: number;
@@ -250,7 +250,7 @@ export interface FinalScore {
     presentation: number;
     final: number;
   };
-  grade: string;
+  grade: "A+" | "A" | "A-" | "B+" | "B" | "B-" | "C+" | "C" | "C-" | "D+" | "D" | "D-" | "F"
   total: number;
   GPA: number;
 }
