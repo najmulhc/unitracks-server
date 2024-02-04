@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { AssignmentResponse as AssignmentResponseType } from "../../types";
 
 export const AssignmentResponseSchema = new Schema<AssignmentResponseType>({
-  assignment: {
+  assignmentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "assignment",
     required: [true, "What course this assignment belongs?"],

@@ -200,7 +200,7 @@ export interface ExamResponse extends EvaluationResponse {
 }
 
 export interface MarksDistribution {
-  course: number;
+  course: mongoose.Types.ObjectId;
   attendence: {
     minimum: number;
     totalMarks: number;
