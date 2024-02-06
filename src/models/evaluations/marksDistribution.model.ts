@@ -8,7 +8,16 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
     ref: "course",
   },
   attendence: {
-    minimum: { type: Number, default: 0, min: 0, max: 20 },
+    minimum: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 20,
+      required: [
+        true,
+        "You need to set the minimum amount of attendence to the class.",
+      ],
+    },
     totalMarks: {
       type: Number,
       default: 0,

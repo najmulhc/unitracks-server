@@ -7,6 +7,8 @@ import {
   getAllCourses,
   getCourseById,
   getCourses,
+  getMarksDistribution,
+  setMarksDistribution,
   uploadCourseCoverImage,
   uploadTextBook,
 } from "../controllers/course.controller";
@@ -35,5 +37,9 @@ router
   .route("/cover-image")
   .patch(upload.single("coverImage"), asyncHandler(uploadCourseCoverImage));
 router.route("/textbook").post(asyncHandler(uploadTextBook));
+router
+  .route("/:courseId/marks-distribution")
+  .post(asyncHandler(setMarksDistribution))
+  .get(asyncHandler(getMarksDistribution));
 
 export default router;

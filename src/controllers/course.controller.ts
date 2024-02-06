@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import { deleteImage, uploadImage } from "../utils/uploadImage";
 import { createNotification } from "./notificationController";
 import courseTeacherTester from "../utils/courseTeacherTester";
+import MarksDistribution from "../models/evaluations/marksDistribution.model";
 
 export const createCourse = async (req: UserRequest, res: Response) => {
   // get required information (coursename, course code, batch, teacher);
@@ -325,4 +326,229 @@ export const uploadTextBook = async (req: UserRequest, res: Response) => {
       .status(200)
       .json(new ApiResponse(200, {}, "Successfully updated the textbook."));
   }
+};
+
+// first here, teacher will set the marks distribution of the course
+
+export const setMarksDistribution = async (req: UserRequest, res: Response) => {
+  // get the course ID and teacher
+  const course = await Course.findById(req.params.courseId);
+  const teacher = await Teacher.findOne({ email: req.user.email });
+
+  if (!req.params.courseId) {
+    throw new ApiError(400, `No course Id found in the request params.`);
+  }
+  if (!course) {
+    throw new ApiError(404, `No course found with the given Id.`);
+  }
+
+  if (course.isMarkDistributed) {
+    throw new ApiError(
+      400,
+      "The marks distribution is already set for the course.",
+    );
+  }
+
+  if (!teacher) {
+    throw new ApiError(404, `No teacher found with the given email.`);
+  }
+
+  // test the authenticity of the teacher for the course(we want to asses fi the teacher has access the course);
+
+  if (course.teacher !== teacher._id) {
+    throw new ApiError(401, `You do not have access to the course.`);
+  }
+
+  // get the marks distribution from the request body
+  const { attendence, quiz, mid, assignment, presentation, final } =
+    req.body.marksDistribution;
+  if (!attendence || !quiz || !mid || !assignment || !presentation || !final) {
+    throw new ApiError(400, "Incomplete marks distribution information.");
+  }
+  if (
+    attendence.totalMarks +
+      quiz.totalMarks +
+      mid.totalMarks +
+      assignment.totalMarks +
+      presentation.totalMarks +
+      final.totalMarks !==
+    100
+  ) {
+    throw new ApiError(400, "Total marks must be 100.");
+  }
+
+  // create a new marks distribution object and save it to the course.
+
+  // it will make sure if you include quiz, you have set the number of questions and total marks of the quizzes.
+  if (quiz.count && !quiz.questionsCount) {
+    throw new ApiError(
+      400,
+      "You need to set the number of questions in a quiz.",
+    );
+  } else if (quiz.count && !quiz.totalMarks) {
+    throw new ApiError(
+      400,
+      "You need to set the total marks allocated to quiz.",
+    );
+  }
+
+  // it will make sure if you include mid, you have set the number of questions, total marks and max attempted questions of the mids.
+  if (mid.count) {
+    if (!mid.marksForEach) {
+      throw new ApiError(
+        400,
+        "You need to set the marks for each question in mid.",
+      );
+    } else if (!mid.totalMarks) {
+      throw new ApiError(
+        400,
+        "You need to set the total marks allocated to mid.",
+      );
+    } else if (!mid.totalQuestions) {
+      throw new ApiError(400, "You need to set the total questions in mid.");
+    } else if (!mid.maxAttemptedQuestions) {
+      throw new ApiError(
+        400,
+        "You need to set the maximum attempted questions in mid.",
+      );
+    }
+  }
+
+  // it will make sure if you include assignment, you have set the number of assignments and total marks of the assignments.
+  if (assignment.count) {
+    if (!assignment.totalMarks) {
+      throw new ApiError(
+        400,
+        "You need to set the total marks allocated to assignment.",
+      );
+    } else if (
+      assignment.count * assignment.marksForEach !==
+      assignment.totalMarks
+    ) {
+      throw new ApiError(
+        400,
+        "The total marks of assignment must be equal to the multiplication of count and marksForEach.",
+      );
+    }
+  }
+
+  // it will make sure if you include presentation, you have set the number of presentations and total marks of the presentations.
+  if (presentation.count) {
+    if (!presentation.marksForEach) {
+      throw new ApiError(
+        400,
+        "You need to set the marks for each presentation.",
+      );
+    } else if (
+      presentation.count * presentation.marksForEach !==
+      presentation.totalMarks
+    ) {
+      throw new ApiError(
+        400,
+        "The total marks of presentation must be equal to the multiplication of count and marksForEach.",
+      );
+    }
+  }
+  if (final) {
+    if (!final.marksForEach) {
+      throw new ApiError(
+        400,
+        "You need to set the marks for each question in final.",
+      );
+    } else if (!final.totalMarks) {
+      throw new ApiError(
+        400,
+        "You need to set the total marks allocated to final.",
+      );
+    } else if (!final.totalQuestions) {
+      throw new ApiError(400, "You need to set the total questions in final.");
+    } else if (!final.maxAttemptedQuestions) {
+      throw new ApiError(
+        400,
+        "You need to set the maximum attempted questions in final.",
+      );
+    } else if (
+      final.maxAttempedQuestions * final.marksForEach !==
+      final.totalMarks
+    ) {
+      throw new ApiError(
+        400,
+        "The total marks of final must be equal to the multiplication of maxAttempedQuestions and marksForEach.",
+      );
+    }
+  }
+
+  // if you are here, that means all the data is validated and ready to saved as the marks disribution document for the course.
+  const createdMarksDistribution = await MarksDistribution.create({
+    attendence,
+    quiz,
+    mid,
+    assignment,
+    presentation,
+    final,
+    total: 100,
+    course: course._id,
+  });
+  if (!createdMarksDistribution) {
+    throw new ApiError(
+      500,
+      "There was an error to create the marks distribution.",
+    );
+  }
+  const updatedCourse = await Course.findByIdAndUpdate(
+    course._id,
+    {
+      $set: {
+        marksDistribution: createdMarksDistribution._id,
+      },
+    },
+    { new: true },
+  );
+  if (!updatedCourse) {
+    throw new ApiError(500, "There was an error to update the course.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        course: updatedCourse,
+        marksDistribution: createdMarksDistribution,
+      },
+      "Successfully set the marks distribution.",
+    ),
+  );
+};
+
+export const getMarksDistribution = async (req: UserRequest, res: Response) => {
+  const { courseId } = req.params;
+  if (!courseId) {
+    throw new ApiError(400, "No course id found in the request params.");
+  }
+  const course = await Course.findById(courseId).populate("marksDistribution");
+  if (!course) {
+    throw new ApiError(404, "No course found with the given id.");
+  }
+  if (!course.isMarkDistributed) {
+    throw new ApiError(
+      404,
+      "The marks distribution is not set for the course.",
+    );
+  }
+  const marksDistribution = await MarksDistribution.findById(
+    course.marksDistribution,
+  );
+  if (!marksDistribution) {
+    throw new ApiError(404, "No marks distribution found for the course.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        marksDistribution,
+      },
+      "Successfully found the marks distribution.",
+    ),
+  );
 };
