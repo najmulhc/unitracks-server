@@ -522,13 +522,19 @@ export const setMarksDistribution = async (req: UserRequest, res: Response) => {
 
 export const getMarksDistribution = async (req: UserRequest, res: Response) => {
   const { courseId } = req.params;
+
+  // if the user did not provide any course Id 
   if (!courseId) {
     throw new ApiError(400, "No course id found in the request params.");
   }
   const course = await Course.findById(courseId).populate("marksDistribution");
+
+  // when there is no course found with the given id
   if (!course) {
     throw new ApiError(404, "No course found with the given id.");
   }
+
+  // when the course does not have any marks distribution
   if (!course.isMarkDistributed) {
     throw new ApiError(
       404,
@@ -538,6 +544,8 @@ export const getMarksDistribution = async (req: UserRequest, res: Response) => {
   const marksDistribution = await MarksDistribution.findById(
     course.marksDistribution,
   );
+
+  // if the marksDistribution document does not found in the database
   if (!marksDistribution) {
     throw new ApiError(404, "No marks distribution found for the course.");
   }
