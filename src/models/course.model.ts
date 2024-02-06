@@ -3,6 +3,15 @@ import { CourseType } from "../types";
 import Student from "./student.model";
 
 const courseSchema = new Schema<CourseType>({
+
+  isMarkDistributed: {
+    type: Boolean, 
+    default :false, 
+  }, 
+  marksDistribution: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "marksDistribution",
+  }, 
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "teacher",

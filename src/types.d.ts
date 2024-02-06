@@ -79,6 +79,8 @@ export interface QuizType {
 export interface CourseType {
   teacher: mongoose.Schema.Types.ObjectId | TeacherType;
   session: "2020" | "2021";
+  isMarkDistributed: boolean;
+  marksDistribution: mongoose.Schema.Types.ObjectId;
   students: [mongoose.Schema.Types.ObjectId];
   courseCode: number;
   name: string;
@@ -250,7 +252,20 @@ export interface FinalScore {
     presentation: number;
     final: number;
   };
-  grade: "A+" | "A" | "A-" | "B+" | "B" | "B-" | "C+" | "C" | "C-" | "D+" | "D" | "D-" | "F"
+  grade:
+    | "A+"
+    | "A"
+    | "A-"
+    | "B+"
+    | "B"
+    | "B-"
+    | "C+"
+    | "C"
+    | "C-"
+    | "D+"
+    | "D"
+    | "D-"
+    | "F";
   total: number;
   GPA: number;
 }
