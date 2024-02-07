@@ -9,6 +9,9 @@ const courseTeacherTester = async ({
   courseId: string;
   teacherEmail: string;
 }) => {
+  if (!courseId) {
+    throw new ApiError(400, "No course Id is provided.");
+  }
   const course = await Course.findById(courseId).populate({
     path: "teacher",
     select: "_id email",
@@ -23,8 +26,7 @@ const courseTeacherTester = async ({
   if (courseTeacher?.email !== teacherEmail) {
     throw new ApiError(404, "You are not the teacher of this course.");
   }
-  return course
-  
+  return course;
 };
 
 export default courseTeacherTester;
