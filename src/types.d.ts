@@ -209,11 +209,13 @@ export interface MarksDistribution {
   };
   quiz: {
     count: number;
+    taken: number;
     questionsCount: number;
     totalMarks: number;
   };
   mid: {
     count: number;
+    taken: number;
     marksForEach: number;
     totalMarks: number;
     totalQuestions: number;
@@ -222,11 +224,13 @@ export interface MarksDistribution {
   assignment: {
     count: number;
     marksForEach: number;
+    taken: number;
     totalMarks: number;
   };
 
   presentation: {
     count: number;
+    taken: number;
     marksForEach: number;
     totalMarks: number;
   };
@@ -235,6 +239,7 @@ export interface MarksDistribution {
     marksForEach: number;
     totalMarks: number;
     totalQuestions: number;
+    taken: number;
     maxAttempedQuestions: number;
   };
 

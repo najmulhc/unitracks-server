@@ -37,9 +37,20 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
     },
     totalMarks: {
       type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    taken: {
+      type: Number,
+      default: 0,
     },
   },
   mid: {
+    taken: {
+      type: Number,
+      default: 0,
+    },
     count: {
       type: Number,
       min: 1,
@@ -72,6 +83,10 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
     },
   },
   assignment: {
+    taken: {
+      type: Number,
+      default: 0,
+    },
     count: {
       type: Number,
       min: 0,
@@ -92,6 +107,10 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
     },
   },
   presentation: {
+    taken: {
+      type: Number,
+      default: 0,
+    },
     count: {
       type: Number,
       min: 0,
@@ -134,6 +153,10 @@ const MarksDistributionSchema = new Schema<MarksDistributionType>({
       type: Number,
       min: 0,
       max: 100,
+      default: 0,
+    },
+    taken: {
+      type: Number,
       default: 0,
     },
   },
