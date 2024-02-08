@@ -163,6 +163,31 @@ export const getAssignments = async (req: UserRequest, res: Response) => {
   );
 };
 
+// get a single assignment 
+export const getSingleAssignment = async (req: UserRequest, res: Response) => {
+  const course = await findCourse(req.params.courseId);
+  const {assignmentId} = req.params;
+
+  if(!assignmentId) {
+    throw new ApiError(400, "No assignment Id is provided.");
+  }
+
+  const assignment = await Assignment.findById(assignmentId);
+  if (!assignment) {
+    throw new ApiError(404, "No assignment found with the given Id.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        assignment,
+      },
+      "Successfully fetched the assignment.",
+    ),
+  );
+}
+
 export const deleteAssignment = async (req: UserRequest, res: Response) => {
   const teacher: TeacherType = req?.teacher as TeacherType;
   const course = await courseTeacherTester({

@@ -4,6 +4,7 @@ import asyncHandler from "../utils/asyncHandler.util";
 import {
   deleteAssignment,
   getAssignments,
+  getSingleAssignment,
   getStudentProfile,
   scheduleAssignment,
 } from "../controllers/courseEvaluation.controller";
@@ -31,6 +32,7 @@ router
     varifyJWTMiddleware,
     asyncHandler(teacherTester),
     asyncHandler(deleteAssignment),
-  );
+  )
+  .get(varifyJWTMiddleware, asyncHandler(getSingleAssignment));
 
 export default router;
