@@ -5,7 +5,6 @@ import MarksDistribution from "../models/evaluations/marksDistribution.model";
 import {
   CourseType,
   MarksDistribution as MarksDistributionType,
-  
   StudentType,
   TeacherType,
   UserRequest,
@@ -163,12 +162,12 @@ export const getAssignments = async (req: UserRequest, res: Response) => {
   );
 };
 
-// get a single assignment 
+// get a single assignment
 export const getSingleAssignment = async (req: UserRequest, res: Response) => {
   const course = await findCourse(req.params.courseId);
-  const {assignmentId} = req.params;
+  const { assignmentId } = req.params;
 
-  if(!assignmentId) {
+  if (!assignmentId) {
     throw new ApiError(400, "No assignment Id is provided.");
   }
 
@@ -186,7 +185,7 @@ export const getSingleAssignment = async (req: UserRequest, res: Response) => {
       "Successfully fetched the assignment.",
     ),
   );
-}
+};
 
 export const deleteAssignment = async (req: UserRequest, res: Response) => {
   const teacher: TeacherType = req?.teacher as TeacherType;
@@ -211,11 +210,10 @@ export const deleteAssignment = async (req: UserRequest, res: Response) => {
     throw new ApiError(500, "There was a problem to delete the assignment.");
   }
 
-  const marksDistribution: MarksDistributionType = (await MarksDistribution.findOne(
-    {
+  const marksDistribution: MarksDistributionType =
+    (await MarksDistribution.findOne({
       course: course._id,
-    },
-  )) as MarksDistribution;
+    })) as MarksDistribution;
 
   const updatedMarksDistribution = await MarksDistribution.findOneAndUpdate(
     {
@@ -233,7 +231,10 @@ export const deleteAssignment = async (req: UserRequest, res: Response) => {
   );
 
   if (!updatedMarksDistribution) {
-    throw new ApiError(500, "There was a problem to update the marks distribution.");
+    throw new ApiError(
+      500,
+      "There was a problem to update the marks distribution.",
+    );
   }
 
   res.status(200).json(
@@ -243,6 +244,42 @@ export const deleteAssignment = async (req: UserRequest, res: Response) => {
         success: true,
       },
       "successfully deleted the assignment.",
+    ),
+  );
+};
+
+export const upadateAssignment = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+  const assignment = await Assignment.findById(req.params.assignmentId);
+  if (!assignment) {
+    throw new ApiError(404, "No assignment found with the given Id.");
+  }
+  const { updatedInformation } = req.body;
+
+  const updatedCourse = await Assignment.findByIdAndUpdate(
+    req.params.assignmentId,
+    {
+      $set: {
+        ...updatedInformation,
+      },
+    },
+    { new: true },
+  );
+
+  if (!updatedCourse) {
+    throw new ApiError(500, "There was a problem to update the assignment.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        updatedCourse,
+      },
+      "Successfully updated the assignment.",
     ),
   );
 };

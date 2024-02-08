@@ -7,6 +7,7 @@ import {
   getSingleAssignment,
   getStudentProfile,
   scheduleAssignment,
+  upadateAssignment,
 } from "../controllers/courseEvaluation.controller";
 import studentTester from "../middlewares/studentTester.middleware";
 import teacherTester from "../middlewares/teacherTester.middleware";
@@ -33,6 +34,11 @@ router
     asyncHandler(teacherTester),
     asyncHandler(deleteAssignment),
   )
-  .get(varifyJWTMiddleware, asyncHandler(getSingleAssignment));
+  .get(varifyJWTMiddleware, asyncHandler(getSingleAssignment))
+  .patch(
+    varifyJWTMiddleware,
+    asyncHandler(teacherTester),
+    asyncHandler(upadateAssignment),
+  );
 
 export default router;
