@@ -44,13 +44,11 @@ export const getStudentProfile = async (req: UserRequest, res: Response) => {
 
 // when a teacher will create a new assignment for the course.
 export const scheduleAssignment = async (req: UserRequest, res: Response) => {
-  const course: CourseType = await findCourse(req.params.courseId);
-  const teacher = req?.teacher;
-
-  if (teacher?._id !== course.teacher) {
-    throw new ApiError(400, "You do not have the access of the course.");
-  }
-
+  const course: CourseType = await courseTeacherTester({
+    courseId: req.params.courseId,
+    teacherEmail: req?.teacher?.email as string,
+  });
+  
   const marksDistribution = await MarksDistribution.findOne({
     course: course._id,
   });
@@ -162,7 +160,7 @@ export const getAssignments = async (req: UserRequest, res: Response) => {
   );
 };
 
-// get a single assignment
+// get a single assignment by any user wanted. 
 export const getSingleAssignment = async (req: UserRequest, res: Response) => {
   const course = await findCourse(req.params.courseId);
   const { assignmentId } = req.params;
@@ -187,6 +185,7 @@ export const getSingleAssignment = async (req: UserRequest, res: Response) => {
   );
 };
 
+// route handler for deleting a course's any assignment by a teacher
 export const deleteAssignment = async (req: UserRequest, res: Response) => {
   const teacher: TeacherType = req?.teacher as TeacherType;
   const course = await courseTeacherTester({
@@ -248,6 +247,8 @@ export const deleteAssignment = async (req: UserRequest, res: Response) => {
   );
 };
 
+
+// route handler for updating a course's any assignment by a teacher
 export const upadateAssignment = async (req: UserRequest, res: Response) => {
   const course = await courseTeacherTester({
     courseId: req.params.courseId as string,
@@ -283,3 +284,10 @@ export const upadateAssignment = async (req: UserRequest, res: Response) => {
     ),
   );
 };
+
+
+// route handler for submitting a response by a/multiple students. 
+
+export const submitAssignment = async (req: UserRequest, res: Response) => { 
+  
+}

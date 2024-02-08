@@ -7,6 +7,7 @@ import {
   getSingleAssignment,
   getStudentProfile,
   scheduleAssignment,
+  submitAssignment,
   upadateAssignment,
 } from "../controllers/courseEvaluation.controller";
 import studentTester from "../middlewares/studentTester.middleware";
@@ -39,6 +40,14 @@ router
     varifyJWTMiddleware,
     asyncHandler(teacherTester),
     asyncHandler(upadateAssignment),
+  );
+
+router
+  .route("/:courseId/assignment/:assignmentId/submit")
+  .post(
+    varifyJWTMiddleware,
+    asyncHandler(studentTester),
+    asyncHandler(submitAssignment),
   );
 
 export default router;
