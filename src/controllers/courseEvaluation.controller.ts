@@ -17,6 +17,7 @@ import courseTeacherTester from "../utils/courseTeacherTester";
 import courseStudentTester from "../utils/courseStudentTester.util";
 import mongoose from "mongoose";
 import AssignmentResponse from "../models/evaluations/assignmentResponse.model";
+import Presentation from "../models/evaluations/presentation.model";
 
 export const getStudentProfile = async (req: UserRequest, res: Response) => {
   const { _id } = req.student as StudentType;
@@ -316,7 +317,92 @@ export const submitAssignment = async (req: UserRequest, res: Response) => {
 // PRESENTATION PART
 
 // route handler for creating a new presentation by teacher.
-export const createPresentation = async (req: UserRequest, res: Response) => {};
+export const createPresentation = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+
+  const marksDistribution = await MarksDistribution.findOne({
+    course: course._id,
+  });
+
+  if (!marksDistribution) {
+    throw new ApiError(500, "Your course may not have marks distributed yet.");
+  }
+  
+  if (
+    marksDistribution.presentation.count === marksDistribution.presentation.taken
+  ) {
+    throw new ApiError(
+      400,
+      "You have already taken the maximum number of presentations.",
+    );
+  }
+
+  const { presentationTopic, startingTime, endingTime, description } = req.body;
+
+  if (!presentationTopic || !startingTime || endingTime || description) {
+    throw new ApiError(400, "Incomplete presentation information.");
+  }
+
+  if (typeof presentationTopic !== "string" || typeof description !== "string") {
+    throw new ApiError(
+      400,
+      "Invalid type of data given for presentation title or description or both. We accept only string type of data for them.",
+    );
+  }
+
+  if (typeof startingTime !== "number" || typeof endingTime !== "number") {
+    throw new ApiError(
+      400,
+      "Invalid type of data for presentation start and end time. we accept neumaric value of time in unix system.",
+    );
+  }
+
+  const createdPresentation = await Presentation.create({
+    topic: presentationTopic,
+    description,
+    startingTime,
+    endingTime,
+    course: course._id,
+  });
+
+  if (!createdPresentation) {
+    throw new ApiError(500, "There was a problem to create the presentation.");
+  }
+
+  const updatedMarksDistribution = MarksDistribution.findByIdAndUpdate(
+    marksDistribution._id,
+    {
+      $set: {
+        presentation: {
+          ...marksDistribution.presentation,
+          taken: marksDistribution.presentation.taken + 1,
+        },
+      },
+    },
+  );
+
+  if (!updatedMarksDistribution) {
+    await Presentation.findByIdAndDelete(createdPresentation._id);
+    throw new ApiError(
+      500,
+      "There was an error to update the marks distribution document.",
+    );
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        presentation: createdPresentation,
+        marksDistribution: updatedMarksDistribution,
+      },
+      "Successfully created the presentation.",
+    ),
+  );
+};
 
 // route handler for updating a new presentation by teacher.
 export const updatePresentation = async (req: UserRequest, res: Response) => {};
