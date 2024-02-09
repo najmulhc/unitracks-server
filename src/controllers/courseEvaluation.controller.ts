@@ -14,6 +14,9 @@ import ApiResponse from "../utils/ApiResponse.util";
 import { Response } from "express";
 import findCourse from "../utils/findCourse.util";
 import courseTeacherTester from "../utils/courseTeacherTester";
+import courseStudentTester from "../utils/courseStudentTester.util";
+import mongoose from "mongoose";
+import AssignmentResponse from "../models/evaluations/assignmentResponse.model";
 
 export const getStudentProfile = async (req: UserRequest, res: Response) => {
   const { _id } = req.student as StudentType;
@@ -48,7 +51,7 @@ export const scheduleAssignment = async (req: UserRequest, res: Response) => {
     courseId: req.params.courseId,
     teacherEmail: req?.teacher?.email as string,
   });
-  
+
   const marksDistribution = await MarksDistribution.findOne({
     course: course._id,
   });
@@ -160,7 +163,7 @@ export const getAssignments = async (req: UserRequest, res: Response) => {
   );
 };
 
-// get a single assignment by any user wanted. 
+// get a single assignment by any user wanted.
 export const getSingleAssignment = async (req: UserRequest, res: Response) => {
   const course = await findCourse(req.params.courseId);
   const { assignmentId } = req.params;
@@ -247,7 +250,6 @@ export const deleteAssignment = async (req: UserRequest, res: Response) => {
   );
 };
 
-
 // route handler for updating a course's any assignment by a teacher
 export const upadateAssignment = async (req: UserRequest, res: Response) => {
   const course = await courseTeacherTester({
@@ -285,9 +287,57 @@ export const upadateAssignment = async (req: UserRequest, res: Response) => {
   );
 };
 
+// route handler for submitting a response by a/multiple students.
 
-// route handler for submitting a response by a/multiple students. 
+export const submitAssignment = async (req: UserRequest, res: Response) => {
+  const course = await courseStudentTester({
+    courseId: req.params.courseId as string,
+    studentId: req?.student?._id as mongoose.Schema.Types.ObjectId,
+  });
+  const { assignmentId } = req.params;
+  const assignment = await Assignment.findById(assignmentId);
 
-export const submitAssignment = async (req: UserRequest, res: Response) => { 
-  
-}
+  if (!assignment) {
+    throw new ApiError(404, "No assignment found with the given Id.");
+  }
+
+  const alreadySubmitted = await AssignmentResponse.findOne({
+    assigmentId: assignment._id,
+    students: [req?.student?._id as mongoose.Schema.Types.ObjectId],
+  });
+
+  if (alreadySubmitted) {
+    throw new ApiError(403, "You have already submitted the assignment.");
+  }
+
+  // now we have a fresh response submitted that passed all validations. we can now save the response to the database.
+};
+
+// PRESENTATION PART
+
+// route handler for creating a new presentation by teacher.
+export const createPresentation = async (req: UserRequest, res: Response) => {};
+
+// route handler for updating a new presentation by teacher.
+export const updatePresentation = async (req: UserRequest, res: Response) => {};
+
+// route handler for deleting a presentation by teacher
+export const deletePresentation = async (req: UserRequest, res: Response) => {};
+
+// route handler for getting all the presentations of the course.
+export const getPresentations = async (req: UserRequest, res: Response) => {};
+
+// route handler for getting a single presentation of the course. (two usecase, one for teacher and the other for students.)
+export const getSinglePresentation = async (
+  req: UserRequest,
+  res: Response,
+) => {};
+
+// route handler for submitting a single presentation response.
+export const submitPresentation = async (req: UserRequest, res: Response) => {};
+
+// route handler for evaluating a single presentation response.
+export const evaluatePresentation = async (
+  req: UserRequest,
+  res: Response,
+) => {};
