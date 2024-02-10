@@ -330,9 +330,10 @@ export const createPresentation = async (req: UserRequest, res: Response) => {
   if (!marksDistribution) {
     throw new ApiError(500, "Your course may not have marks distributed yet.");
   }
-  
+
   if (
-    marksDistribution.presentation.count === marksDistribution.presentation.taken
+    marksDistribution.presentation.count ===
+    marksDistribution.presentation.taken
   ) {
     throw new ApiError(
       400,
@@ -346,7 +347,10 @@ export const createPresentation = async (req: UserRequest, res: Response) => {
     throw new ApiError(400, "Incomplete presentation information.");
   }
 
-  if (typeof presentationTopic !== "string" || typeof description !== "string") {
+  if (
+    typeof presentationTopic !== "string" ||
+    typeof description !== "string"
+  ) {
     throw new ApiError(
       400,
       "Invalid type of data given for presentation title or description or both. We accept only string type of data for them.",
@@ -405,7 +409,42 @@ export const createPresentation = async (req: UserRequest, res: Response) => {
 };
 
 // route handler for updating a new presentation by teacher.
-export const updatePresentation = async (req: UserRequest, res: Response) => {};
+export const updatePresentation = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+  const presentation = await Presentation.findById(req.params.presentationId);
+
+  if (!presentation) {
+    throw new ApiError(404, "No presentation found with the given Id.");
+  }
+  const  {updatedPresentationRequest} = req.body;
+
+  const updatedPresentation = await Presentation.findByIdAndUpdate(
+    req.params.presentationId,
+    {
+      $set: {
+        ...updatedPresentationRequest,
+      },
+    },
+    { new: true },
+  );
+
+  if (!updatedPresentation) {
+    throw new ApiError(500, "There was a problem to update the presentation.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        updatedPresentation,
+      },
+      "Successfully updated the presentation.",
+    ),
+  );
+};
 
 // route handler for deleting a presentation by teacher
 export const deletePresentation = async (req: UserRequest, res: Response) => {};
