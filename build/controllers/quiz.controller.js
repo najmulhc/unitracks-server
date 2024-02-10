@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteQuiz = exports.postQuizResponse = exports.getQuizQuestions = exports.getAllCoursesForStudent = exports.getQuizById = exports.addQuestion = exports.createNewQuiz = void 0;
-const quiz_model_1 = __importDefault(require("../models/quiz.model"));
+const quiz_model_1 = __importDefault(require("../models/evaluations/quiz.model"));
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
 const createNewQuiz = async (req, res) => {

@@ -24,33 +24,46 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const notificationSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: [true, "We need the title of the notification"],
-        minlength: 15,
-        maxlength: 50
+const ExamSchema = new mongoose_1.Schema({
+    type: {
+        enum: ["final", "mid"],
+        default: "mid",
     },
-    setter: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
-    },
-    usersFor: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ],
-    views: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
-        },
-    ],
-    time: {
+    totalMarks: {
         type: Number,
-        required: true,
+        min: 0,
+        max: 70,
+        default: 0,
+        required: [true, "Please specify the total marks"],
+    },
+    questions: [
+        {
+            questionNumber: { type: Number, min: 1, max: 10 },
+            totalMarks: {
+                type: Number,
+                min: 3,
+                max: 15,
+            },
+            subQuestions: [
+                {
+                    question: {
+                        type: String,
+                        required: [true, "Please specify the question"],
+                    },
+                    marks: {
+                        type: Number,
+                        min: 0,
+                        max: 15,
+                        required: [true, "Please specify the marks"],
+                    },
+                },
+            ],
+        },
+    ],
+    responses: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "examResponse",
     },
 });
-const Notification = mongoose_1.default.model("Notification", notificationSchema);
-exports.default = Notification;
+const Exam = mongoose_1.default.model("exam", ExamSchema);
+exports.default = Exam;

@@ -29,6 +29,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const student_model_1 = __importDefault(require("./student.model"));
 const courseSchema = new mongoose_1.Schema({
+    isMarkDistributed: {
+        type: Boolean,
+        default: false,
+    },
+    marksDistribution: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "marksDistribution",
+    },
     teacher: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "teacher",
@@ -69,7 +77,12 @@ const courseSchema = new mongoose_1.Schema({
     coverImage: {
         type: String,
         required: false,
-    }
+    },
+    textBook: [
+        {
+            type: String,
+        },
+    ],
 });
 courseSchema.pre("save", async function (next) {
     if (!this.isModified("courseCode")) {
@@ -90,5 +103,5 @@ courseSchema.pre("save", async function (next) {
     }
     next();
 });
-const Course = mongoose_1.default.model("course", courseSchema);
+const Course = mongoose_1.default.model("Course", courseSchema);
 exports.default = Course;

@@ -1,4 +1,4 @@
-import Quiz from "../models/quiz.model";
+import Quiz from "../models/evaluations/quiz.model";
 import ApiError from "../utils/ApiError.util";
 import { Request, Response } from "express";
 import ApiResponse from "../utils/ApiResponse.util";

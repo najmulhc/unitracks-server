@@ -23,34 +23,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AssignmentResponseSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const notificationSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: [true, "We need the title of the notification"],
-        minlength: 15,
-        maxlength: 50
-    },
-    setter: {
+exports.AssignmentResponseSchema = new mongoose_1.Schema({
+    assignmentId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "assignment",
+        required: [true, "What course this assignment belongs?"],
     },
-    usersFor: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ],
-    views: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
-        },
-    ],
-    time: {
+    isEvaluated: {
+        type: Boolean,
+        default: false,
+    },
+    score: {
         type: Number,
-        required: true,
+        default: 0,
+    },
+    type: {
+        type: String,
+        enum: ["individual", "group"],
+        required: [true, "Please specify the type of the assignment."],
+    },
+    students: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "student",
+        },
+    ],
+    submission: {
+        type: String,
+        required: [true, "Please insert the assingment PDF file."],
     },
 });
-const Notification = mongoose_1.default.model("Notification", notificationSchema);
-exports.default = Notification;
+const AssignmentResponse = mongoose_1.default.model("assignmentResponse", exports.AssignmentResponseSchema);
+exports.default = AssignmentResponse;

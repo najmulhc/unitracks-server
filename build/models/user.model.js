@@ -23,10 +23,6 @@ const userSchema = new mongoose_1.default.Schema({
         },
         default: "unassigned",
     },
-    refreshToken: {
-        type: String,
-        default: undefined,
-    },
 });
-const User = mongoose_1.default.models.users || mongoose_1.default.model("user", userSchema);
+const User = mongoose_1.default.models.users || mongoose_1.default.model("User", userSchema);
 exports.default = User;

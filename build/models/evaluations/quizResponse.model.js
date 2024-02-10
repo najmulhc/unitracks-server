@@ -24,33 +24,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const notificationSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: [true, "We need the title of the notification"],
-        minlength: 15,
-        maxlength: 50
-    },
-    setter: {
+const QuizResponseSchema = new mongoose_1.Schema({
+    students: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "student" }],
+    quizId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "quiz",
     },
-    usersFor: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ],
-    views: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
-        },
-    ],
-    time: {
+    answerScript: [{ type: Number, min: 0, max: 5 }],
+    score: {
         type: Number,
-        required: true,
+        min: 0,
+        max: 100,
+        default: 0,
+    },
+    isEvaluated: { type: Boolean, default: false },
+    submissionTime: {
+        type: Number,
+        default: 0,
+        required: [true, "Please provide the submission time"],
     },
 });
-const Notification = mongoose_1.default.model("Notification", notificationSchema);
-exports.default = Notification;
+const QuizResponse = mongoose_1.default.model("QuizResponse", QuizResponseSchema);
+exports.default = QuizResponse;

@@ -24,33 +24,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const notificationSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: [true, "We need the title of the notification"],
-        minlength: 15,
-        maxlength: 50
-    },
-    setter: {
+const PresentationSchema = new mongoose_1.Schema({
+    course: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "course",
     },
-    usersFor: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ],
-    views: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
-        },
-    ],
-    time: {
+    topic: {
+        type: String,
+        required: [true, "Please provide the title of the presentation"],
+    },
+    description: {
+        type: String,
+        required: [true, "Please provide the description of the presentation"],
+    },
+    startingTime: {
         type: Number,
-        required: true,
+        min: 0,
+        max: 100,
+        required: [true, "Please provide the marks of the presentation"],
     },
+    endingTime: {
+        type: Number,
+        min: 0,
+        max: 100,
+        required: [true, "Please provide the marks of the presentation"],
+    },
+    responses: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "presentationResponse",
+        },
+    ],
 });
-const Notification = mongoose_1.default.model("Notification", notificationSchema);
-exports.default = Notification;
+const Presentation = mongoose_1.default.model("Presentation", PresentationSchema);
+exports.default = Presentation;

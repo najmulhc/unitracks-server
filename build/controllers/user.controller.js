@@ -29,7 +29,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.setUserRole = exports.getAllUsers = exports.loginWithToken = exports.beAnAdmin = exports.login = exports.basicRegister = void 0;
 const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const admin_model_1 = __importDefault(require("../models/admin.model"));
 const jwt = __importStar(require("jsonwebtoken"));
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const createStudent_util_1 = __importDefault(require("../utils/createStudent.util"));
@@ -38,6 +37,7 @@ const createTeacher_util_1 = __importDefault(require("../utils/createTeacher.uti
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
 const student_model_1 = __importDefault(require("../models/student.model"));
+const notificationController_1 = require("./notificationController");
 // in the first time the user will have no role assigned, so we will create a simple unassigned user role untill
 const basicRegister = async (req, res) => {
     const { email, password } = req?.body;
@@ -86,12 +86,18 @@ const login = async (req, res) => {
         email,
         role: user?.role,
     }, process.env.JWT_SIGN);
+    const notification = await (0, notificationController_1.createNotification)({
+        creator: user._id,
+        text: "dummy text of notification",
+        sessions: ["2020", "2021"],
+    });
     return res.status(200).json(new ApiResponse_util_1.default(200, {
         token,
         user: {
             email: user.email,
             role: user.role,
         },
+        notification,
     }, "user created"));
 };
 exports.login = login;
@@ -103,9 +109,6 @@ const beAnAdmin = async (req, res) => {
     if (key !== process.env.ADMIN_KEY || !key) {
         throw new ApiError_util_1.default(400, "Invalid admin key");
     }
-    const admin = await admin_model_1.default.create({
-        email,
-    });
     const updatedUser = await user_model_1.default.findOneAndUpdate({ email }, {
         role: "admin",
     }, {
@@ -161,7 +164,10 @@ const setUserRole = async (req, res) => {
     });
     // creates new student
     if (req.body.userRole === "student") {
-        const createdStudent = await (0, createStudent_util_1.default)(userEmail);
+        const createdStudent = await (0, createStudent_util_1.default)({
+            email: req.body.userEmail,
+            userId: updatedUser._id,
+        });
         return res.status(200).json(new ApiResponse_util_1.default(200, {
             student: createdStudent,
         }, "student created Successfully"));

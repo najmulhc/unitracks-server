@@ -13,6 +13,11 @@ const adminSchema = new mongoose_1.default.Schema({
         type: String,
         default: "admin",
     },
+    userId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
 });
-const Admin = mongoose_1.default.models.admin || mongoose_1.default.model("admin", adminSchema);
+const Admin = mongoose_1.default.models.admin || mongoose_1.default.model("Admin", adminSchema);
 exports.default = Admin;

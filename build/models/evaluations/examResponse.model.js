@@ -24,33 +24,54 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const notificationSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: [true, "We need the title of the notification"],
-        minlength: 15,
-        maxlength: 50
-    },
-    setter: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
-    },
-    usersFor: [
+const ExamResponseSchema = new mongoose_1.Schema({
+    students: [
         {
             type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "student",
         },
     ],
-    views: [
-        {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Student",
-        },
-    ],
-    time: {
+    score: {
+        type: Number,
+        min: 0,
+        max: 60,
+        default: 0,
+    },
+    submissionTime: {
         type: Number,
         required: true,
     },
+    isEvaluated: {
+        type: Boolean,
+        default: false,
+    },
+    examId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "exam",
+    },
+    answerScript: [
+        {
+            questionNumber: {
+                type: Number,
+                required: true,
+                min: 1,
+                max: 10,
+            },
+            subQuestions: [
+                {
+                    answer: {
+                        type: String,
+                        default: "",
+                    },
+                    marks: {
+                        type: Number,
+                        min: 0,
+                        max: 15,
+                    },
+                },
+            ],
+        },
+    ],
 });
-const Notification = mongoose_1.default.model("Notification", notificationSchema);
-exports.default = Notification;
+const ExamResponse = mongoose_1.default.model("ExamResponse", ExamResponseSchema);
+exports.default = ExamResponse;

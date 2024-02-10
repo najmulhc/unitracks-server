@@ -24,23 +24,59 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const resourceSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: true,
-    },
-    link: {
-        type: String,
-        required: true,
-    },
-    teacher: {
+const FinalScoreSchema = new mongoose_1.Schema({
+    student: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Teacher",
+        ref: "student"
     },
     course: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Course",
+        ref: "course"
     },
+    parts: {
+        quiz: {
+            type: Number,
+            min: 0,
+            max: 100,
+        },
+        mid: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        attendence: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        presentation: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        final: {
+            type: Number,
+            min: 0,
+            max: 100,
+            required: [true, "Please specify the score in final exam."]
+        }
+    },
+    grade: {
+        type: String,
+        enum: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"],
+        required: [true, "Please specify the grade"]
+    },
+    total: {
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0
+    }, GPA: {
+        type: Number,
+        min: 0,
+        max: 4,
+        required: [true, "Please specify the GPA"]
+    }
 });
-const Resource = (0, mongoose_1.model)("Resource", resourceSchema);
-exports.default = Resource;
+const FinalScore = mongoose_1.default.model("finalScore", FinalScoreSchema);
+exports.default = FinalScore;

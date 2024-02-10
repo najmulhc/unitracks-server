@@ -4,10 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTeacher = exports.postTeacher = void 0;
+exports.getAllTeachers = exports.getTeacher = exports.postTeacher = void 0;
 const ApiError_util_1 = __importDefault(require("../utils/ApiError.util"));
 const teacher_model_1 = __importDefault(require("../models/teacher.model"));
 const ApiResponse_util_1 = __importDefault(require("../utils/ApiResponse.util"));
+const authTester_util_1 = __importDefault(require("../utils/authTester.util"));
 // completes the information collection process of a teacher
 const postTeacher = async (req, res) => {
     // this will take all information needed for a teacher
@@ -66,3 +67,12 @@ const getTeacher = async (req, res) => {
     }, "Found the teacher"));
 };
 exports.getTeacher = getTeacher;
+const getAllTeachers = async (req, res) => {
+    const { role } = req.user;
+    (0, authTester_util_1.default)(role, "admin");
+    const teachers = await teacher_model_1.default.find().select("_id firstName lastName email");
+    res.status(200).json(new ApiResponse_util_1.default(200, {
+        teachers,
+    }, "Got all the teachers"));
+};
+exports.getAllTeachers = getAllTeachers;
