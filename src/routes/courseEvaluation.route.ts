@@ -2,15 +2,15 @@ import { Router } from "express";
 import varifyJWTMiddleware from "../middlewares/varifyJWT.middleware";
 import asyncHandler from "../utils/asyncHandler.util";
 import {
+  createAssignment,
   createPresentation,
   deleteAssignment,
   evaluatePresentation,
-  getAssignments,
-  getPresentations,
+  getAllAssignments,
+  getAllPresentations,
   getSingleAssignment,
   getSinglePresentation,
   getStudentProfile,
-  scheduleAssignment,
   submitAssignment,
   upadateAssignment,
   updatePresentation,
@@ -28,10 +28,16 @@ router
     asyncHandler(getStudentProfile),
   );
 
+
+// for assignments
 router
   .route("/:courseId/assignment")
-  .post(varifyJWTMiddleware, asyncHandler(scheduleAssignment))
-  .get(varifyJWTMiddleware, asyncHandler(getAssignments));
+  .post(
+    varifyJWTMiddleware,
+    asyncHandler(teacherTester),
+    asyncHandler(createAssignment),
+  )
+  .get(varifyJWTMiddleware, asyncHandler(getAllAssignments));
 
 router
   .route("/:courseId/assignment/:assignmentId")
@@ -63,7 +69,7 @@ router
     asyncHandler(teacherTester),
     asyncHandler(createPresentation),
   )
-  .get(varifyJWTMiddleware, asyncHandler(getPresentations));
+  .get(varifyJWTMiddleware, asyncHandler(getAllPresentations));
 
 router
   .route("/:courseId/presentation/:presentationId")

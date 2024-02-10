@@ -1,4 +1,3 @@
-import Course from "../models/course.model";
 import Assignment from "../models/evaluations/assignment.model";
 import FinalScore from "../models/evaluations/finalScore.model";
 import MarksDistribution from "../models/evaluations/marksDistribution.model";
@@ -46,8 +45,10 @@ export const getStudentProfile = async (req: UserRequest, res: Response) => {
   );
 };
 
+// ASSIGNMENT PART
+
 // when a teacher will create a new assignment for the course.
-export const scheduleAssignment = async (req: UserRequest, res: Response) => {
+export const createAssignment = async (req: UserRequest, res: Response) => {
   const course: CourseType = await courseTeacherTester({
     courseId: req.params.courseId,
     teacherEmail: req?.teacher?.email as string,
@@ -144,7 +145,7 @@ export const scheduleAssignment = async (req: UserRequest, res: Response) => {
 };
 
 // to get all the assignments of the course.
-export const getAssignments = async (req: UserRequest, res: Response) => {
+export const getAllAssignments = async (req: UserRequest, res: Response) => {
   const course = await findCourse(req.params.courseId);
   const assignments = await Assignment.find({ course: course._id });
   if (!assignments) {
@@ -314,6 +315,15 @@ export const submitAssignment = async (req: UserRequest, res: Response) => {
   // now we have a fresh response submitted that passed all validations. we can now save the response to the database.
 };
 
+export const evaluateAssignment = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    teacherEmail: req?.teacher?.email as string,
+    courseId: req.params.courseId as string,
+  });
+
+  const assignmentResponse = await AssignmentResponse.findById(req.params)
+};
+
 // PRESENTATION PART
 
 // route handler for creating a new presentation by teacher.
@@ -466,32 +476,32 @@ export const deletePresentation = async (req: UserRequest, res: Response) => {
     throw new ApiError(500, "There was a problem to delete the presentation.");
   }
 
- const marksDistribution: MarksDistributionType =
-   (await MarksDistribution.findOne({
-     course: course._id,
-   })) as MarksDistribution;
+  const marksDistribution: MarksDistributionType =
+    (await MarksDistribution.findOne({
+      course: course._id,
+    })) as MarksDistribution;
 
- const updatedMarksDistribution = await MarksDistribution.findOneAndUpdate(
-   {
-     course: course._id,
-   },
-   {
-     $set: {
-       presentation: {
-         ...marksDistribution?.presentation,
-         taken: marksDistribution?.presentation.taken - 1,
-       },
-     },
-   },
-   { new: true },
- );
+  const updatedMarksDistribution = await MarksDistribution.findOneAndUpdate(
+    {
+      course: course._id,
+    },
+    {
+      $set: {
+        presentation: {
+          ...marksDistribution?.presentation,
+          taken: marksDistribution?.presentation.taken - 1,
+        },
+      },
+    },
+    { new: true },
+  );
 
- if (!updatedMarksDistribution) {
-   throw new ApiError(
-     500,
-     "There was a problem to update the marks distribution.",
-   );
- }
+  if (!updatedMarksDistribution) {
+    throw new ApiError(
+      500,
+      "There was a problem to update the marks distribution.",
+    );
+  }
 
   res.status(200).json(
     new ApiResponse(
@@ -505,16 +515,75 @@ export const deletePresentation = async (req: UserRequest, res: Response) => {
 };
 
 // route handler for getting all the presentations of the course.
-export const getPresentations = async (req: UserRequest, res: Response) => {};
+export const getAllPresentations = async (req: UserRequest, res: Response) => {
+  const course = await findCourse(req.params.courseId);
+
+  const presentations = await Presentation.find({
+    course: course._id,
+  });
+
+  if (!presentations) {
+    throw new ApiError(404, "No presentation are there in this course.");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { presentations },
+        "Successfully fetched all presentations.",
+      ),
+    );
+};
 
 // route handler for getting a single presentation of the course. (two usecase, one for teacher and the other for students.)
 export const getSinglePresentation = async (
   req: UserRequest,
   res: Response,
-) => {};
+) => {
+  const presentation = await Presentation.findById(req.params.presentationId);
+
+  if (!presentation) {
+    throw new ApiError(404, "No presentation found with the given Id.");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { presentation },
+        "Successfully fetched the presentation.",
+      ),
+    );
+};
 
 // route handler for submitting a single presentation response.
-export const submitPresentation = async (req: UserRequest, res: Response) => {};
+export const submitPresentation = async (req: UserRequest, res: Response) => {
+  const course = await courseStudentTester({
+    courseId: req.params.courseId as string,
+    studentId: req?.student?._id as mongoose.Schema.Types.ObjectId,
+  });
+
+  const { presentationId } = req.params;
+  const presentation = await Presentation.findById(presentationId);
+
+  if (!presentation) {
+    throw new ApiError(404, "No presentation found with the given Id.");
+  }
+
+  const alreadySubmitted = await AssignmentResponse.findOne({
+    presentationId: presentation._id,
+    students: [req?.student?._id as mongoose.Schema.Types.ObjectId],
+  });
+
+  if (alreadySubmitted) {
+    throw new ApiError(403, "You have already submitted the presentation.");
+  }
+
+  // now we have a fresh response submitted that passed all validations. we can now save the response to the database.
+};
 
 // route handler for evaluating a single presentation response.
 export const evaluatePresentation = async (
