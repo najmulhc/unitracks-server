@@ -419,7 +419,7 @@ export const updatePresentation = async (req: UserRequest, res: Response) => {
   if (!presentation) {
     throw new ApiError(404, "No presentation found with the given Id.");
   }
-  const  {updatedPresentationRequest} = req.body;
+  const { updatedPresentationRequest } = req.body;
 
   const updatedPresentation = await Presentation.findByIdAndUpdate(
     req.params.presentationId,
@@ -447,7 +447,62 @@ export const updatePresentation = async (req: UserRequest, res: Response) => {
 };
 
 // route handler for deleting a presentation by teacher
-export const deletePresentation = async (req: UserRequest, res: Response) => {};
+export const deletePresentation = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    teacherEmail: req.teacher?.email as string,
+    courseId: req.params.courseId as string,
+  });
+  const presentation = await Presentation.findById(req.params.presentationId);
+
+  if (!presentation) {
+    throw new ApiError(404, "No presentation found with the given Id.");
+  }
+
+  const deletedPresentation = await Presentation.findByIdAndDelete(
+    req.params.presentationId,
+  );
+
+  if (!deletedPresentation) {
+    throw new ApiError(500, "There was a problem to delete the presentation.");
+  }
+
+ const marksDistribution: MarksDistributionType =
+   (await MarksDistribution.findOne({
+     course: course._id,
+   })) as MarksDistribution;
+
+ const updatedMarksDistribution = await MarksDistribution.findOneAndUpdate(
+   {
+     course: course._id,
+   },
+   {
+     $set: {
+       presentation: {
+         ...marksDistribution?.presentation,
+         taken: marksDistribution?.presentation.taken - 1,
+       },
+     },
+   },
+   { new: true },
+ );
+
+ if (!updatedMarksDistribution) {
+   throw new ApiError(
+     500,
+     "There was a problem to update the marks distribution.",
+   );
+ }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        success: true,
+      },
+      "successfully deleted the presentation.",
+    ),
+  );
+};
 
 // route handler for getting all the presentations of the course.
 export const getPresentations = async (req: UserRequest, res: Response) => {};
