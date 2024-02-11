@@ -57,7 +57,46 @@ const createQuiz = async (req: UserRequest, res: Response) => {
 
 // route handler for accessing all quizzess
 
+export const getAllQuizzes = async (req: UserRequest, res: Response) => {
+  const quizzes = await Quiz.find({
+    courseId: req.params.courseId,
+    isPublished: true,
+  });
+
+  if (!quizzes) {
+    throw new ApiError(404, "No quizzes found for this course.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        quizzes,
+      },
+      "Successfully fetched all the quizzes.",
+    ),
+  );
+};
+
 // route handler for getting a single quiz
+
+export const getSingleQuiz  = async (req: UserRequest, res: Response) => {
+  const quiz = await Quiz.findById(req.params.quizId);
+
+  if (!quiz) {
+    throw new ApiError(404, "No quiz found with this id.");
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        quiz,
+      },
+      "Successfully fetched the quiz.",
+    ),
+  );
+}
 
 // route handler for updating a quiz
 
