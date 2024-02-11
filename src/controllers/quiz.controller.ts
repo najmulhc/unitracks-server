@@ -1,111 +1,70 @@
-import Quiz from "../models/evaluations/quiz.model";
+import mongoose, { ObjectId } from "mongoose";
+import { Types } from "mongoose";
+import { Response } from "express";
+import { UserRequest } from "../types";
+import courseTeacherTester from "../utils/courseTeacherTester";
 import ApiError from "../utils/ApiError.util";
-import { Request, Response } from "express";
+import Quiz from "../models/evaluations/quiz.model";
 import ApiResponse from "../utils/ApiResponse.util";
-import { QuizType, UserRequest } from "../types";
 
-export const createNewQuiz = async (req: UserRequest, res: Response) => {
-  const { teacher, course } = req;
-
-  // varification of given information
-  const { quizName }: any = req.body;
-  if (!quizName) {
-    throw new ApiError(400, "No quiz name given.");
-  }
-
-  // create simple quiz object and store it to db.
-  const quiz = await Quiz.create({
-    teacher: teacher?._id,
-    course: course?._id,
-    name: quizName,
+// route handler for quiz creation.
+const createQuiz = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
   });
 
-  if (!quiz) {
-    throw new ApiError(500, "There was an error creating the quiz.");
+  const { name, startingTime, endingTime } = req.body;
+
+  if (!name || !startingTime || !endingTime) {
+    throw new ApiError(400, "Incomplete quiz creation request.");
   }
 
-  // return created quiz
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        quiz,
-      },
-      "The quiz has been created.",
-    ),
-  );
-};
-
-// adding questions to the quiz
-
-export const addQuestion = async (req: UserRequest, res: Response) => {
-  const { teacher, course } = req;
-  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
-};
-
-// getting a quiz by id.
-
-export const getQuizById = async (req: UserRequest, res: Response) => {
-  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
-};
-
-// getting quizzes by course for a student.
-
-export const getAllCoursesForStudent = async (
-  req: UserRequest,
-  res: Response,
-) => {
-  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
-};
-
-// getting all quizzes by a teacher.
-
-// getting quiz questions by students
-
-export const getQuizQuestions = async (req: UserRequest, res: Response) => {
-  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
-};
-
-// posting student response of a quiz
-export const postQuizResponse = async (req: UserRequest, res: Response) => {
-  return res.status(200).json(new ApiResponse(200, {}, "Messge"));
-};
-
-// deleting a quiz
-
-export const deleteQuiz = async (req: UserRequest, res: Response) => {
-  const { course } = req;
-  const { quizId } = req.body;
-
-  // find and validate the quiz
-  const quiz: QuizType | null = await Quiz.findById(quizId);
-  if (!quiz) {
-    throw new ApiError(400, "Invalid quiz id.");
-  }
-  if (quiz && quiz.course !== course?._id) {
-    throw new ApiError(404, "The quiz does not exists in the course.");
-  }
-
-  // delete the quiz
-  try {
-    await Quiz.findByIdAndDelete(quizId);
-  } catch (error: any) {
+  if (typeof name !== "string") {
     throw new ApiError(
-      500,
-      error.message || "There was an error to delete the quiz.",
+      400,
+      "Invalid type of data in the quiz name. we only accept string for this data.",
+    );
+  }
+  if (typeof startingTime !== "number" || typeof endingTime !== "number") {
+    throw new ApiError(
+      400,
+      "Invalid type of data in the date fields. Please provide data in unix date number.",
     );
   }
 
-  // return the resutl
-  return res.status(200).json(
+  const createdQuiz = await Quiz.create({
+    courseId: course?._id,
+    name,
+    startTime: startingTime,
+    endTime: endingTime,
+  });
+
+  if (!createdQuiz) {
+    throw new ApiError(500, "There was an error to create the quiz.");
+  }
+
+  res.status(200).json(
     new ApiResponse(
       200,
       {
-        quizzes: await Quiz.find({
-          course: course?._id,
-        }),
+        createdQuiz,
       },
-      "The quiz has been deleted.",
+      "Successfully created the quiz.",
     ),
   );
 };
+
+// route handler for accessing all quizzess
+
+// route handler for getting a single quiz
+
+// route handler for updating a quiz
+
+// route handler for deleting a quiz
+
+// route handler for adding questiuons to a quiz
+
+// route handler for deleting a question from a quiz.
+
+// route handler for publishing a quiz

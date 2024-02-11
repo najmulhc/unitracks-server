@@ -34,6 +34,14 @@ const QuizSchema = new Schema<QuizType>({
       ref: "quizResponse",
     },
   ],
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
+  courseId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "course"
+  }
 });
 
 const Quiz = mongoose.model("Quiz", QuizSchema);

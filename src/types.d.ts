@@ -128,6 +128,8 @@ export interface Quiz {
     correctOption: number;
   }[];
   responses: mongoose.Types.ObjectId[];
+  isPublished: boolean, 
+  courseId: mongoose.Types.ObjectId;
 }
 
 export interface EvaluationResponse {
