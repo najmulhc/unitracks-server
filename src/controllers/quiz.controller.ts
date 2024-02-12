@@ -6,6 +6,7 @@ import courseTeacherTester from "../utils/courseTeacherTester";
 import ApiError from "../utils/ApiError.util";
 import Quiz from "../models/evaluations/quiz.model";
 import ApiResponse from "../utils/ApiResponse.util";
+import MarksDistribution from "../models/evaluations/marksDistribution"
 
 // route handler for quiz creation.
 const createQuiz = async (req: UserRequest, res: Response) => {
@@ -100,10 +101,39 @@ export const getSingleQuiz  = async (req: UserRequest, res: Response) => {
 
 // route handler for updating a quiz
 
+export const updateQuiz = async (req : UserRequest , res : Response ) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+}
+
 // route handler for deleting a quiz
+export const deleteQuiz = async ( req: UserRequest, res: Response) => { 
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+}
 
 // route handler for adding questiuons to a quiz
 
 // route handler for deleting a question from a quiz.
 
 // route handler for publishing a quiz
+
+export const publishQuiz = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({
+    courseId: req.params.courseId as string,
+    teacherEmail: req?.teacher?.email as string,
+  });
+  const quiz = await Quiz.findById(req.params.quizId);
+
+  if(!quiz) {
+    throw new ApiError(404, "No quiz exists with the given Id.")
+  }
+
+  const markDistribution = await MarksDistribution.find({
+    course: course._id;
+  })
+}

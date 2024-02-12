@@ -57,6 +57,14 @@ const QuizSchema = new mongoose_1.Schema({
             ref: "quizResponse",
         },
     ],
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+    courseId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "course"
+    }
 });
 const Quiz = mongoose_1.default.model("Quiz", QuizSchema);
 exports.default = Quiz;
