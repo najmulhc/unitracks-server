@@ -122,6 +122,12 @@ export const beAnAdmin = async (req: UserRequest, res: Response) => {
     },
     process.env.JWT_SIGN as string,
   );
+
+  const newAdmin = await Admin.create({
+    email: req?.user.email, 
+    userId: req?.user._id,
+
+  })
   res.status(200).json(
     new ApiResponse(
       200,

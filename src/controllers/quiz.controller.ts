@@ -118,6 +118,11 @@ export const deleteQuiz = async ( req: UserRequest, res: Response) => {
 
 // route handler for adding questiuons to a quiz
 
+export const addQuizQuestion = async (req: UserRequest, res: Response) => {
+  const course = await courseTeacherTester({ courseId: req.params.courseId as string, teacherEmail: req?.teacher?.email as string });
+
+  const quiz = await Quiz.findById(req.params.quizId);
+  
 // route handler for deleting a question from a quiz.
 
 // route handler for publishing a quiz
@@ -134,6 +139,9 @@ export const publishQuiz = async (req: UserRequest, res: Response) => {
   }
 
   const markDistribution = await MarksDistribution.find({
-    course: course._id;
+    course: course._id, 
   })
+  if(!markDistribution) {
+    throw new ApiError(404, "No marks distribution found for this course.")
+  }
 }
